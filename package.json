@@ -4,9 +4,10 @@
   "description": "Library for web sites with rich paged viewing and EPUB support, shared with Vivliostyle Formatter & Browser",
   "scripts": {
     "lint": "eslint src test",
-    "build": "mkdirp lib && java -jar node_modules/google-closure-compiler/compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --language_in ECMASCRIPT5 --warning_level VERBOSE --output_wrapper_file src/wrapper.js --externs src/externs.js --process_common_js_modules --js_output_file lib/vivliostyle.min.js src/closure/goog/base.js src/closure/goog/*/*.js src/adapt/*.js src/vivliostyle/*.js",
+    "build": "mkdirp lib && java -jar node_modules/google-closure-compiler/compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --language_in ECMASCRIPT5 --warning_level VERBOSE --output_wrapper_file src/wrapper.js --externs src/externs.js --process_common_js_modules --js_output_file lib/vivliostyle.min.js src/closure/goog/base.js src/closure/goog/*/*.js src/adapt/*.js src/vivliostyle/*.js plugins/*/src/*.js node_modules/hypher/lib/hypher.js",
     "test": "karma start test/conf/karma-sauce.conf.js",
-    "test:local": "karma start test/conf/karma-local.conf.js"
+    "test:local": "karma start test/conf/karma-local.conf.js",
+    "copy:hyphenation_dictionaries": "mkdirp plugins/hyphenation/resources && copyfiles -u 3 \"node_modules/hyphenation.*/lib/!(ender).js\" plugins/hyphenation/resources"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,9 @@
   "main": "lib/vivliostyle.min.js",
   "homepage": "https://github.com/vivliostyle/vivliostyle.js",
   "dependencies": {
+    "hypher": "0.2.4",
+    "hyphenation.pl": "0.2.1",
+    "hyphenation.en-us": "0.2.1"
   },
   "devDependencies": {
     "eslint": "^3.3.1",
@@ -39,6 +43,7 @@
     "karma-verbose-reporter": "0.0.3",
     "karma-commonjs": "^1.0.0",
     "mkdirp": "^0.5.1",
-    "mustache": "^2.2.1"
+    "mustache": "^2.2.1",
+    "copyfiles": "^1.0.0"
   }
 }
