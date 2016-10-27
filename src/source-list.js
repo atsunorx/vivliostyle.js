@@ -53,10 +53,13 @@
         "adapt/toc.js",
         "adapt/epub.js",
         "adapt/viewer.js",
-        "vivliostyle/viewer.js"
+        "vivliostyle/viewer.js",
+
+        "../plugins/hyphenation/src/hyphenation-plugin.js"
     ];
 
     var commonJsModuleList = [
+        "node_modules/hypher/lib/hypher.js"
     ];
 
     if (typeof window === "object" && typeof window.vivliostyleCallback === "function") {
