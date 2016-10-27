@@ -351,8 +351,12 @@ adapt.viewer.Viewer.prototype.configure = function(command) {
     if (typeof command["renderAllPages"] == "boolean") {
         this.renderAllPages = command["renderAllPages"];
     }
+    // for backward compatibility
     if (typeof command["userAgentRootURL"] == "string") {
-        adapt.base.resourceBaseURL = command["userAgentRootURL"];
+        adapt.base.baseURL = command["userAgentRootURL"].replace(/resources\/?$/, "");
+    }
+    if (typeof command["rootURL"] == "string") {
+        adapt.base.baseURL = command["rootURL"];
     }
     if (typeof command["pageViewMode"] == "string" && command["pageViewMode"] !== this.pageViewMode) {
         this.pageViewMode = command["pageViewMode"];
