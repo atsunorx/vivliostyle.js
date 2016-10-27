@@ -1105,6 +1105,31 @@ adapt.vgen.ViewFactory.prototype.modifyElemDimensionWithImageResolution = functi
 };
 
 /**
+ * @return {!adapt.task.Result.<boolean>}
+ */
+adapt.vgen.ViewFactory.prototype.createTextNodeView = function() {
+    var self = this;
+    var offsetInNode = self.offsetInNode || 0;
+    var textContet = self.sourceNode.textContent.substr(offsetInNode);
+    /** @type {!adapt.task.Frame.<boolean>} */ var frame
+        = adapt.task.newFrame("createTextNodeView");
+    var hooks = /** @type {!Array.<vivliostyle.plugin.PreProcessTextContentHook>} */
+        vivliostyle.plugin.getHooksForName(vivliostyle.plugin.HOOKS.PREPROCESS_TEXT_CONTENT);
+    var index = 0;
+    frame.loop(function() {
+        if (index >= hooks.length) return adapt.task.newResult(false);
+        return hooks[index++](xmldoc, style).then(function(processedText) {
+            textContet = processedText;
+            return true;
+        });
+    }).then(function() {
+        self.viewNode = document.createTextNode(textContet);
+        frame.finish(true);
+    });
+    return frame.result();
+};
+
+/**
  * @param {boolean} firstTime
  * @param {boolean} atUnforcedBreak
  * @return {!adapt.task.Result.<boolean>} holding true if children should be processed
@@ -1120,11 +1145,10 @@ adapt.vgen.ViewFactory.prototype.createNodeView = function(firstTime, atUnforced
     } else {
         if (self.sourceNode.nodeType == 8) {
             self.viewNode = null; // comment node
+            result = adapt.task.newResult(true);
         } else {
-            var offsetInNode = self.offsetInNode || 0;
-            self.viewNode = document.createTextNode(self.sourceNode.textContent.substr(offsetInNode));
+            result = self.createTextNodeView();
         }
-        result = adapt.task.newResult(true);
     }
     result.then(function(processChildren) {
         needToProcessChildren = processChildren;

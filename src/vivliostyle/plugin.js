@@ -27,10 +27,30 @@ goog.scope(function() {
          * Note that a shorthand declaration is not directly passed to this hook.
          * After the shorthand declaration is interpreted and broken into non-shorthand declarations, the hook is called for each of the non-shorthand declarations.
          */
-        "SIMPLE_PROPERTY": "SIMPLE_PROPERTY"
+        "SIMPLE_PROPERTY": "SIMPLE_PROPERTY",
+
+        /**
+         * Called when a text node is created.
+         *
+         * The hook is called with an object with the following properties:
+         *   {!adapt.vtree.NodeContext} nodeContext
+         *   {!string} sourceTextContent
+         *
+         * Functions called by this hook are expected to return a adapt.task.Result.<string>.
+         * The text content is then replaced by the returned value.
+         */
+        "PREPROCESS_TEXT_CONTENT": "PREPROCESS_TEXT_CONTENT"
     };
 
     /** @const */ var HOOKS = vivliostyle.plugin.HOOKS;
+
+    /**
+     * @typedef {function(
+     *   !adapt.vtree.NodeContext,
+     *   !string
+     * ):adapt.task.Result.<string>}
+     */
+    vivliostyle.plugin.PreProcessTextContentHook;
 
     /**
      * @private
