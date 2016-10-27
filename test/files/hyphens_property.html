@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <style>
+    div.hyphens {
+      width: 80px;
+      margin: 10px;
+    }
+    div.hyphens:after {
+      content: "Words may be broken at hyphe\0000ADnation opportunities determined auto\0000ADmatic\0000ADally by a \
+language-appropriate hyphenation resource in addition to those indicated explicitly by a conditional hyphen. \
+Automatic hyphenation opportunities within a word must be ignored if the word contains a conditional hyphen (&shy; or U+00AD), \
+in favor of the conditional hyphen(s). However, if, even after breaking at such opportunities, a portion of that word is \
+is still too long to fit on one line, an automatic hyphenation opportunity may be used."
+    }
+    .hyphens1 {
+      hyphens: manual;
+      hyphenate-character: "_";
+      hyphenate-limit-zone: 10px;
+      hyphenate-limit-lines: 3;
+      hyphenate-limit-last: always;
+      hyphenate-limit-chars: 3 3 3;
+      -webkit-hyphens: manual;
+      -webkit-hyphenate-character: "_";
+      -webkit-hyphenate-limit-zone: 10px;
+      -webkit-hyphenate-limit-lines: 3;
+      -webkit-hyphenate-limit-last: always;
+      -webkit-hyphenate-limit-chars: 3 3 3;
+    }
+</style>
+</head>
+<body>
+  <div class="hyphens hyphens1"></div>
+  <div class="hyphens hyphens2" lang="en-pl"></div>
+</body>
+</html>
