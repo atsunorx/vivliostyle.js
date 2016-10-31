@@ -19,10 +19,12 @@ module.exports = function(config) {
         basePath: "../..",
         frameworks: ["jasmine", 'commonjs'],
         files: sourceFiles.concat(testFiles).concat(commonJsSourceFiles),
-        preprocessors: {
-            'node_modules/hypher/lib/hypher.js': ['commonjs'],
+        preprocessors: Object.assign({
             'plugins/hyphenation/src/*.js': ['commonjs']
-        },
+        }, commonJsSourceFiles.reduce(function(r, f) {
+            r[f] = ['commonjs'];
+            return r;
+        }, {})),
         commonjsPreprocessor: {
             modulesRoot: './'
         },
