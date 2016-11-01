@@ -3,7 +3,7 @@
   "version": "2016.10.1-pre",
   "description": "Library for web sites with rich paged viewing and EPUB support, shared with Vivliostyle Formatter & Browser",
   "scripts": {
-    "lint": "eslint src test",
+    "lint": "eslint src test plugins/*/src plugins/*/test",
     "build": "mkdirp lib && java -jar node_modules/google-closure-compiler/compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --language_in ECMASCRIPT5 --warning_level VERBOSE --output_wrapper_file src/wrapper.js --externs src/externs.js --process_common_js_modules --js_output_file lib/vivliostyle.min.js src/closure/goog/base.js src/closure/goog/*/*.js src/adapt/*.js src/vivliostyle/*.js plugins/*/src/*.js node_modules/hypher/lib/hypher.js",
     "test": "karma start test/conf/karma-sauce.conf.js",
     "test:local": "karma start test/conf/karma-local.conf.js",
