@@ -30,27 +30,44 @@ goog.scope(function() {
         "SIMPLE_PROPERTY": "SIMPLE_PROPERTY",
 
         /**
-         * Called when a text node is created.
+         * Called before creating a text node for modifying a text content.
          *
          * The hook is called with an object with the following properties:
-         *   {!adapt.vtree.NodeContext} nodeContext
-         *   {!string} sourceTextContent
+         *   {adapt.vtree.NodeContext} nodeContext
+         *   {string} sourceTextContent
          *
          * Functions called by this hook are expected to return a adapt.task.Result.<string>.
          * The text content is then replaced by the returned value.
          */
-        "PREPROCESS_TEXT_CONTENT": "PREPROCESS_TEXT_CONTENT"
+        "PREPROCESS_TEXT_CONTENT": "PREPROCESS_TEXT_CONTENT",
+
+        /**
+         * Called before creating a element for modifying a element style.
+         *
+         * The hook is called with an object with the following properties:
+         *   {adapt.vtree.NodeContext} nodeContext
+         *   {!Object} style
+         */
+        "PREPROCESS_ELEMENT_STYLE": "PREPROCESS_ELEMENT_STYLE"
     };
 
     /** @const */ var HOOKS = vivliostyle.plugin.HOOKS;
 
     /**
      * @typedef {function(
-     *   !adapt.vtree.NodeContext,
-     *   !string
+     *   adapt.vtree.NodeContext,
+     *   string
      * ):adapt.task.Result.<string>}
      */
     vivliostyle.plugin.PreProcessTextContentHook;
+
+    /**
+     * @typedef {function(
+     *   adapt.vtree.NodeContext,
+     *   !Object
+     * ):undefined}
+     */
+    vivliostyle.plugin.PreProcessElementStyleHook;
 
     /**
      * @private

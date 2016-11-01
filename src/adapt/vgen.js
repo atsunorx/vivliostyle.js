@@ -952,6 +952,9 @@ adapt.vgen.ViewFactory.prototype.createElementView = function(firstTime, atUnfor
                 var listStyleURL = (/** @type {adapt.css.URL} */ (listStyleImage)).url;
                 fetchers.push(adapt.taskutil.loadElement(new Image(), listStyleURL));
             }
+
+            self.preprocessElementStyle(computedStyle);
+
             self.applyComputedStyles(result, computedStyle);
             if (!self.nodeContext.inline) {
                 var blackList = null;
@@ -1105,25 +1108,39 @@ adapt.vgen.ViewFactory.prototype.modifyElemDimensionWithImageResolution = functi
 };
 
 /**
+ * @private
+ * @param {!Object} computedStyle
+ */
+adapt.vgen.ViewFactory.prototype.preprocessElementStyle = function(computedStyle) {
+    var self = this;
+    /** @type {!Array.<vivliostyle.plugin.PreProcessElementStyleHook>} */ var hooks =
+        vivliostyle.plugin.getHooksForName(vivliostyle.plugin.HOOKS.PREPROCESS_ELEMENT_STYLE);
+    hooks.forEach(function(hook) {
+        hook(self.nodeContext, computedStyle);
+    });
+};
+
+/**
+ * @private
  * @return {!adapt.task.Result.<boolean>}
  */
 adapt.vgen.ViewFactory.prototype.createTextNodeView = function() {
     var self = this;
     var offsetInNode = self.offsetInNode || 0;
-    var textContet = self.sourceNode.textContent.substr(offsetInNode);
+    var textContent = self.sourceNode.textContent.substr(offsetInNode);
     /** @type {!adapt.task.Frame.<boolean>} */ var frame
         = adapt.task.newFrame("createTextNodeView");
-    var hooks = /** @type {!Array.<vivliostyle.plugin.PreProcessTextContentHook>} */
+    /** @type {!Array.<vivliostyle.plugin.PreProcessTextContentHook>} */ var hooks =
         vivliostyle.plugin.getHooksForName(vivliostyle.plugin.HOOKS.PREPROCESS_TEXT_CONTENT);
     var index = 0;
     frame.loop(function() {
         if (index >= hooks.length) return adapt.task.newResult(false);
-        return hooks[index++](xmldoc, style).then(function(processedText) {
-            textContet = processedText;
-            return true;
+        return hooks[index++](self.nodeContext, textContent).thenAsync(function(processedText) {
+            textContent = processedText;
+            return adapt.task.newResult(true);
         });
     }).then(function() {
-        self.viewNode = document.createTextNode(textContet);
+        self.viewNode = document.createTextNode(textContent);
         frame.finish(true);
     });
     return frame.result();
