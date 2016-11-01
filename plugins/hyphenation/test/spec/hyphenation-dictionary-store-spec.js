@@ -15,11 +15,11 @@ describe("vivliostyle.plugins.hyphenation", function() {
         describe("#resolveDictionaryUrl", function() {
             it("resolves a hyphenation dictionary url for language", function() {
                 expect(target.resolveDictionaryUrl("pl")).toBe(
-                    "./plugins/hyphenation/resources/pl.js");
-                expect(target.resolveDictionaryUrl("en-us")).toBe(
-                    "./plugins/hyphenation/resources/en-us.js");
-                expect(target.resolveDictionaryUrl("ja-JP")).toBe(
-                    "./plugins/hyphenation/resources/ja-JP.js");
+                    "./plugins/hyphenation/resources/pl.json");
+                expect(target.resolveDictionaryUrl("en-US")).toBe(
+                    "./plugins/hyphenation/resources/en-us.json");
+                expect(target.resolveDictionaryUrl("ja-jp")).toBe(
+                    "./plugins/hyphenation/resources/ja-jp.json");
             });
         });
     });

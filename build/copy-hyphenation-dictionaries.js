@@ -8,7 +8,7 @@ glob("node_modules/hyphenation.*", {}, function (er, modules) {
         var ids = typeof dictionary.id == "string" ? [dictionary.id] : dictionary.id;
         var body = JSON.stringify(dictionary);
         ids.forEach(function(id) {
-            var dst = "plugins/hyphenation/resources/" + id + ".json";
+            var dst = "plugins/hyphenation/resources/" + id.toLowerCase() + ".json";
             fs.writeFileSync(dst, body);
         });
     });
