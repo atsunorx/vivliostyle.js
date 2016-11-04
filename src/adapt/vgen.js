@@ -1126,10 +1126,29 @@ adapt.vgen.ViewFactory.prototype.preprocessElementStyle = function(computedStyle
  */
 adapt.vgen.ViewFactory.prototype.createTextNodeView = function() {
     var self = this;
-    var offsetInNode = self.offsetInNode || 0;
-    var textContent = self.sourceNode.textContent.substr(offsetInNode);
     /** @type {!adapt.task.Frame.<boolean>} */ var frame
         = adapt.task.newFrame("createTextNodeView");
+    this.preprocessTextContent().then(function() {
+        var offsetInNode = self.offsetInNode || 0;
+        var textContent = self.nodeContext.preprocessedTextContent.substr(offsetInNode);
+        self.viewNode = document.createTextNode(textContent);
+        frame.finish(true);
+    });
+    return frame.result();
+};
+
+/**
+ * @private
+ * @return {!adapt.task.Result.<boolean>}
+ */
+adapt.vgen.ViewFactory.prototype.preprocessTextContent = function() {
+    if (this.context.preprocessedTextContent != null) {
+        return adapt.task.newResult(true);
+    }
+    var self = this;
+    var textContent = self.sourceNode.textContent;
+    /** @type {!adapt.task.Frame.<boolean>} */ var frame
+        = adapt.task.newFrame("preprocessTextContent");
     /** @type {!Array.<vivliostyle.plugin.PreProcessTextContentHook>} */ var hooks =
         vivliostyle.plugin.getHooksForName(vivliostyle.plugin.HOOKS.PREPROCESS_TEXT_CONTENT);
     var index = 0;
@@ -1140,7 +1159,7 @@ adapt.vgen.ViewFactory.prototype.createTextNodeView = function() {
             return adapt.task.newResult(true);
         });
     }).then(function() {
-        self.viewNode = document.createTextNode(textContent);
+        self.nodeContext.preprocessedTextContent = textContent;
         frame.finish(true);
     });
     return frame.result();
