@@ -55,6 +55,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 target.preprocessElementStyle(context, style);
 
                 expect(context).toEqual({
+                    hyphens: 'manual'
                 });
                 expect(style).toEqual({
                     hyphens: adapt.css.ident.manual
@@ -65,6 +66,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 target.preprocessElementStyle(context, style);
 
                 expect(context).toEqual({
+                    hyphens: 'none'
                 });
                 expect(style).toEqual({
                     hyphens: adapt.css.ident.none
@@ -161,12 +163,14 @@ describe("vivliostyle.plugins.hyphenation", function() {
 
                 expect(target.extractElementStyleAndLang({
                     hyphensLeftmin: 3,
+                    hyphens: "none",
                     parent: {
                         hyphensLeftmin: 10,
                         sourceNode: {
                             lang: "pl"
                         },
                         parent: {
+                            hyphens: "auto",
                             hyphensRightmin: 12,
                             sourceNode: {
                                 lang: "en"
@@ -174,7 +178,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                         }
                     }
                 })).toEqual({
-                    hyphens: null,
+                    hyphens: "none",
                     hyphensLeftmin: 3,
                     hyphensRightmin: 12,
                     lang: "pl"

@@ -183,8 +183,9 @@ goog.scope(function() {
      */
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessHyphens = function(context, computedStyle) {
         var hyphens = computedStyle["hyphens"];
+        if (!hyphens || !hyphens.isIdent()) return
+        context.hyphens = hyphens.name;
         if (hyphens === adapt.css.ident.auto) {
-            context.hyphens = "auto";
             computedStyle["hyphens"] = adapt.css.ident.manual;
         }
     };
