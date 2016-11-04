@@ -92,12 +92,38 @@ goog.scope(function() {
                 frame.finish(string);
                 return;
             }
-            if (leftmin  != null) dictionary.leftmin  = leftmin;
-            if (rightmin != null) dictionary.rightmin = rightmin;
-            var processed = new Hypher(dictionary).hyphenate(string);
-            frame.finish(processed.join("\u00AD"));
-        });
+            var original = {
+                leftmin:  dictionary.leftmin,
+                rightmin: dictionary.rightmin
+            };
+            try {
+                this.setHyphenationLimitChars(dictionary, leftmin, rightmin);
+                var processed = new Hypher(dictionary).hyphenateText(string);
+                frame.finish(processed);
+            } finally {
+                this.resetHyphenationLimitChars(dictionary, original);
+            }
+        }.bind(this));
         return frame.result();
+    };
+
+    /**
+     * @param {!HypherDictionary} dictionary
+     * @param {(number|null)=} leftmin
+     * @param {(number|null)=} rightmin
+     */
+    vivliostyle.plugins.hyphenation.Hyphenator.prototype.setHyphenationLimitChars = function(dictionary, leftmin, rightmin) {
+        if (leftmin  != null) dictionary.leftmin  = leftmin;
+        if (rightmin != null) dictionary.rightmin = rightmin;
+    };
+
+    /**
+     * @param {!HypherDictionary} dictionary
+     * @param {{leftmin:(number|null), rightmin:(number|null)}} original
+     */
+    vivliostyle.plugins.hyphenation.Hyphenator.prototype.resetHyphenationLimitChars = function(dictionary, original) {
+        dictionary.leftmin  = original.leftmin;
+        dictionary.rightmin = original.rightmin;
     };
 
     /**

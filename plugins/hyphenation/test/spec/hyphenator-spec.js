@@ -198,7 +198,16 @@ describe("vivliostyle.plugins.hyphenation", function() {
             it("hyphenate a string when dictionary is not null.", function(cb) {
                 adapt.task.start(function() {
                     target.hyphenate("hyphenation opportunities", "en").then(function(result) {
-                        expect(result).toEqual("hyphe\u00ADna\u00ADtio\u00ADn op\u00ADpor\u00ADtu\u00ADni\u00ADties");
+                        expect(result).toEqual("hyphe\u00ADna\u00ADtion oppor\u00ADtu\u00ADni\u00ADties");
+                        expect(dictionaryStore.load).toHaveBeenCalled();
+                        cb();
+                    });
+                });
+            });
+            it("can limit the minimum number of characters in a hyphenated word designated by hyphensLeftmin and hyphensRightmin.", function(cb) {
+                adapt.task.start(function() {
+                    target.hyphenate("hyphenation opportunities", "en", 6, 6).then(function(result) {
+                        expect(result).toEqual("hyphenation opportu\u00ADnities");
                         expect(dictionaryStore.load).toHaveBeenCalled();
                         cb();
                     });
@@ -213,6 +222,18 @@ describe("vivliostyle.plugins.hyphenation", function() {
                     });
                 });
             });
+            // TODO
+            // it("do nothing when a word contains a soft hyphen.", function(cb) {
+            //     adapt.task.start(function() {
+            //         console.log("hyphenation opportunities".length);
+            //         console.log("hyphenatio\u00ADn opportunities".length);
+            //         target.hyphenate("hyphenatio\u00ADn opportunities", "en").then(function(result) {
+            //             expect(result).toEqual("hyphenatio\u00ADn oppor\u00ADtu\u00ADni\u00ADties");
+            //             expect(dictionaryStore.load).toHaveBeenCalled();
+            //             cb();
+            //         });
+            //     });
+            // });
         });
 
         describe("#hyphenateTextNodeContent", function() {
@@ -231,7 +252,18 @@ describe("vivliostyle.plugins.hyphenation", function() {
             it("hyphenate a text content.", function(cb) {
                 adapt.task.start(function() {
                     target.hyphenateTextNodeContent(context, "hyphenation opportunities").then(function(result) {
-                        expect(result).toEqual("hyphe\u00ADna\u00ADtio\u00ADn op\u00ADpor\u00ADtu\u00ADni\u00ADties");
+                        expect(result).toEqual("hyphe\u00ADna\u00ADtion oppor\u00ADtu\u00ADni\u00ADties");
+                        expect(dictionaryStore.load).toHaveBeenCalledWith("en");
+                        cb();
+                    });
+                });
+            });
+            it("can limit the minimum number of characters in a hyphenated word designated by hyphensLeftmin and hyphensRightmin.", function(cb) {
+                adapt.task.start(function() {
+                    context.hyphensLeftmin  = 6;
+                    context.hyphensRightmin = 6;
+                    target.hyphenateTextNodeContent(context, "hyphenation opportunities").then(function(result) {
+                        expect(result).toEqual("hyphenation opportu\u00ADnities");
                         expect(dictionaryStore.load).toHaveBeenCalledWith("en");
                         cb();
                     });
