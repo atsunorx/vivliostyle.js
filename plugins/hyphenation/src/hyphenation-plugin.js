@@ -21,8 +21,7 @@ goog.scope(function() {
 
     /**
      * @typedef {{
-     *  hyphensLeftmin: (number|null),
-     *  hyphensRightmin: (number|null),
+     *  hyphenateLimitChars: Array.<(number|null)>,
      *  hyphens: (string|null),
      *  lang: (string|null)
      * }}
@@ -80,11 +79,12 @@ goog.scope(function() {
     /**
      * @param {!string} string
      * @param {!string} lang
+     * @param {(number|null)=} min
      * @param {(number|null)=} leftmin
      * @param {(number|null)=} rightmin
      * @return {!adapt.task.Result.<string>}
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.hyphenate = function(string, lang, leftmin, rightmin) {
+    vivliostyle.plugins.hyphenation.Hyphenator.prototype.hyphenate = function(string, lang, min, leftmin, rightmin) {
         /** @type {!adapt.task.Frame.<string>} */ var frame =
             adapt.task.newFrame("hyphenate");
         this.dictionaryStore.load(lang).then(function(dictionary) {
@@ -98,7 +98,7 @@ goog.scope(function() {
             };
             try {
                 this.setHyphenationLimitChars(dictionary, leftmin, rightmin);
-                var processed = new Hypher(dictionary).hyphenateText(string);
+                var processed = new Hypher(dictionary).hyphenateText(string, min);
                 frame.finish(processed);
             } finally {
                 this.resetHyphenationLimitChars(dictionary, original);
@@ -119,7 +119,7 @@ goog.scope(function() {
 
     /**
      * @param {!HypherDictionary} dictionary
-     * @param {{leftmin:(number|null), rightmin:(number|null)}} original
+     * @param {{leftmin:number, rightmin:number}} original
      */
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.resetHyphenationLimitChars = function(dictionary, original) {
         dictionary.leftmin  = original.leftmin;
@@ -135,10 +135,14 @@ goog.scope(function() {
         if (/^[\s]*$/.test(string)) return adapt.task.newResult(string);
 
         var styleAndLang = this.extractElementStyleAndLang(context);
+
         if (styleAndLang.hyphens != "auto") return adapt.task.newResult(string);
         if (!styleAndLang.lang) return adapt.task.newResult(string);
+        var hyphenateLimitChars = styleAndLang.hyphenateLimitChars;
         return this.hyphenate(string, styleAndLang.lang,
-            styleAndLang.hyphensLeftmin, styleAndLang.hyphensRightmin);
+            hyphenateLimitChars ? hyphenateLimitChars[0] :null,
+            hyphenateLimitChars ? hyphenateLimitChars[1] :null,
+            hyphenateLimitChars ? hyphenateLimitChars[2] :null);
     };
 
     /**
@@ -148,22 +152,18 @@ goog.scope(function() {
      */
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.extractElementStyleAndLang = function(context) {
         /** @type {!vivliostyle.plugins.hyphenation.StyleAndLang} */ var styleAndLang = {
-            lang: null, hyphens: null,
-            hyphensLeftmin: null, hyphensRightmin: null
+            lang: null, hyphens: null, hyphenateLimitChars: null
         };
         var collectors = [
-            new vivliostyle.plugins.hyphenation.StyleCollector(styleAndLang, "hyphens"),
-            new vivliostyle.plugins.hyphenation.StyleCollector(styleAndLang, "hyphensLeftmin"),
-            new vivliostyle.plugins.hyphenation.StyleCollector(styleAndLang, "hyphensRightmin"),
-            new vivliostyle.plugins.hyphenation.LangCollector(styleAndLang)
+            new vivliostyle.plugins.hyphenation.PropertyCollector(styleAndLang, "hyphens"),
+            new vivliostyle.plugins.hyphenation.PropertyCollector(styleAndLang, "hyphenateLimitChars"),
+            new vivliostyle.plugins.hyphenation.PropertyCollector(styleAndLang, "lang")
         ];
-        while (context) {
-            collectors.forEach(function(c) { c.collect(context); });
-            if (collectors.every(function(c) { return c.isCollected(); })) {
-                return styleAndLang;
-            }
-            context = context.parent;
-        }
+        [context, context.parent].some(function(cont) {
+            if (!cont) return true;
+            collectors.forEach(function(c) { c.collect(cont); });
+            return collectors.every(function(c) { return c.isCollected(); });
+        });
         return styleAndLang;
     };
 
@@ -172,6 +172,7 @@ goog.scope(function() {
      * @param {!Object} computedStyle
      */
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessElementStyle = function(context, computedStyle) {
+        if (!context.inheritedProps) return;
         this.preprocessHyphens(context, computedStyle);
         this.preprocessHyphenateLimitChars(context, computedStyle);
     };
@@ -182,32 +183,41 @@ goog.scope(function() {
      * @param {!Object} computedStyle
      */
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessHyphens = function(context, computedStyle) {
-        var hyphens = computedStyle["hyphens"];
-        if (!hyphens || !hyphens.isIdent()) return
-        context.hyphens = hyphens.name;
-        if (hyphens === adapt.css.ident.auto) {
+        var hyphens = context.inheritedProps["hyphens"];
+        if (!hyphens) return;
+        context.hyphens = hyphens;
+        if (hyphens === "none") {
+            computedStyle["hyphens"] = adapt.css.ident.none;
+        } else {
             computedStyle["hyphens"] = adapt.css.ident.manual;
         }
     };
     /**
      * @private
      * @param {adapt.vtree.NodeContext} context
-     * @param {!Object} computedStyle
      */
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessHyphenateLimitChars = function(context, computedStyle) {
-        var hyphenateLimitChars = computedStyle["hyphenate-limit-chars"];
+        var hyphenateLimitChars =
+            /** @type {adapt.css.Val} */ (context.inheritedProps["hyphenate-limit-chars"]);
         if (!hyphenateLimitChars
             || !hyphenateLimitChars.isSpaceList()
-            || hyphenateLimitChars.values.length <= 1) {
+            || hyphenateLimitChars.values.length == 0) {
             return;
         }
-        /** @type {adapt.css.Val} */ var leftmin  = hyphenateLimitChars.values[1];
+        /** @type {adapt.css.Val} */ var min      = hyphenateLimitChars.values[0];
+        /** @type {adapt.css.Val} */ var leftmin  = null;
         /** @type {adapt.css.Val} */ var rightmin = leftmin;
+        if (hyphenateLimitChars.values.length >= 2) {
+            leftmin = rightmin = hyphenateLimitChars.values[1];
+        }
         if (hyphenateLimitChars.values.length >= 3) {
             rightmin = hyphenateLimitChars.values[2];
         }
-        context.hyphensLeftmin  = this.extactInt(leftmin);
-        context.hyphensRightmin = this.extactInt(rightmin);
+        context.hyphenateLimitChars = [
+            this.extactInt(min),
+            this.extactInt(leftmin),
+            this.extactInt(rightmin)
+        ];
     };
 
     /**
@@ -244,59 +254,17 @@ goog.scope(function() {
      * @param {adapt.vtree.NodeContext} context
      */
     vivliostyle.plugins.hyphenation.PropertyCollector.prototype.collect = function(context) {
+        if (this.isCollected()) return;
+        var value = context[this.key];
+        if (value !== undefined) {
+            this.styleAndLang[this.key] = value;
+        }
     };
     /**
      * @return {boolean}
      */
     vivliostyle.plugins.hyphenation.PropertyCollector.prototype.isCollected = function() {
         return this.styleAndLang[this.key] != null;
-    };
-
-    /**
-     * @constructor
-     * @param {!vivliostyle.plugins.hyphenation.StyleAndLang} styleAndLang
-     * @param {!string} styleName
-     * @extends {vivliostyle.plugins.hyphenation.PropertyCollector}
-     */
-    vivliostyle.plugins.hyphenation.StyleCollector = function(styleAndLang, styleName) {
-        vivliostyle.plugins.hyphenation.PropertyCollector.call(
-            this, styleAndLang, styleName);
-    };
-    goog.inherits(vivliostyle.plugins.hyphenation.StyleCollector,
-        vivliostyle.plugins.hyphenation.PropertyCollector);
-
-    /**
-     * @override
-     * @param {adapt.vtree.NodeContext} context
-     */
-    vivliostyle.plugins.hyphenation.StyleCollector.prototype.collect = function(context) {
-        if (this.isCollected()) return;
-        var style = context[this.key];
-        if (style) {
-            this.styleAndLang[this.key] = style;
-        }
-    };
-
-    /**
-     * @constructor
-     * @param {!vivliostyle.plugins.hyphenation.StyleAndLang} styleAndLang
-     * @extends {vivliostyle.plugins.hyphenation.PropertyCollector}
-     */
-    vivliostyle.plugins.hyphenation.LangCollector = function(styleAndLang) {
-        vivliostyle.plugins.hyphenation.PropertyCollector.call(
-            this, styleAndLang, "lang");
-    };
-    goog.inherits(vivliostyle.plugins.hyphenation.LangCollector,
-        vivliostyle.plugins.hyphenation.PropertyCollector);
-    /**
-     * @override
-     * @param {adapt.vtree.NodeContext} context
-     */
-    vivliostyle.plugins.hyphenation.LangCollector.prototype.collect = function(context) {
-        if (this.isCollected()) return;
-        if (context.sourceNode && context.sourceNode.lang) {
-            this.styleAndLang[this.key] = context.sourceNode.lang;
-        }
     };
 
     vivliostyle.plugins.hyphenation.hyphenator =

@@ -684,10 +684,12 @@ adapt.vtree.NodeContext = function(sourceNode, parent, boxOffset) {
     /** @type {?string} */ this.breakAfter = null;
     /** @type {Node} */ this.viewNode = null;
     /** @type {Node} */ this.clearSpacer = null;
-    /** @type {Object.<string,number|string>} */ this.inheritedProps = parent ? parent.inheritedProps : {};
+    /** @type {Object.<string,number|string|adapt.css.Val>} */ this.inheritedProps = parent ? parent.inheritedProps : {};
     /** @type {boolean} */ this.vertical = parent ? parent.vertical : false;
     /** @type {string} */ this.direction = parent ? parent.direction : "ltr";
     /** @type {adapt.vtree.FirstPseudo} */ this.firstPseudo = parent ? parent.firstPseudo : null;
+    /** @type {?string} */ this.preprocessedTextContent = null;
+    /** @type {?string} */ this.lang = null;
 };
 
 /**

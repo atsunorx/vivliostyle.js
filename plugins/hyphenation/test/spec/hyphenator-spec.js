@@ -40,34 +40,34 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 style = {};
             });
             it("inserts 'hyphens:auto' to a context when hyphens property is 'auto' and modify hyphens to 'manual'.", function() {
-                style.hyphens = adapt.css.ident.auto;
+                context.inheritedProps = {
+                    hyphens: 'auto'
+                };
                 target.preprocessElementStyle(context, style);
 
-                expect(context).toEqual({
-                    hyphens: 'auto'
-                });
+                expect(context.hyphens).toEqual('auto');
                 expect(style).toEqual({
                     hyphens: adapt.css.ident.manual
                 });
             });
             it("do nothing when hyphens property is 'manual'.", function() {
-                style.hyphens = adapt.css.ident.manual;
+                context.inheritedProps = {
+                    hyphens: 'manual'
+                };
                 target.preprocessElementStyle(context, style);
 
-                expect(context).toEqual({
-                    hyphens: 'manual'
-                });
+                expect(context.hyphens).toEqual('manual');
                 expect(style).toEqual({
                     hyphens: adapt.css.ident.manual
                 });
             });
             it("do nothing when hyphens property is 'none'.", function() {
-                style.hyphens = adapt.css.ident.none;
+                context.inheritedProps = {
+                    hyphens: 'none'
+                };
                 target.preprocessElementStyle(context, style);
 
-                expect(context).toEqual({
-                    hyphens: 'none'
-                });
+                expect(context.hyphens).toEqual('none');
                 expect(style).toEqual({
                     hyphens: adapt.css.ident.none
                 });
@@ -81,67 +81,69 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 });
             });
 
-            it("inserts 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is 'auto 1 2'.", function() {
-                style['hyphenate-limit-chars'] = new adapt.css.SpaceList([
-                    adapt.css.ident.auto,
-                    new adapt.css.Int(1),
-                    new adapt.css.Int(2)
-                ]);
+            it("inserts 'hyphensMin', 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is 'auto 1 2'.", function() {
+                context.inheritedProps = {
+                    "hyphenate-limit-chars": new adapt.css.SpaceList([
+                        adapt.css.ident.auto,
+                        new adapt.css.Int(1),
+                        new adapt.css.Int(2)
+                    ])
+                };
                 target.preprocessElementStyle(context, style);
-
-                expect(context).toEqual({
-                    hyphensLeftmin: 1,
-                    hyphensRightmin: 2
-                });
+                expect(context.hyphenateLimitChars).toEqual([null, 1, 2]);
             });
-            it("inserts 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is '10 2'.", function() {
-                style['hyphenate-limit-chars'] = new adapt.css.SpaceList([
-                    new adapt.css.Int(10),
-                    new adapt.css.Int(2)
-                ]);
+            it("inserts 'hyphensMin', 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is '10 2'.", function() {
+                context.inheritedProps = {
+                    "hyphenate-limit-chars": new adapt.css.SpaceList([
+                        new adapt.css.Int(10),
+                        new adapt.css.Int(2)
+                    ])
+                };
                 target.preprocessElementStyle(context, style);
-
-                expect(context).toEqual({
-                    hyphensLeftmin: 2,
-                    hyphensRightmin: 2
-                });
+                expect(context.hyphenateLimitChars).toEqual([10, 2, 2]);
             });
             it("do nothing when hyphenate-limit-chars property is '10'.", function() {
-                style['hyphenate-limit-chars'] = new adapt.css.SpaceList([
-                    new adapt.css.Int(10)
-                ]);
+                context.inheritedProps = {
+                    "hyphenate-limit-chars": new adapt.css.SpaceList([
+                        new adapt.css.Int(10)
+                    ])
+                };
                 target.preprocessElementStyle(context, style);
-
-                expect(context).toEqual({});
+                expect(context.hyphenateLimitChars).toEqual([10, null, null]);
             });
-            it("inserts 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is 'auto auto auto'.", function() {
-                style['hyphenate-limit-chars'] = new adapt.css.SpaceList([
-                    adapt.css.ident.auto,
-                    adapt.css.ident.auto,
-                    adapt.css.ident.auto
-                ]);
+            it("inserts 'hyphensMin', 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is 'auto auto auto'.", function() {
+                context.inheritedProps = {
+                    "hyphenate-limit-chars": new adapt.css.SpaceList([
+                        adapt.css.ident.auto,
+                        adapt.css.ident.auto,
+                        adapt.css.ident.auto
+                    ])
+                };
                 target.preprocessElementStyle(context, style);
-
-                expect(context).toEqual({
-                    hyphensLeftmin: null,
-                    hyphensRightmin: null
-                });
+                expect(context.hyphenateLimitChars).toEqual([null, null, null]);
             });
-            it("inserts 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is 'auto auto'.", function() {
-                style['hyphenate-limit-chars'] = new adapt.css.SpaceList([
-                    adapt.css.ident.auto,
-                    adapt.css.ident.auto
-                ]);
+            it("inserts 'hyphensMin', 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is 'auto auto'.", function() {
+                context.inheritedProps = {
+                    "hyphenate-limit-chars": new adapt.css.SpaceList([
+                        adapt.css.ident.auto,
+                        adapt.css.ident.auto
+                    ])
+                };
                 target.preprocessElementStyle(context, style);
-
-                expect(context).toEqual({
-                    hyphensLeftmin: null,
-                    hyphensRightmin: null
-                });
+                expect(context.hyphenateLimitChars).toEqual([null, null, null]);
+            });
+            it("inserts 'hyphensMin', 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is 'auto'.", function() {
+                context.inheritedProps = {
+                    "hyphenate-limit-chars": new adapt.css.SpaceList([
+                        adapt.css.ident.auto
+                    ])
+                };
+                target.preprocessElementStyle(context, style);
+                expect(context.hyphenateLimitChars).toEqual([null, null, null]);
             });
             it("do nothing when hyphenate-limit-chars property is undefined.", function() {
                 target.preprocessElementStyle(context, style);
-                expect(context).toEqual({});
+                expect(context.hyphenateLimitChars).toEqual(undefined);
             });
         });
 
@@ -149,50 +151,80 @@ describe("vivliostyle.plugins.hyphenation", function() {
             it("extracts required properties from a context.", function() {
                 expect(target.extractElementStyleAndLang({
                     hyphens: 'auto',
-                    hyphensLeftmin: 3,
-                    hyphensRightmin: 2,
-                    sourceNode: {
-                        lang: "en"
-                    }
+                    hyphenateLimitChars: [null, 2, 3],
+                    lang: "en"
                 })).toEqual({
                     hyphens: 'auto',
-                    hyphensLeftmin: 3,
-                    hyphensRightmin: 2,
+                    hyphenateLimitChars: [null, 2, 3],
                     lang: "en"
                 });
 
                 expect(target.extractElementStyleAndLang({
-                    hyphensLeftmin: 3,
                     hyphens: "none",
                     parent: {
-                        hyphensLeftmin: 10,
-                        sourceNode: {
-                            lang: "pl"
-                        },
+                        hyphenateLimitChars: [10, 2, 3],
+                        lang: "pl",
                         parent: {
                             hyphens: "auto",
-                            hyphensRightmin: 12,
-                            sourceNode: {
-                                lang: "en"
-                            }
+                            lang: "en"
                         }
                     }
                 })).toEqual({
                     hyphens: "none",
-                    hyphensLeftmin: 3,
-                    hyphensRightmin: 12,
+                    hyphenateLimitChars: [10, 2, 3],
                     lang: "pl"
+                });
+
+                expect(target.extractElementStyleAndLang({
+                })).toEqual({
+                    hyphens: null,
+                    hyphenateLimitChars: null,
+                    lang: null
                 });
 
                 expect(target.extractElementStyleAndLang({
                     parent: {
                         parent: {
+                            hyphens: "auto",
+                            hyphenateLimitChars: [10, 2, 3]
                         }
                     }
                 })).toEqual({
                     hyphens: null,
-                    hyphensLeftmin: null,
-                    hyphensRightmin: null,
+                    hyphenateLimitChars: null,
+                    lang: null
+                });
+
+                expect(target.extractElementStyleAndLang({
+                    hyphenateLimitChars: [null, null, null],
+                    parent: {
+                        hyphens: "auto",
+                        hyphenateLimitChars: [12, 2, 3],
+                        parent: {
+                            hyphens: "auto",
+                            hyphenateLimitChars: [13, 2, 3]
+                        }
+                    }
+                })).toEqual({
+                    hyphens: "auto",
+                    hyphenateLimitChars: [null, null, null],
+                    lang: null
+                });
+
+                expect(target.extractElementStyleAndLang({
+                    hyphens: "none",
+                    hyphenateLimitChars: [null, null, null],
+                    parent: {
+                        hyphens: "auto",
+                        hyphenateLimitChars: [12, 2, 3],
+                        parent: {
+                            hyphens: "manual",
+                            hyphenateLimitChars: [13, 2, 3]
+                        }
+                    }
+                })).toEqual({
+                    hyphens: "none",
+                    hyphenateLimitChars: [null, null, null],
                     lang: null
                 });
             });
@@ -201,17 +233,35 @@ describe("vivliostyle.plugins.hyphenation", function() {
         describe("#hyphenate", function() {
             it("hyphenate a string when dictionary is not null.", function(cb) {
                 adapt.task.start(function() {
-                    target.hyphenate("hyphenation opportunities", "en").then(function(result) {
-                        expect(result).toEqual("hyphe\u00ADna\u00ADtion oppor\u00ADtu\u00ADni\u00ADties");
+                    target.hyphenate("breaking characters before hyphenation opportunities", "en").then(function(result) {
+                        expect(result).toEqual("brea\u00ADking cha\u00ADrac\u00ADters before hyphe\u00ADna\u00ADtion oppor\u00ADtu\u00ADni\u00ADties");
                         expect(dictionaryStore.load).toHaveBeenCalled();
                         cb();
                     });
                 });
             });
-            it("can limit the minimum number of characters in a hyphenated word designated by hyphensLeftmin and hyphensRightmin.", function(cb) {
+            it("can limit the minimum number of characters in a hyphenated word designated by arguments.", function(cb) {
                 adapt.task.start(function() {
-                    target.hyphenate("hyphenation opportunities", "en", 6, 6).then(function(result) {
-                        expect(result).toEqual("hyphenation opportu\u00ADnities");
+                    target.hyphenate("breaking characters before hyphenation opportunities", "en", 8).then(function(result) {
+                        expect(result).toEqual("breaking cha\u00ADrac\u00ADters before hyphe\u00ADna\u00ADtion oppor\u00ADtu\u00ADni\u00ADties");
+                        expect(dictionaryStore.load).toHaveBeenCalled();
+                        cb();
+                    });
+                });
+            });
+            it("can limit the minimum number of characters before the hyphen designated by arguments.", function(cb) {
+                adapt.task.start(function() {
+                    target.hyphenate("breaking characters before hyphenation opportunities", "en", 4, 6).then(function(result) {
+                        expect(result).toEqual("breaking charac\u00ADters before hyphena\u00ADtion opportu\u00ADni\u00ADties");
+                        expect(dictionaryStore.load).toHaveBeenCalled();
+                        cb();
+                    });
+                });
+            });
+            it("can limit the minimum number of characters after the hyphen designated by arguments.", function(cb) {
+                adapt.task.start(function() {
+                    target.hyphenate("breaking characters before hyphenation opportunities", "en", 4, 3, 6).then(function(result) {
+                        expect(result).toEqual("breaking cha\u00ADracters before hyphe\u00ADnation oppor\u00ADtu\u00ADnities");
                         expect(dictionaryStore.load).toHaveBeenCalled();
                         cb();
                     });
@@ -219,8 +269,8 @@ describe("vivliostyle.plugins.hyphenation", function() {
             });
             it("do nothing when dictionary is null.", function(cb) {
                 adapt.task.start(function() {
-                    target.hyphenate("hyphenation opportunities", "ja").then(function(result) {
-                        expect(result).toEqual("hyphenation opportunities");
+                    target.hyphenate("breaking characters before hyphenation opportunities", "ja").then(function(result) {
+                        expect(result).toEqual("breaking characters before hyphenation opportunities");
                         expect(dictionaryStore.load).toHaveBeenCalled();
                         cb();
                     });
@@ -228,8 +278,8 @@ describe("vivliostyle.plugins.hyphenation", function() {
             });
             it("do nothing when a word contains a soft hyphen.", function(cb) {
                 adapt.task.start(function() {
-                    target.hyphenate("hyphenatio\u00ADn opportunities", "en").then(function(result) {
-                        expect(result).toEqual("hyphenatio\u00ADn oppor\u00ADtu\u00ADni\u00ADties");
+                    target.hyphenate("b\u00ADreaking characters before hyphenatio\u00ADn opportunities", "en").then(function(result) {
+                        expect(result).toEqual("b\u00ADreaking cha\u00ADrac\u00ADters before hyphenatio\u00ADn oppor\u00ADtu\u00ADni\u00ADties");
                         expect(dictionaryStore.load).toHaveBeenCalled();
                         cb();
                     });
@@ -242,29 +292,24 @@ describe("vivliostyle.plugins.hyphenation", function() {
             beforeEach(function() {
                 context = {
                     hyphens: 'auto',
-                    hyphensLeftmin: 3,
-                    hyphensRightmin: 2,
-                    sourceNode: {
-                        lang: "en"
-                    }
+                    lang: "en"
                 };
             });
 
             it("hyphenate a text content.", function(cb) {
                 adapt.task.start(function() {
-                    target.hyphenateTextNodeContent(context, "hyphenation opportunities").then(function(result) {
-                        expect(result).toEqual("hyphe\u00ADna\u00ADtion oppor\u00ADtu\u00ADni\u00ADties");
+                    target.hyphenateTextNodeContent(context, "breaking characters before hyphenation opportunities").then(function(result) {
+                        expect(result).toEqual("brea\u00ADking cha\u00ADrac\u00ADters before hyphe\u00ADna\u00ADtion oppor\u00ADtu\u00ADni\u00ADties");
                         expect(dictionaryStore.load).toHaveBeenCalledWith("en");
                         cb();
                     });
                 });
             });
-            it("can limit the minimum number of characters in a hyphenated word designated by hyphensLeftmin and hyphensRightmin.", function(cb) {
+            it("can limit the minimum number of characters in a hyphenated word designated by hyphenateLimitChars.", function(cb) {
                 adapt.task.start(function() {
-                    context.hyphensLeftmin  = 6;
-                    context.hyphensRightmin = 6;
-                    target.hyphenateTextNodeContent(context, "hyphenation opportunities").then(function(result) {
-                        expect(result).toEqual("hyphenation opportu\u00ADnities");
+                    context.hyphenateLimitChars = [8, 5, 5];
+                    target.hyphenateTextNodeContent(context, "breaking characters before hyphenation opportunities").then(function(result) {
+                        expect(result).toEqual("breaking characters before hyphe\u00ADnation oppor\u00ADtu\u00ADnities");
                         expect(dictionaryStore.load).toHaveBeenCalledWith("en");
                         cb();
                     });
@@ -282,18 +327,18 @@ describe("vivliostyle.plugins.hyphenation", function() {
             it("do nothing when hyphens is not 'auto'.", function(cb) {
                 context.hyphens = null;
                 adapt.task.start(function() {
-                    target.hyphenateTextNodeContent(context, "hyphenation opportunities").then(function(result) {
-                        expect(result).toEqual("hyphenation opportunities");
+                    target.hyphenateTextNodeContent(context, "breaking characters before hyphenation opportunities").then(function(result) {
+                        expect(result).toEqual("breaking characters before hyphenation opportunities");
                         expect(dictionaryStore.load).not.toHaveBeenCalled();
                         cb();
                     });
                 });
             });
             it("do nothing when lang is null.", function(cb) {
-                context.sourceNode = null;
+                context.lang = null;
                 adapt.task.start(function() {
-                    target.hyphenateTextNodeContent(context, "hyphenation opportunities").then(function(result) {
-                        expect(result).toEqual("hyphenation opportunities");
+                    target.hyphenateTextNodeContent(context, "breaking characters before hyphenation opportunities").then(function(result) {
+                        expect(result).toEqual("breaking characters before hyphenation opportunities");
                         expect(dictionaryStore.load).not.toHaveBeenCalled();
                         cb();
                     });

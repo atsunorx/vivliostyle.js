@@ -540,6 +540,13 @@ adapt.vgen.ViewFactory.prototype.resolveURL = function(url) {
 };
 
 /**
+ */
+adapt.vgen.ViewFactory.prototype.inheritLangAttribute = function() {
+    this.nodeContext.lang = this.nodeContext.sourceNode.lang
+        || (this.nodeContext.parent && this.nodeContext.parent.lang);
+};
+
+/**
  *
  * @param {!Object.<string,adapt.css.Val>} computedStyle
  */
@@ -571,6 +578,8 @@ adapt.vgen.ViewFactory.prototype.transferPolyfilledInheritedProps = function(com
                             props[name] = numericVal.num * adapt.expr.defaultUnitSizes[numericVal.unit];
                             break;
                     }
+                } else {
+                    props[name] = value;
                 }
                 delete computedStyle[name];
             }
@@ -601,6 +610,7 @@ adapt.vgen.ViewFactory.prototype.createElementView = function(firstTime, atUnfor
     self.nodeContext.vertical = self.computeStyle(self.nodeContext.vertical, elementStyle, computedStyle);
 
     this.transferPolyfilledInheritedProps(computedStyle);
+    this.inheritLangAttribute();
 
     if (computedStyle["direction"]) {
         self.nodeContext.direction = computedStyle["direction"].toString();
@@ -1142,7 +1152,7 @@ adapt.vgen.ViewFactory.prototype.createTextNodeView = function() {
  * @return {!adapt.task.Result.<boolean>}
  */
 adapt.vgen.ViewFactory.prototype.preprocessTextContent = function() {
-    if (this.context.preprocessedTextContent != null) {
+    if (this.nodeContext.preprocessedTextContent != null) {
         return adapt.task.newResult(true);
     }
     var self = this;

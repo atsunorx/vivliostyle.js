@@ -41,6 +41,12 @@ adapt.csscasc.inheritedProps = {
     "font-variant": true,
     "font-weight": true,
     "glyph-orientation-vertical": true,
+    "hyphens": true,
+    "hyphenate-character": true,
+    "hyphenate-limit-zone": true,
+    "hyphenate-limit-chars": true,
+    "hyphenate-limit-lines": true,
+    "hyphenate-limit-last": true,
     "image-rendering": true,
     "image-resolution": true,
     "letter-spacing": true,
@@ -107,7 +113,9 @@ adapt.csscasc.polyfilledInheritedProps = [
     "box-decoration-break", // TODO: box-decoration-block should not be inherited. https://github.com/vivliostyle/vivliostyle.js/issues/259
     "image-resolution",
     "orphans",
-    "widows"
+    "widows",
+    "hyphens",
+    "hyphenate-limit-chars"
 ];
 
 /** @const */
