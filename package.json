@@ -29,7 +29,7 @@
   "main": "lib/vivliostyle.min.js",
   "homepage": "https://github.com/vivliostyle/vivliostyle.js",
   "devDependencies": {
-    "hypher": "0.2.4",
+    "hypher": "https://github.com/unageanu/hypher.git#fix_inconsistent_soft_hyphen_handling",
     "hyphenation.be": "0.2.1",
     "hyphenation.bn": "0.2.1",
     "hyphenation.ca": "0.2.1",
