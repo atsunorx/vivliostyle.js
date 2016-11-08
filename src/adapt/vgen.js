@@ -551,7 +551,7 @@ adapt.vgen.ViewFactory.prototype.inheritLangAttribute = function() {
  * @param {!Object.<string,adapt.css.Val>} computedStyle
  */
 adapt.vgen.ViewFactory.prototype.transferPolyfilledInheritedProps = function(computedStyle) {
-    var polyfilledInheritedProps = adapt.csscasc.polyfilledInheritedProps.filter(function(name) {
+    var polyfilledInheritedProps = adapt.csscasc.getPolyfilledInheritedProps().filter(function(name) {
         return computedStyle[name];
     });
     if (polyfilledInheritedProps.length) {

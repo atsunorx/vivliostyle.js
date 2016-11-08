@@ -81,7 +81,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 });
             });
 
-            it("inserts 'hyphensMin', 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is 'auto 1 2'.", function() {
+            it("inserts 'hyphenateLimitChars' to a context when hyphenate-limit-chars property is 'auto 1 2'.", function() {
                 context.inheritedProps = {
                     "hyphenate-limit-chars": new adapt.css.SpaceList([
                         adapt.css.ident.auto,
@@ -92,7 +92,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 target.preprocessElementStyle(context, style);
                 expect(context.hyphenateLimitChars).toEqual([null, 1, 2]);
             });
-            it("inserts 'hyphensMin', 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is '10 2'.", function() {
+            it("inserts 'hyphenateLimitChars' to a context when hyphenate-limit-chars property is '10 2'.", function() {
                 context.inheritedProps = {
                     "hyphenate-limit-chars": new adapt.css.SpaceList([
                         new adapt.css.Int(10),
@@ -111,7 +111,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 target.preprocessElementStyle(context, style);
                 expect(context.hyphenateLimitChars).toEqual([10, null, null]);
             });
-            it("inserts 'hyphensMin', 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is 'auto auto auto'.", function() {
+            it("inserts 'hyphenateLimitChars' to a context when hyphenate-limit-chars property is 'auto auto auto'.", function() {
                 context.inheritedProps = {
                     "hyphenate-limit-chars": new adapt.css.SpaceList([
                         adapt.css.ident.auto,
@@ -122,7 +122,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 target.preprocessElementStyle(context, style);
                 expect(context.hyphenateLimitChars).toEqual([null, null, null]);
             });
-            it("inserts 'hyphensMin', 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is 'auto auto'.", function() {
+            it("inserts 'hyphenateLimitChars' to a context when hyphenate-limit-chars property is 'auto auto'.", function() {
                 context.inheritedProps = {
                     "hyphenate-limit-chars": new adapt.css.SpaceList([
                         adapt.css.ident.auto,
@@ -132,7 +132,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 target.preprocessElementStyle(context, style);
                 expect(context.hyphenateLimitChars).toEqual([null, null, null]);
             });
-            it("inserts 'hyphensMin', 'hyphensLeftmin' and 'hyphensrightmin' to a context when hyphenate-limit-chars property is 'auto'.", function() {
+            it("inserts 'hyphenateLimitChars' to a context when hyphenate-limit-chars property is 'auto'.", function() {
                 context.inheritedProps = {
                     "hyphenate-limit-chars": new adapt.css.SpaceList([
                         adapt.css.ident.auto
@@ -144,6 +144,28 @@ describe("vivliostyle.plugins.hyphenation", function() {
             it("do nothing when hyphenate-limit-chars property is undefined.", function() {
                 target.preprocessElementStyle(context, style);
                 expect(context.hyphenateLimitChars).toEqual(undefined);
+            });
+
+            it("inserts 'hyphenateCharacter' to a context when hyphenate-character property is '_'.", function() {
+                context.inheritedProps = {
+                    "hyphenate-character": new adapt.css.Str("_")
+                };
+                target.preprocessElementStyle(context, style);
+                expect(context.hyphenateCharacter).toEqual("_");
+                expect(style["hyphenate-character"].str).toEqual("_");
+            });
+            it("do nothing when  hyphenate-character property is auto.", function() {
+                context.inheritedProps = {
+                    "hyphenate-character": adapt.css.ident.auto
+                };
+                target.preprocessElementStyle(context, style);
+                expect(context.hyphenateCharacter).toEqual(undefined);
+                expect(style["hyphenate-character"]).toEqual(adapt.css.ident.auto);
+            });
+            it("do nothing when  hyphenate-character property is undfined.", function() {
+                target.preprocessElementStyle(context, style);
+                expect(context.hyphenateCharacter).toEqual(undefined);
+                expect(style["hyphenate-character"]).toEqual(undefined);
             });
         });
 
@@ -343,6 +365,16 @@ describe("vivliostyle.plugins.hyphenation", function() {
                         cb();
                     });
                 });
+            });
+        });
+
+        describe("#getPolyfilledInheritedProps", function() {
+            it("returns a array of polyfilled inherited property names.", function() {
+                expect(target.getPolyfilledInheritedProps()).toEqual([
+                    "hyphens",
+                    "hyphenate-character",
+                    "hyphenate-limit-chars"
+                ]);
             });
         });
     });

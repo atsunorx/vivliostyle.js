@@ -113,10 +113,19 @@ adapt.csscasc.polyfilledInheritedProps = [
     "box-decoration-break", // TODO: box-decoration-block should not be inherited. https://github.com/vivliostyle/vivliostyle.js/issues/259
     "image-resolution",
     "orphans",
-    "widows",
-    "hyphens",
-    "hyphenate-limit-chars"
+    "widows"
 ];
+
+/**
+ * @return {Array.<string>}
+ */
+adapt.csscasc.getPolyfilledInheritedProps = function() {
+    /** @type {!Array.<vivliostyle.plugin.PolyfilledInheritedPropsHook>} */ var hooks =
+        vivliostyle.plugin.getHooksForName(vivliostyle.plugin.HOOKS.POLYFILLED_INHERITED_PROPS);
+    return hooks.reduce(function(props, f) {
+        return props.concat(f());
+    }, [].concat(adapt.csscasc.polyfilledInheritedProps));
+};
 
 /** @const */
 adapt.csscasc.supportedNamespaces = {

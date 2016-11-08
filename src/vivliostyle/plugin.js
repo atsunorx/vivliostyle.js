@@ -48,7 +48,14 @@ goog.scope(function() {
          *   {adapt.vtree.NodeContext} nodeContext
          *   {!Object} style
          */
-        "PREPROCESS_ELEMENT_STYLE": "PREPROCESS_ELEMENT_STYLE"
+        "PREPROCESS_ELEMENT_STYLE": "PREPROCESS_ELEMENT_STYLE",
+
+        /**
+         * Called before geting adapt.csscasc.polyfilledInheritedProps.
+         *
+         * The hook return a array of polyfilled inherited property name.
+         */
+        "POLYFILLED_INHERITED_PROPS": "POLYFILLED_INHERITED_PROPS"
     };
 
     /** @const */ var HOOKS = vivliostyle.plugin.HOOKS;
@@ -68,6 +75,11 @@ goog.scope(function() {
      * ):undefined}
      */
     vivliostyle.plugin.PreProcessElementStyleHook;
+
+    /**
+     * @typedef {function():!Array.<string>}
+     */
+    vivliostyle.plugin.PolyfilledInheritedPropsHook;
 
     /**
      * @private

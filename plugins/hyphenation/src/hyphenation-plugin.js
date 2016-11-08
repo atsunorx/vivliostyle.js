@@ -175,6 +175,7 @@ goog.scope(function() {
         if (!context.inheritedProps) return;
         this.preprocessHyphens(context, computedStyle);
         this.preprocessHyphenateLimitChars(context, computedStyle);
+        this.preprocessHyphenateCharacter(context, computedStyle);
     };
 
     /**
@@ -219,7 +220,17 @@ goog.scope(function() {
             this.extactInt(rightmin)
         ];
     };
-
+    /**
+     * @private
+     * @param {adapt.vtree.NodeContext} context
+     * @param {!Object} computedStyle
+     */
+    vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessHyphenateCharacter = function(context, computedStyle) {
+        var hyphenateCharacter = /** @type {adapt.css.Val} */ (context.inheritedProps["hyphenate-character"]);
+        if (!hyphenateCharacter) return;
+        context.hyphenateCharacter = hyphenateCharacter.str;
+        computedStyle["hyphenate-character"] = hyphenateCharacter;
+    };
     /**
      * @private
      * @param {adapt.css.Val} val
@@ -231,6 +242,17 @@ goog.scope(function() {
     };
 
     /**
+     * @return {!Array.<string>}
+     */
+    vivliostyle.plugins.hyphenation.Hyphenator.prototype.getPolyfilledInheritedProps = function() {
+        return [
+            "hyphens",
+            "hyphenate-character",
+            "hyphenate-limit-chars"
+        ];
+    };
+
+    /**
      *
      */
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.registerHooks = function() {
@@ -239,6 +261,8 @@ goog.scope(function() {
             this.hyphenateTextNodeContent.bind(this));
         plugin.registerHook(plugin.HOOKS.PREPROCESS_ELEMENT_STYLE,
             this.preprocessElementStyle.bind(this));
+        plugin.registerHook(plugin.HOOKS.POLYFILLED_INHERITED_PROPS,
+            this.getPolyfilledInheritedProps.bind(this));
     };
 
     /**

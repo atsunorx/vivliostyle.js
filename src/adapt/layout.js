@@ -1373,10 +1373,13 @@ adapt.layout.Column.prototype.findAcceptableBreakInside = function(checkPoints, 
         } else {
             // Character with index low is the last one that fits.
             viewIndex = low - nodeContext.boxOffset;
+            var hyphenChar = nodeContext.hyphenateCharacter
+                || (nodeContext.parent && nodeContext.parent.hyphenateCharacter)
+                || "-";
             var text = textNode.data;
             if (text.charCodeAt(viewIndex) == 0xAD) {
                 // convert trailing soft hyphen to a real hyphen
-                textNode.replaceData(viewIndex, text.length - viewIndex, "-");
+                textNode.replaceData(viewIndex, text.length - viewIndex, hyphenChar);
                 viewIndex++;
             } else {
                 // keep the trailing character (it may be a space or not)
@@ -1385,7 +1388,7 @@ adapt.layout.Column.prototype.findAcceptableBreakInside = function(checkPoints, 
                 var ch1 = text.charAt(viewIndex);
                 // If automatic hyphen was inserted here, add a real hyphen.
                 textNode.replaceData(viewIndex, text.length - viewIndex,
-                    adapt.base.isLetter(ch0) && adapt.base.isLetter(ch1) ? "-" : "");
+                    adapt.base.isLetter(ch0) && adapt.base.isLetter(ch1) ? hyphenChar : "");
             }
             if (viewIndex > 0) {
                 nodeContext = nodeContext.modify();
