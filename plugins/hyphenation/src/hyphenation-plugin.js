@@ -199,9 +199,17 @@ goog.scope(function() {
      */
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessHyphenateLimitChars = function(context, computedStyle) {
         var hyphenateLimitChars =
-            /** @type {adapt.css.Val} */ (context.inheritedProps["hyphenate-limit-chars"]);
-        if (!hyphenateLimitChars
-            || !hyphenateLimitChars.isSpaceList
+            /** @type {adapt.css.Val|string|number} */ (context.inheritedProps["hyphenate-limit-chars"]);
+        if (!hyphenateLimitChars) return;
+        if (typeof hyphenateLimitChars === 'number') {
+            context.hyphenateLimitChars = [hyphenateLimitChars, null, null];
+            return;
+        }
+        if (hyphenateLimitChars === 'auto') {
+            context.hyphenateLimitChars = [null, null, null];
+            return;
+        }
+        if (!hyphenateLimitChars.isSpaceList
             || !hyphenateLimitChars.isSpaceList()
             || hyphenateLimitChars.values.length == 0) {
             return;
@@ -227,10 +235,15 @@ goog.scope(function() {
      * @param {!Object} computedStyle
      */
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessHyphenateCharacter = function(context, computedStyle) {
-        var hyphenateCharacter = /** @type {adapt.css.Val} */ (context.inheritedProps["hyphenate-character"]);
+        var hyphenateCharacter = /** @type {adapt.css.Val|string} */ (context.inheritedProps["hyphenate-character"]);
         if (!hyphenateCharacter) return;
-        context.hyphenateCharacter = hyphenateCharacter.str;
-        computedStyle["hyphenate-character"] = hyphenateCharacter;
+        if (typeof hyphenateCharacter === 'string') {
+            computedStyle["hyphenate-character"] =
+                adapt.css.getName(hyphenateCharacter);
+        } else {
+            context.hyphenateCharacter = hyphenateCharacter.str;
+            computedStyle["hyphenate-character"] = hyphenateCharacter;
+        }
     };
     /**
      * @private

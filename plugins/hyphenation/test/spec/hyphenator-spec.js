@@ -102,11 +102,9 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 target.preprocessElementStyle(context, style);
                 expect(context.hyphenateLimitChars).toEqual([10, 2, 2]);
             });
-            it("do nothing when hyphenate-limit-chars property is '10'.", function() {
+            it("inserts 'hyphenateLimitChars' to a context when hyphenate-limit-chars property is '10'.", function() {
                 context.inheritedProps = {
-                    "hyphenate-limit-chars": new adapt.css.SpaceList([
-                        new adapt.css.Int(10)
-                    ])
+                    "hyphenate-limit-chars": 10
                 };
                 target.preprocessElementStyle(context, style);
                 expect(context.hyphenateLimitChars).toEqual([10, null, null]);
@@ -134,9 +132,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
             });
             it("inserts 'hyphenateLimitChars' to a context when hyphenate-limit-chars property is 'auto'.", function() {
                 context.inheritedProps = {
-                    "hyphenate-limit-chars": new adapt.css.SpaceList([
-                        adapt.css.ident.auto
-                    ])
+                    "hyphenate-limit-chars": "auto"
                 };
                 target.preprocessElementStyle(context, style);
                 expect(context.hyphenateLimitChars).toEqual([null, null, null]);
@@ -156,7 +152,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
             });
             it("do nothing when  hyphenate-character property is auto.", function() {
                 context.inheritedProps = {
-                    "hyphenate-character": adapt.css.ident.auto
+                    "hyphenate-character": 'auto'
                 };
                 target.preprocessElementStyle(context, style);
                 expect(context.hyphenateCharacter).toEqual(undefined);

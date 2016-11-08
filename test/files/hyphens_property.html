@@ -3,41 +3,95 @@
 <head>
   <style>
     @page {
-        size: 200px 200px;
+      size: 200px 200px;
     }
     body {
       widows: 1;
       orphans: 1;
     }
+    div.label {
+      margin-top: 20px;
+      font-size: xx-small;
+      color: #FF3333;
+    }
     div.hyphens {
-      width: 80px;
-      margin: 10px;
+      width: 150px;
+      font-size: xx-large;
     }
-    div.hyphens:after {
-      content: "Words may be broken at hyphe\0000ADnation opportunities determined auto\0000ADmatic\0000ADally by a \
-language-appropriate hyphenation resource in addition to those indicated explicitly by a conditional hyphen. \
-Automatic hyphenation opportunities within a word must be ignored if the word contains a conditional hyphen (&shy; or U+00AD), \
-in favor of the conditional hyphen(s). However, if, even after breaking at such opportunities, a portion of that word is \
-is still too long to fit on one line, an automatic hyphenation opportunity may be used."
-    }
-    .hyphens1 {
+    .hyphens-auto {
       hyphens: auto;
-      hyphenate-character: "_";
+      hyphenate-character: auto;
       hyphenate-limit-zone: 10px;
       hyphenate-limit-lines: 3;
       hyphenate-limit-last: always;
-      hyphenate-limit-chars: 3 3 3;
+      hyphenate-limit-chars: auto;
       -webkit-hyphens: auto;
-      -webkit-hyphenate-character: "_";
+      -webkit-hyphenate-character: auto;
       -webkit-hyphenate-limit-zone: 10px;
       -webkit-hyphenate-limit-lines: 3;
       -webkit-hyphenate-limit-last: always;
-      -webkit-hyphenate-limit-chars: 3 3 3;
+      -webkit-hyphenate-limit-chars: auto;
+    }
+    .hyphens-auto-with-limit-chars {
+      hyphens: auto;
+      hyphenate-limit-chars: 3 4 4;
+      -webkit-hyphens: auto;
+      -webkit-hyphenate-limit-chars: 3 4 4;
+    }
+    .hyphens-auto-with-limit-chars2 {
+      hyphens: auto;
+      hyphenate-limit-chars: 6;
+      -webkit-hyphens: auto;
+      -webkit-hyphenate-limit-chars: 6;
+    }
+    .hyphens-auto-with-hyphenate-character {
+      hyphens: auto;
+      hyphenate-character: "_";
+      -webkit-hyphens: auto;
+      -webkit-hyphenate-character: "_";
+    }
+    .hyphens-manual {
+      hyphens: manual;
+      -webkit-hyphens: manual;
+    }
+    .hyphens-none {
+      hyphens: none;
+      -webkit-hyphens: none;
     }
   </style>
 </head>
 <body>
-  <div class="hyphens hyphens1"></div>
-  <div class="hyphens hyphens2" lang="en-pl"></div>
+  <div class="label">hyphens:auto</div>
+  <div class="hyphens hyphens-auto">
+    Words will be broken at hyphenation opportunities determined automatically.
+  </div>
+  <div class="label">hyphens:auto<br/>hyphenate-limit-chars: 3 4 4</div>
+  <div class="hyphens hyphens-auto-with-limit-chars">
+    Words will be broken at hyphenation opportunities determined automatically.
+  </div>
+  <div class="label">hyphens:auto<br/>hyphenate-limit-chars: 6</div>
+  <div class="hyphens hyphens-auto-with-limit-chars2">
+    Words will be broken at hyphenation opportunities determined automatically.
+  </div>
+  <div class="label">hyphens:auto<br/>hyphenate-character: "_"</div>
+  <div class="hyphens hyphens-auto-with-hyphenate-character">
+    Words will be broken at hyphenation opportunities determined automatically.
+  </div>
+  <div class="label">hyphens:manual</div>
+  <div class="hyphens hyphens-manual">
+    Words will be broken at hy&shy;phenation opportunities determined au&shy;tomatical&shy;ly.
+  </div>
+  <div class="label">hyphens:none</div>
+  <div class="hyphens hyphens-none">
+    Words will be broken at hyphenation opportunities determined automatically.
+  </div>
+  <div class="label">hyphens:auto<br/>lang:unknown</div>
+  <div class="hyphens hyphens-auto" lang="unknown">
+    Words will be broken at hyphenation opportunities determined automatically.
+  </div>
+  <div class="label">hyphens:auto<br/>lang:en-US and en-GB</div>
+  <div class="hyphens hyphens-auto" lang="en-US">
+    Words will be broken at <span lang="en-GB">hyphenation opportunities</span> determined automatically.
+  </div>
 </body>
 </html>
