@@ -688,7 +688,6 @@ adapt.vtree.NodeContext = function(sourceNode, parent, boxOffset) {
     /** @type {boolean} */ this.vertical = parent ? parent.vertical : false;
     /** @type {string} */ this.direction = parent ? parent.direction : "ltr";
     /** @type {adapt.vtree.FirstPseudo} */ this.firstPseudo = parent ? parent.firstPseudo : null;
-    /** @type {?string} */ this.preprocessedTextContent = null;
     /** @type {?string} */ this.lang = null;
 };
 
@@ -744,7 +743,6 @@ adapt.vtree.NodeContext.prototype.cloneItem = function() {
     np.firstPseudo = this.firstPseudo;
     np.vertical = this.vertical;
     np.overflow = this.overflow;
-    np.preprocessedTextContent = this.preprocessedTextContent;
     return np;
 };
 
@@ -812,7 +810,7 @@ adapt.vtree.NodeContext.prototype.toNodePosition = function() {
         }
         nc = nc.parent;
     } while (nc);
-    return {steps:steps, offsetInNode: this.offsetInNode, after: this.after, preprocessedTextContent: this.preprocessedTextContent };
+    return {steps:steps, offsetInNode: this.offsetInNode, after: this.after };
 };
 
 /**

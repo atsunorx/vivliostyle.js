@@ -201,6 +201,7 @@ goog.scope(function() {
         var hyphenateLimitChars =
             /** @type {adapt.css.Val} */ (context.inheritedProps["hyphenate-limit-chars"]);
         if (!hyphenateLimitChars
+            || !hyphenateLimitChars.isSpaceList
             || !hyphenateLimitChars.isSpaceList()
             || hyphenateLimitChars.values.length == 0) {
             return;

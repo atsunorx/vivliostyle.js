@@ -398,7 +398,6 @@ adapt.layout.Column.prototype.openAllViews = function(position) {
             if (stepIndex == 0) {
                 nodeContext.offsetInNode = position.offsetInNode;
                 nodeContext.after = position.after;
-                nodeContext.preprocessedTextContent = position.preprocessedTextContent;
                 if (nodeContext.after) {
                     break;
                 }
