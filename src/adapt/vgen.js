@@ -1333,7 +1333,7 @@ adapt.vgen.ViewFactory.prototype.nextPositionInTree = function(pos) {
         }
         // no children - was there text content?
         if (pos.sourceNode.nodeType != 1) {
-            boxOffset += pos.sourceNode.textContent.length - 1 - pos.offsetInNode;
+            boxOffset += pos.preprocessedTextContent.length - 1 - pos.offsetInNode;
         }
         pos = pos.modify();
         pos.boxOffset = boxOffset;
