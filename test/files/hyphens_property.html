@@ -58,40 +58,47 @@
       hyphens: none;
       -webkit-hyphens: none;
     }
+    .insert-before:before, .insert-before:after {
+      content: "hyphenation opportunities";
+    }
   </style>
 </head>
 <body>
   <div class="label">hyphens:auto</div>
   <div class="hyphens hyphens-auto">
-    Words will be broken at hyphenation opportunities determined automatically.
+    Words may be broken at hyphenation opportunities determined automatically.
   </div>
   <div class="label">hyphens:auto<br/>hyphenate-limit-chars: 3 4 4</div>
   <div class="hyphens hyphens-auto-with-limit-chars">
-    Words will be broken at hyphenation opportunities determined automatically.
+    Words may be broken at hyphenation opportunities determined automatically.
   </div>
   <div class="label">hyphens:auto<br/>hyphenate-limit-chars: 6</div>
   <div class="hyphens hyphens-auto-with-limit-chars2">
-    Words will be broken at hyphenation opportunities determined automatically.
+    Words may be broken at hyphenation opportunities determined automatically.
   </div>
   <div class="label">hyphens:auto<br/>hyphenate-character: "_"</div>
   <div class="hyphens hyphens-auto-with-hyphenate-character">
-    Words will be broken at hyphenation opportunities determined automatically.
+    Words may be broken at hyphenation opportunities determined automatically.
   </div>
   <div class="label">hyphens:manual</div>
   <div class="hyphens hyphens-manual">
-    Words will be broken at hy&shy;phenation opportunities determined au&shy;tomatical&shy;ly.
+    Words may be broken at hy&shy;phenation opportunities determined au&shy;tomatical&shy;ly.
   </div>
   <div class="label">hyphens:none</div>
   <div class="hyphens hyphens-none">
-    Words will be broken at hyphenation opportunities determined automatically.
+    Words may be broken at hyphenation opportunities determined automatically.
   </div>
   <div class="label">hyphens:auto<br/>lang:unknown</div>
   <div class="hyphens hyphens-auto" lang="unknown">
-    Words will be broken at hyphenation opportunities determined automatically.
+    Words may be broken at hyphenation opportunities determined automatically.
   </div>
   <div class="label">hyphens:auto<br/>lang:en-US and en-GB</div>
   <div class="hyphens hyphens-auto" lang="en-US">
-    Words will be broken at <span lang="en-GB">hyphenation opportunities</span> determined automatically.
+    Words may be broken at <span lang="en-GB">hyphenation opportunities</span> determined automatically.
+  </div>
+  <div class="label">hyphens:auto<br/>insert text using :before, :after</div>
+  <div class="hyphens hyphens-auto">
+    <span class="insert-before insert-after">hyphenation opportunities</span>
   </div>
 </body>
 </html>
