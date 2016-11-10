@@ -14,7 +14,9 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 7 : "_para1i_para1u_su2b3r2s3que_2s3dem_",
                 8 : "_su2b3lu",
                 9 : "_anti3m2n_circu2m1_co2n1iun",
-                10 : "_di2s3cine"                }
+                10 : "_di2s3cine"
+            },
+            exceptions: "e\u2027xceptio\u2027n,wo\u2027rds"
         };
         var target;
         var dictionaryStore;
@@ -298,6 +300,15 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 adapt.task.start(function() {
                     target.hyphenate("b\u00ADreaking characters before hyphenatio\u00ADn opportunities", "en").then(function(result) {
                         expect(result).toEqual("b\u00ADreaking cha\u00ADrac\u00ADters before hyphenatio\u00ADn oppor\u00ADtu\u00ADni\u00ADties");
+                        expect(dictionaryStore.load).toHaveBeenCalled();
+                        cb();
+                    });
+                });
+            });
+            it("can specifies exception words in a hyphenation dictionary.", function(cb) {
+                adapt.task.start(function() {
+                    target.hyphenate("exception words", "en").then(function(result) {
+                        expect(result).toEqual("e\u00ADxceptio\u00ADn wo\u00ADrds");
                         expect(dictionaryStore.load).toHaveBeenCalled();
                         cb();
                     });

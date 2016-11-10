@@ -14,7 +14,8 @@ goog.scope(function() {
      * @typedef {{
      *  leftmin: !number,
      *  rightmin: !number,
-     *  patterns: !Object
+     *  patterns: !Object,
+     *  exceptions: string
      * }}
      */
     var HypherDictionary;
@@ -32,18 +33,18 @@ goog.scope(function() {
     /**
      * @param {adapt.net.Response} response
      * @param {adapt.net.JSONStore} store
-     * @return {!adapt.task.Result.<HypherDictionary>}
+     * @return {!adapt.task.Result.<adapt.base.JSON>}
      */
     vivliostyle.plugins.hyphenation.parseDictionary = function(response, store) {
-        if (response.status >= 400) return adapt.task.newResult(/** @type {HypherDictionary} */ (null));
-        return /** @type {!adapt.task.Result.<HypherDictionary>} */ (adapt.net.parseJSONResource(response, store));
+        if (response.status >= 400) return adapt.task.newResult(/** @type {adapt.base.JSON} */ (null));
+        return /** @type {!adapt.task.Result.<adapt.base.JSON>} */ (adapt.net.parseJSONResource(response, store));
     };
 
     /**
      * @constructor
      */
     vivliostyle.plugins.hyphenation.HyphenationDictionaryStore = function() {
-        /** @type {!adapt.net.ResourceStore.<HypherDictionary>} */ this.store =
+        /** @type {!adapt.net.ResourceStore.<adapt.base.JSON>} */ this.store =
             new adapt.net.ResourceStore(
                 vivliostyle.plugins.hyphenation.parseDictionary,
                 adapt.net.XMLHttpRequestResponseType.TEXT);
@@ -54,8 +55,83 @@ goog.scope(function() {
      * @return {!adapt.task.Result.<HypherDictionary>}
      */
     vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.load = function(lang) {
+        return this.loadDictionary(lang).thenAsync(function(dictionary) {
+            if (dictionary && this.exceptionFileUrl != null) {
+                return this.loadAndMergeExceptions(dictionary, lang);
+            } else {
+                return adapt.task.newResult(dictionary);
+            }
+        }.bind(this));
+    };
+
+    /**
+     * @private
+     * @param {!string} lang
+     * @return {!adapt.task.Result.<HypherDictionary>}
+     */
+    vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.loadDictionary = function(lang) {
         var url = this.resolveDictionaryUrl(lang);
-        return this.store.load(url, false);
+        return /** @type  {!adapt.task.Result.<HypherDictionary>} */ (this.store.load(url, false));
+    };
+
+    /**
+     * @private
+     * @param {HypherDictionary} dictionary
+     * @param {!string} lang
+     * @return {!adapt.task.Result.<HypherDictionary>}
+     */
+    vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.loadAndMergeExceptions = function(dictionary, lang) {
+        return this.store.load(this.exceptionFileUrl, false).thenAsync(function(exceptions) {
+            if (exceptions) {
+                var exceptionWords = this.collectExceptionWords(lang, exceptions);
+                dictionary.exceptions = dictionary.exceptions
+                    ? dictionary.exceptions + "," + exceptionWords.join(",")
+                    : exceptionWords.join(",");
+            }
+            return adapt.task.newResult(dictionary);
+        }.bind(this));
+    };
+    /**
+     * @private
+     * @param {!string} lang
+     * @param {!Object.<string, Array.<string>>} exceptions
+     * @return {!Array.<string>}
+     */
+    vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.collectExceptionWords = function(lang, exceptions) {
+        if (!exceptions) return [];
+        var key = null;
+        Object.keys(exceptions).forEach(function(k) {
+            if (k.toLowerCase() === lang.toLowerCase()) key = k;
+        });
+        var words = {};
+        this.collectWords(exceptions.all, words);
+        if (key != null) this.collectWords(exceptions[/** @type {string}*/ (key)], words);
+        return Object.keys(words).reduce(function(r, k) {
+            r.push(words[k]);
+            return r;
+        }, []).sort();
+    };
+    /**
+     * @private
+     * @param {Array.<string>} exceptionWords
+     * @param {!Object.<string,string>} words
+     */
+    vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.collectWords = function(exceptionWords, words) {
+        if (!exceptionWords) return;
+        exceptionWords.forEach(function(word) {
+            var stripped = word.replace(/\|/g, '');
+            words[stripped] = word.replace(/\|/g, '\u2027');
+        });
+    };
+
+    /**
+     * @param {string} exceptionFileUrl
+     */
+    vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.setExcpetionFileUrl = function(exceptionFileUrl) {
+        if (this.exceptionFileUrl !== exceptionFileUrl) {
+            if (this.exceptionFileUrl) this.store.delete(this.exceptionFileUrl);
+            this.exceptionFileUrl = exceptionFileUrl;
+        }
     };
 
     /**
@@ -256,6 +332,19 @@ goog.scope(function() {
     };
 
     /**
+     * @param {adapt.base.JSON} command
+     * @return {boolean}
+     */
+    vivliostyle.plugins.hyphenation.Hyphenator.prototype.configure = function(command) {
+        if (typeof command["hyphenationExceptionFileUrl"] == "string"
+            && command["hyphenationExceptionFileUrl"] !== this.dictionaryStore.exceptionFileUrl) {
+            this.dictionaryStore.setExcpetionFileUrl(command["hyphenationExceptionFileUrl"]);
+            return true;
+        }
+        return false;
+    };
+
+    /**
      * @return {!Array.<string>}
      */
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.getPolyfilledInheritedProps = function() {
@@ -277,6 +366,8 @@ goog.scope(function() {
             this.preprocessElementStyle.bind(this));
         plugin.registerHook(plugin.HOOKS.POLYFILLED_INHERITED_PROPS,
             this.getPolyfilledInheritedProps.bind(this));
+        plugin.registerHook(plugin.HOOKS.CONFIGURATION,
+            this.configure.bind(this));
     };
 
     /**

@@ -376,7 +376,21 @@ adapt.viewer.Viewer.prototype.configure = function(command) {
         this.fitToScreen = command["fitToScreen"];
         this.needRefresh = true;
     }
+
+    this.confugurePlugins(command);
+
     return adapt.task.newResult(true);
+};
+
+/**
+ * @param {adapt.base.JSON} command
+ */
+adapt.viewer.Viewer.prototype.confugurePlugins = function(command) {
+    /** @type {!Array.<vivliostyle.plugin.ConfigurationHook>} */ var hooks =
+        vivliostyle.plugin.getHooksForName(vivliostyle.plugin.HOOKS.CONFIGURATION);
+    hooks.forEach(function(hook) {
+        this.needRefresh = hook(command) || this.needRefresh;
+    });
 };
 
 /**

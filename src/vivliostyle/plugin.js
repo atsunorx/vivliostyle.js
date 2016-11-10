@@ -55,7 +55,15 @@ goog.scope(function() {
          *
          * The hook return a array of polyfilled inherited property name.
          */
-        "POLYFILLED_INHERITED_PROPS": "POLYFILLED_INHERITED_PROPS"
+        "POLYFILLED_INHERITED_PROPS": "POLYFILLED_INHERITED_PROPS",
+
+        /**
+         * Called when a Viewer is configured.
+         *
+         * The hook is called with an object with the following properties:
+         *  {adapt.base.JSON} command
+         */
+        "CONFIGURATION": "CONFIGURATION"
     };
 
     /** @const */ var HOOKS = vivliostyle.plugin.HOOKS;
@@ -80,6 +88,11 @@ goog.scope(function() {
      * @typedef {function():!Array.<string>}
      */
     vivliostyle.plugin.PolyfilledInheritedPropsHook;
+
+    /**
+     * @typedef {function(adapt.base.JSON):boolean}
+     */
+    vivliostyle.plugin.ConfigurationHook;
 
     /**
      * @private
