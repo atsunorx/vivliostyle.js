@@ -713,6 +713,7 @@ adapt.vtree.NodeContext.prototype.resetView = function() {
     this.containingBlockForAbsolute = false;
     this.vertical = this.parent ? this.parent.vertical : false;
     this.nodeShadow = null;
+    this.preprocessedTextContent = null;
 };
 
 /**
@@ -743,6 +744,7 @@ adapt.vtree.NodeContext.prototype.cloneItem = function() {
     np.firstPseudo = this.firstPseudo;
     np.vertical = this.vertical;
     np.overflow = this.overflow;
+    np.preprocessedTextContent = this.preprocessedTextContent;
     return np;
 };
 
@@ -810,7 +812,12 @@ adapt.vtree.NodeContext.prototype.toNodePosition = function() {
         }
         nc = nc.parent;
     } while (nc);
-    return {steps:steps, offsetInNode: this.offsetInNode, after: this.after };
+    return {
+        steps:steps,
+        offsetInNode: this.offsetInNode,
+        after: this.after,
+        preprocessedTextContent: this.preprocessedTextContent
+    };
 };
 
 /**
