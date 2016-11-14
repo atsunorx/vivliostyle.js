@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <style>
+    @page {
+      size: 300px 200px;
+    }
+    body {
+      -moz-column-count: 2;
+      column-count: 2;
+      -moz-column-fill: auto;
+      column-fill: auto;
+
+      widows: 1;
+      orphans: 1;
+    }
+    div.label {
+      font-size: xx-small;
+      color: #FF3333;
+    }
+    div.hyphens {
+      font-size: x-large;
+      hyphens: auto;
+      margin-bottom: 20px;
+    }
+    .hyphenate-limit-last_column {
+      hyphenate-limit-last: column;
+      -webkit-hyphenate-limit-last: column;
+    }
+    .hyphenate-limit-last_none {
+      hyphenate-limit-last: none;
+      -webkit-hyphenate-limit-last: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="label">hyphenate-limit-last: column</div>
+  <div class="hyphens hyphenate-limit-last_column">
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+  </div>
+  <div class="label">hyphenate-limit-last: none</div>
+  <div class="hyphens hyphenate-limit-last_none">
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+    hyphenation
+  </div>
+</body>
+</html>
