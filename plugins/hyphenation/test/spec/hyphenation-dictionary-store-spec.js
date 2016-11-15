@@ -26,7 +26,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                     },
                     "exceptions": "con\u2027tent"
                 },
-                "exceptions.json": {
+                "./exceptions.json": {
                     all: ["hyphe|na|tion", "oppo|tu|ni|ties"],
                     "en-us": ["hyphe|na|ti|on", "lan|guage"],
                     "en": ["con|tent"],

@@ -136,6 +136,7 @@ goog.scope(function() {
      * @param {string} exceptionFileUrl
      */
     vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.setExcpetionFileUrl = function(exceptionFileUrl) {
+        exceptionFileUrl = adapt.base.resolveURL(exceptionFileUrl, adapt.base.baseURL);
         if (this.exceptionFileUrl !== exceptionFileUrl) {
             if (this.exceptionFileUrl) this.store.delete(this.exceptionFileUrl);
             this.exceptionFileUrl = exceptionFileUrl;
