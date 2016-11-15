@@ -12,8 +12,8 @@ goog.scope(function() {
 
     /**
      * @typedef {{
-     *  leftmin: !number,
-     *  rightmin: !number,
+     *  leftmin: number,
+     *  rightmin: number,
      *  patterns: !Object,
      *  exceptions: string
      * }}
@@ -29,6 +29,14 @@ goog.scope(function() {
      */
     vivliostyle.plugins.hyphenation.StyleAndLang = {};
 
+    /**
+     * @typedef {{
+     *  instance: Hypher,
+     *  defaultLeftmin: number,
+     *  defaultRightmin: number
+     * }}
+     */
+    vivliostyle.plugins.hyphenation.HypherCache = {};
 
     /**
      * @param {adapt.net.Response} response
@@ -150,6 +158,8 @@ goog.scope(function() {
     vivliostyle.plugins.hyphenation.Hyphenator = function() {
         /** @type {!vivliostyle.plugins.hyphenation.HyphenationDictionaryStore} */ this.dictionaryStore =
             new vivliostyle.plugins.hyphenation.HyphenationDictionaryStore();
+        /** @type {Object.<string, vivliostyle.plugins.hyphenation.HypherCache>} */
+        this.hypherCache = {};
     };
 
     /**
@@ -163,43 +173,67 @@ goog.scope(function() {
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.hyphenate = function(string, lang, min, leftmin, rightmin) {
         /** @type {!adapt.task.Frame.<string>} */ var frame =
             adapt.task.newFrame("hyphenate");
-        this.dictionaryStore.load(lang).then(function(dictionary) {
-            if (dictionary == null) {
+        this.getHypherInstance(lang).then(function(cache) {
+            if (cache.instance == null) {
                 frame.finish(string);
                 return;
             }
-            var original = {
-                leftmin:  dictionary.leftmin,
-                rightmin: dictionary.rightmin
-            };
             try {
-                this.setHyphenationLimitChars(dictionary, leftmin, rightmin);
-                var processed = new Hypher(dictionary).hyphenateText(string, min);
+                this.setHyphenationLimitChars(cache, leftmin, rightmin);
+                var processed = cache.instance.hyphenateText(string, min);
                 frame.finish(processed);
             } finally {
-                this.resetHyphenationLimitChars(dictionary, original);
+                this.resetHyphenationLimitChars(cache);
             }
         }.bind(this));
         return frame.result();
     };
 
     /**
-     * @param {!HypherDictionary} dictionary
+     * @param {vivliostyle.plugins.hyphenation.HypherCache} cache
      * @param {(number|null)=} leftmin
      * @param {(number|null)=} rightmin
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.setHyphenationLimitChars = function(dictionary, leftmin, rightmin) {
-        if (leftmin  != null) dictionary.leftmin  = leftmin;
-        if (rightmin != null) dictionary.rightmin = rightmin;
+    vivliostyle.plugins.hyphenation.Hyphenator.prototype.setHyphenationLimitChars = function(cache, leftmin, rightmin) {
+        if (!cache.instance) return;
+        if (leftmin  != null) /** @suppress {const} */ cache.instance.leftMin  = leftmin;
+        if (rightmin != null) /** @suppress {const} */ cache.instance.rightMin = rightmin;
     };
 
     /**
-     * @param {!HypherDictionary} dictionary
-     * @param {{leftmin:number, rightmin:number}} original
+     * @param {vivliostyle.plugins.hyphenation.HypherCache} cache
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.resetHyphenationLimitChars = function(dictionary, original) {
-        dictionary.leftmin  = original.leftmin;
-        dictionary.rightmin = original.rightmin;
+    vivliostyle.plugins.hyphenation.Hyphenator.prototype.resetHyphenationLimitChars = function(cache) {
+        if (!cache.instance) return;
+        /** @suppress {const} */ cache.instance.leftMin  = cache.defaultLeftmin;
+        /** @suppress {const} */ cache.instance.rightMin = cache.defaultRightmin;
+    };
+
+    /**
+     * @param {string} lang
+     * @return {adapt.task.Result.<vivliostyle.plugins.hyphenation.HypherCache>}
+     */
+    vivliostyle.plugins.hyphenation.Hyphenator.prototype.getHypherInstance = function(lang) {
+        if (this.hypherCache[lang]) return adapt.task.newResult(this.hypherCache[lang]);
+        /** @type {!adapt.task.Frame.<vivliostyle.plugins.hyphenation.HypherCache>} */ var frame =
+            adapt.task.newFrame("getHypherInstance");
+        this.dictionaryStore.load(lang).then(function(dictionary) {
+            if (dictionary == null) {
+                this.hypherCache[lang] = {
+                    instance: null,
+                    defaultLeftmin: -1,
+                    defaultRightmin: -1
+                };
+            } else {
+                this.hypherCache[lang] = {
+                    instance: new Hypher(dictionary),
+                    defaultLeftmin: dictionary.leftmin,
+                    defaultRightmin: dictionary.rightmin
+                };
+            }
+            frame.finish(this.hypherCache[lang]);
+        }.bind(this));
+        return frame.result();
     };
 
     /**
