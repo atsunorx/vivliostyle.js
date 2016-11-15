@@ -378,7 +378,7 @@ adapt.viewer.Viewer.prototype.configure = function(command) {
         this.fitToScreen = command["fitToScreen"];
         this.needRefresh = true;
     }
-command["hyphenationExceptionFileUrl"] = "plugins/hyphenation/resources/exceptions.json";
+
     this.configurePlugins(command);
 
     return adapt.task.newResult(true);
@@ -391,7 +391,9 @@ adapt.viewer.Viewer.prototype.configurePlugins = function(command) {
     /** @type {!Array.<vivliostyle.plugin.ConfigurationHook>} */ var hooks =
         vivliostyle.plugin.getHooksForName(vivliostyle.plugin.HOOKS.CONFIGURATION);
     hooks.forEach(function(hook) {
-        this.needRefresh = hook(command) || this.needRefresh;
+        var result = hook(command);
+        this.needResize  = result.needResize  || this.needResize;
+        this.needRefresh = result.needRefresh || this.needRefresh;
     }.bind(this));
 };
 

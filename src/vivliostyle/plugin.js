@@ -90,7 +90,9 @@ goog.scope(function() {
     vivliostyle.plugin.PolyfilledInheritedPropsHook;
 
     /**
-     * @typedef {function(adapt.base.JSON):boolean}
+     * @typedef {function(
+     *   adapt.base.JSON
+     * ):{needResize:(?boolean|undefined), needRefresh:(?boolean|undefined)}}
      */
     vivliostyle.plugin.ConfigurationHook;
 

@@ -367,15 +367,15 @@ goog.scope(function() {
 
     /**
      * @param {adapt.base.JSON} command
-     * @return {boolean}
+     * @return {{needResize:(?boolean|undefined), needRefresh:(?boolean|undefined)}}
      */
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.configure = function(command) {
         if (typeof command["hyphenationExceptionFileUrl"] == "string"
             && command["hyphenationExceptionFileUrl"] !== this.dictionaryStore.exceptionFileUrl) {
             this.dictionaryStore.setExcpetionFileUrl(command["hyphenationExceptionFileUrl"]);
-            return true;
+            return { needResize: true };
         }
-        return false;
+        return {};
     };
 
     /**
