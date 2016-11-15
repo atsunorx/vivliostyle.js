@@ -333,9 +333,9 @@ goog.scope(function() {
             rightmin = hyphenateLimitChars.values[2];
         }
         context['hyphenateLimitChars'] = [
-            this.extactInt(min),
-            this.extactInt(leftmin),
-            this.extactInt(rightmin)
+            this.extractInt(min),
+            this.extractInt(leftmin),
+            this.extractInt(rightmin)
         ];
     };
     /**
@@ -359,7 +359,7 @@ goog.scope(function() {
      * @param {adapt.css.Val} val
      * @return {number|null}
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.extactInt = function(val) {
+    vivliostyle.plugins.hyphenation.Hyphenator.prototype.extractInt = function(val) {
         if (!val || !val.isNum()) return null;
         return val.num;
     };

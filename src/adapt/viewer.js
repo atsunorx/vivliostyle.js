@@ -379,7 +379,7 @@ adapt.viewer.Viewer.prototype.configure = function(command) {
         this.needRefresh = true;
     }
 
-    this.confugurePlugins(command);
+    this.configurePlugins(command);
 
     return adapt.task.newResult(true);
 };
@@ -387,7 +387,7 @@ adapt.viewer.Viewer.prototype.configure = function(command) {
 /**
  * @param {adapt.base.JSON} command
  */
-adapt.viewer.Viewer.prototype.confugurePlugins = function(command) {
+adapt.viewer.Viewer.prototype.configurePlugins = function(command) {
     /** @type {!Array.<vivliostyle.plugin.ConfigurationHook>} */ var hooks =
         vivliostyle.plugin.getHooksForName(vivliostyle.plugin.HOOKS.CONFIGURATION);
     hooks.forEach(function(hook) {
