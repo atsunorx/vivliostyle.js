@@ -378,7 +378,7 @@ adapt.viewer.Viewer.prototype.configure = function(command) {
         this.fitToScreen = command["fitToScreen"];
         this.needRefresh = true;
     }
-
+command["hyphenationExceptionFileUrl"] = "plugins/hyphenation/resources/exceptions.json";
     this.configurePlugins(command);
 
     return adapt.task.newResult(true);

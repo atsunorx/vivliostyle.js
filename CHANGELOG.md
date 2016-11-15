@@ -2,14 +2,6 @@
 
 ## Unreleased
 
-### Added
-
-- Support [CSS Text 4](https://www.w3.org/TR/css-text-4/) properties.
-  - [hyphenate-character](https://www.w3.org/TR/css-text-4/#hyphenate-character)
-  - [hyphenate-limit-zone](https://www.w3.org/TR/css-text-4/#propdef-hyphenate-limit-zone)
-  - [hyphenate-limit-lines](https://www.w3.org/TR/css-text-4/#propdef-hyphenate-limit-lines)
-  - [hyphenate-limit-last](https://www.w3.org/TR/css-text-4/#propdef-hyphenate-limit-last)
-  - [hyphenate-limit-chars](https://www.w3.org/TR/css-text-4/#propdef-hyphenate-limit-chars)
 
 ## [2016.10](https://github.com/vivliostyle/vivliostyle.js/releases/tag/2016.10) - 2016-10-25
 

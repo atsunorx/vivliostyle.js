@@ -201,9 +201,6 @@ z-index = auto | INT;
 
 [epub,moz,ms,webkit]hyphens = auto | manual | none;
 [webkit]hyphenate-character = auto | STRING;
-[ms]hyphenate-limit-zone = PLENGTH;
-[webkit,ms]hyphenate-limit-lines = no-limit | INT;
-hyphenate-limit-last = none | always | column | page | spread;
 [ms]hyphenate-limit-chars = [ auto | INT ]{1,3};
 [adapt,webkit]margin-before = APLENGTH;
 [adapt,webkit]margin-after = APLENGTH;
