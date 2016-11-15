@@ -437,6 +437,18 @@ adapt.base.getCSSProperty = function(elem, prop, opt_value) {
 };
 
 /**
+ * @param {Element} element
+ * @return {string}
+ */
+adapt.base.getLangAttribute = function(element) {
+    var lang = element.getAttributeNS(adapt.base.NS.XML, "lang");
+    if (!lang && element.namespaceURI == adapt.base.NS.XHTML) {
+        lang = element.getAttribute("lang");
+    }
+    return lang;
+};
+
+/**
  * @constructor
  */
 adapt.base.StringBuffer = function() {

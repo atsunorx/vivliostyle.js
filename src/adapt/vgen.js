@@ -542,7 +542,7 @@ adapt.vgen.ViewFactory.prototype.resolveURL = function(url) {
 /**
  */
 adapt.vgen.ViewFactory.prototype.inheritLangAttribute = function() {
-    this.nodeContext.lang = this.nodeContext.sourceNode.lang
+    this.nodeContext.lang = adapt.base.getLangAttribute(/** @type {Element} */ (this.nodeContext.sourceNode))
         || (this.nodeContext.parent && this.nodeContext.parent.lang);
 };
 

@@ -2699,10 +2699,7 @@ adapt.csscasc.CascadeInstance.prototype.pushElement = function(element, baseStyl
         var className = element.getAttribute("name") || "";
         this.currentClassNames = [className];
     }
-    var lang = element.getAttributeNS(adapt.base.NS.XML, "lang");
-    if (!lang && this.currentNamespace == adapt.base.NS.XHTML) {
-        lang = element.getAttribute("lang");
-    }
+    var lang = adapt.base.getLangAttribute(element);
     if (lang) {
         this.stack[this.stack.length - 1].push(
             new adapt.csscasc.RestoreLangItem(this.lang));
