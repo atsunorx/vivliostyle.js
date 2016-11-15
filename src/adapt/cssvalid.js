@@ -2234,7 +2234,7 @@ adapt.cssvalid.ValidatorSet.prototype.validatePropertyAndHandleShorthand =
 adapt.cssvalid.validatorFetcher = new adapt.taskutil.Fetcher(function() {
     /** @type {!adapt.task.Frame.<adapt.cssvalid.ValidatorSet>} */ var frame =
         adapt.task.newFrame("loadValidatorSet.load");
-    var url = adapt.base.resolveURL("validation.txt", adapt.base.baseURL  + "resources/");
+    var url = adapt.base.resolveURL("validation.txt", adapt.base.resourceBaseURL);
     var result = adapt.net.ajax(url);
     var validatorSet = new adapt.cssvalid.ValidatorSet();
     validatorSet.initBuiltInValidators();

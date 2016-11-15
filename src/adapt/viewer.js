@@ -354,9 +354,11 @@ adapt.viewer.Viewer.prototype.configure = function(command) {
     // for backward compatibility
     if (typeof command["userAgentRootURL"] == "string") {
         adapt.base.baseURL = command["userAgentRootURL"].replace(/resources\/?$/, "");
+        adapt.base.resourceBaseURL = command["userAgentRootURL"];
     }
     if (typeof command["rootURL"] == "string") {
         adapt.base.baseURL = command["rootURL"];
+        adapt.base.resourceBaseURL = adapt.base.baseURL + "resources/";
     }
     if (typeof command["pageViewMode"] == "string" && command["pageViewMode"] !== this.pageViewMode) {
         this.pageViewMode = command["pageViewMode"];

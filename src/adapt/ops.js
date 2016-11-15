@@ -35,7 +35,7 @@ adapt.ops.uaStylesheetBaseFetcher = new adapt.taskutil.Fetcher(function() {
     /** @type {!adapt.task.Frame.<boolean>} */ var frame =
         adapt.task.newFrame("uaStylesheetBase");
     adapt.cssvalid.loadValidatorSet().then(function(validatorSet) {
-        var url = adapt.base.resolveURL("user-agent-base.css", adapt.base.baseURL  + "resources/");
+        var url = adapt.base.resolveURL("user-agent-base.css", adapt.base.resourceBaseURL);
         var handler = new adapt.csscasc.CascadeParserHandler(null, null, null, null, null,
             validatorSet, true);
         handler.startStylesheet(adapt.cssparse.StylesheetFlavor.USER_AGENT);
@@ -1184,7 +1184,7 @@ goog.inherits(adapt.ops.OPSDocStore, adapt.net.ResourceStore);
  */
 adapt.ops.OPSDocStore.prototype.init = function(authorStyleSheets, userStyleSheets) {
     this.setStyleSheets(authorStyleSheets, userStyleSheets);
-    var userAgentXML = adapt.base.resolveURL("user-agent.xml", adapt.base.baseURL + "resources/");
+    var userAgentXML = adapt.base.resolveURL("user-agent.xml", adapt.base.resourceBaseURL);
     var frame = adapt.task.newFrame("OPSDocStore.init");
     var self = this;
     adapt.cssvalid.loadValidatorSet().then(function(validatorSet) {
@@ -1283,7 +1283,7 @@ adapt.ops.OPSDocStore.prototype.parseOPSResource = function(response) {
         }
         self.triggersByDocURL[url] = triggers;
         var sources = /** @type {Array.<adapt.ops.StyleSource>} */ ([]);
-        var userAgentURL = adapt.base.resolveURL("user-agent-page.css", adapt.base.baseURL + "resources/");
+        var userAgentURL = adapt.base.resolveURL("user-agent-page.css", adapt.base.resourceBaseURL);
         sources.push({url: userAgentURL, text:null,
             flavor:adapt.cssparse.StylesheetFlavor.USER_AGENT, classes: null, media: null});
         var head = xmldoc.head;
