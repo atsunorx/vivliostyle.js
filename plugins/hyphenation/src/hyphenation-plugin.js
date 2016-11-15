@@ -27,7 +27,7 @@ goog.scope(function() {
      *  lang: (string|null)
      * }}
      */
-    vivliostyle.plugins.hyphenation.StyleAndLang = {};
+    vivliostyle.plugins.hyphenation.StyleAndLang;
 
     /**
      * @typedef {{
@@ -36,7 +36,7 @@ goog.scope(function() {
      *  defaultRightmin: number
      * }}
      */
-    vivliostyle.plugins.hyphenation.HypherCache = {};
+    vivliostyle.plugins.hyphenation.HypherCache;
 
     /**
      * @param {adapt.net.Response} response
