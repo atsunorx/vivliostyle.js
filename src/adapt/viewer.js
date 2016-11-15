@@ -390,7 +390,7 @@ adapt.viewer.Viewer.prototype.confugurePlugins = function(command) {
         vivliostyle.plugin.getHooksForName(vivliostyle.plugin.HOOKS.CONFIGURATION);
     hooks.forEach(function(hook) {
         this.needRefresh = hook(command) || this.needRefresh;
-    });
+    }.bind(this));
 };
 
 /**

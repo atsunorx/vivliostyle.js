@@ -92,8 +92,8 @@ goog.scope(function() {
         return this.store.load(this.exceptionFileUrl, false).thenAsync(function(exceptions) {
             if (exceptions) {
                 var exceptionWords = this.collectExceptionWords(lang, exceptions);
-                dictionary.exceptions = dictionary.exceptions
-                    ? dictionary.exceptions + "," + exceptionWords.join(",")
+                dictionary['exceptions'] = dictionary['exceptions']
+                    ? dictionary['exceptions'] + "," + exceptionWords.join(",")
                     : exceptionWords.join(",");
             }
             return adapt.task.newResult(dictionary);
@@ -112,7 +112,7 @@ goog.scope(function() {
             if (k.toLowerCase() === lang.toLowerCase()) key = k;
         });
         var words = {};
-        this.collectWords(exceptions.all, words);
+        this.collectWords(exceptions['all'], words);
         if (key != null) this.collectWords(exceptions[/** @type {string}*/ (key)], words);
         return Object.keys(words).reduce(function(r, k) {
             r.push(words[k]);
@@ -227,8 +227,8 @@ goog.scope(function() {
             } else {
                 this.hypherCache[lang] = {
                     instance: new Hypher(dictionary),
-                    defaultLeftmin: dictionary.leftmin,
-                    defaultRightmin: dictionary.rightmin
+                    defaultLeftmin: dictionary['leftmin'],
+                    defaultRightmin: dictionary['rightmin']
                 };
             }
             frame.finish(this.hypherCache[lang]);
@@ -245,11 +245,10 @@ goog.scope(function() {
         if (/^[\s]*$/.test(string)) return adapt.task.newResult(string);
 
         var styleAndLang = this.extractElementStyleAndLang(context);
-
-        if (styleAndLang.hyphens != "auto") return adapt.task.newResult(string);
-        if (!styleAndLang.lang) return adapt.task.newResult(string);
-        var hyphenateLimitChars = styleAndLang.hyphenateLimitChars;
-        return this.hyphenate(string, styleAndLang.lang,
+        if (styleAndLang['hyphens'] !== "auto") return adapt.task.newResult(string);
+        if (!styleAndLang['lang']) return adapt.task.newResult(string);
+        var hyphenateLimitChars = styleAndLang['hyphenateLimitChars'];
+        return this.hyphenate(string, styleAndLang['lang'],
             hyphenateLimitChars ? hyphenateLimitChars[0] :null,
             hyphenateLimitChars ? hyphenateLimitChars[1] :null,
             hyphenateLimitChars ? hyphenateLimitChars[2] :null);
@@ -262,7 +261,7 @@ goog.scope(function() {
      */
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.extractElementStyleAndLang = function(context) {
         /** @type {!vivliostyle.plugins.hyphenation.StyleAndLang} */ var styleAndLang = {
-            lang: null, hyphens: null, hyphenateLimitChars: null
+            'lang': null, 'hyphens': null, 'hyphenateLimitChars': null
         };
         var collectors = [
             new vivliostyle.plugins.hyphenation.PropertyCollector(styleAndLang, "hyphens"),
@@ -296,7 +295,7 @@ goog.scope(function() {
     vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessHyphens = function(context, computedStyle) {
         var hyphens = context.inheritedProps["hyphens"];
         if (!hyphens) return;
-        context.hyphens = hyphens;
+        context['hyphens'] = hyphens;
         if (hyphens === "none") {
             computedStyle["hyphens"] = adapt.css.ident.none;
         } else {
@@ -312,11 +311,11 @@ goog.scope(function() {
             /** @type {adapt.css.Val|string|number} */ (context.inheritedProps["hyphenate-limit-chars"]);
         if (!hyphenateLimitChars) return;
         if (typeof hyphenateLimitChars === 'number') {
-            context.hyphenateLimitChars = [hyphenateLimitChars, null, null];
+            context['hyphenateLimitChars'] = [hyphenateLimitChars, null, null];
             return;
         }
         if (hyphenateLimitChars === 'auto') {
-            context.hyphenateLimitChars = [null, null, null];
+            context['hyphenateLimitChars'] = [null, null, null];
             return;
         }
         if (!hyphenateLimitChars.isSpaceList
@@ -333,7 +332,7 @@ goog.scope(function() {
         if (hyphenateLimitChars.values.length >= 3) {
             rightmin = hyphenateLimitChars.values[2];
         }
-        context.hyphenateLimitChars = [
+        context['hyphenateLimitChars'] = [
             this.extactInt(min),
             this.extactInt(leftmin),
             this.extactInt(rightmin)
@@ -351,7 +350,7 @@ goog.scope(function() {
             computedStyle["hyphenate-character"] =
                 adapt.css.getName(hyphenateCharacter);
         } else {
-            context.hyphenateCharacter = hyphenateCharacter.str;
+            context['hyphenateCharacter'] = hyphenateCharacter.str;
             computedStyle["hyphenate-character"] = hyphenateCharacter;
         }
     };
