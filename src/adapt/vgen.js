@@ -1119,7 +1119,7 @@ adapt.vgen.ViewFactory.prototype.modifyElemDimensionWithImageResolution = functi
 
 /**
  * @private
- * @param {!Object} computedStyle
+ * @param {!Object.<string,adapt.css.Val>} computedStyle
  */
 adapt.vgen.ViewFactory.prototype.preprocessElementStyle = function(computedStyle) {
     var self = this;
