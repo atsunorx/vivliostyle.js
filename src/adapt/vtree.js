@@ -689,6 +689,7 @@ adapt.vtree.NodeContext = function(sourceNode, parent, boxOffset) {
     /** @type {string} */ this.direction = parent ? parent.direction : "ltr";
     /** @type {adapt.vtree.FirstPseudo} */ this.firstPseudo = parent ? parent.firstPseudo : null;
     /** @type {?string} */ this.lang = null;
+    /** @type {?string} */ this.preprocessedTextContent = null;
 };
 
 /**
