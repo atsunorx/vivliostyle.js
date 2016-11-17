@@ -396,9 +396,10 @@ adapt.layout.Column.prototype.openAllViews = function(position) {
             var step = steps[stepIndex];
             nodeContext = self.makeNodeContext(step, prevContext);
             if (stepIndex == 0) {
-                nodeContext.offsetInNode = position.offsetInNode;
+                nodeContext.offsetInNode = self.calculateOffstInNodeForNodeContext(position);
                 nodeContext.after = position.after;
                 nodeContext.preprocessedTextContent = position.preprocessedTextContent;
+                nodeContext.textContentDiff = position.textContentDiff;
                 if (nodeContext.after) {
                     break;
                 }
@@ -413,6 +414,16 @@ adapt.layout.Column.prototype.openAllViews = function(position) {
         frame.finish(nodeContext);
     });
     return frame.result();
+};
+
+/**
+ * @param {adapt.vtree.NodePosition} position
+ * @return {number}
+ */
+adapt.layout.Column.prototype.calculateOffstInNodeForNodeContext = function(position) {
+    return position.textContentDiff
+        ? vivliostyle.diff.resolveNewIndex(position.textContentDiff, position.offsetInNode)
+        : position.offsetInNode;
 };
 
 adapt.layout.firstCharPattern =

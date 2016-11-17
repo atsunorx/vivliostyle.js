@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hyphenation and page breaks</title>
+    <style>
+        :root {
+            widows: 1;
+            orphans: 1;
+            hyphens: auto;
+            font-family: Georgia;
+            font-size: 16px;
+            line-height: 20px;
+        }
+        body {
+            margin: 8px;
+        }
+        section {
+            page-break-after: always;
+        }
+        @page {
+            size: 400px;
+        }
+        @-epubx-page-template {
+            @-epubx-flow sub {
+                -epubx-flow-consume: all;
+            }
+            @-epubx-page-master {
+                @-epubx-partition {
+                    -epubx-flow-from: body;
+                    width: 220px;
+                    height: 350px;
+                    border: blue solid;
+                }
+                @-epubx-partition {
+                    -epubx-flow-from: sub;
+                    width: 160px;
+                    right: 0;
+                    border: orange solid;
+                }
+                @-epubx-partition {
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    content: counter(page);
+                    text-align: center;
+                    height: 20px;
+                }
+            }
+            .sub {
+                -epubx-flow-into: sub;
+            }
+        }
+    </style>
+</head>
+<body>
+<section>
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+    Hyphenation opportunities.
+</section>
+<section>
+    <div class="sub">
+        This sentence should be at the top of page 3.
+        Hyphenation opportunities.
+    </div>
+    This sentence should be at the top of page 3.
+</section>
+</body>
+</html>

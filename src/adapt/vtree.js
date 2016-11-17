@@ -690,6 +690,7 @@ adapt.vtree.NodeContext = function(sourceNode, parent, boxOffset) {
     /** @type {adapt.vtree.FirstPseudo} */ this.firstPseudo = parent ? parent.firstPseudo : null;
     /** @type {?string} */ this.lang = null;
     /** @type {?string} */ this.preprocessedTextContent = null;
+    /** @type {?Array.<vivliostyle.diff.Change>} */ this.textContentDiff = null;
 };
 
 /**
@@ -715,6 +716,7 @@ adapt.vtree.NodeContext.prototype.resetView = function() {
     this.vertical = this.parent ? this.parent.vertical : false;
     this.nodeShadow = null;
     this.preprocessedTextContent = null;
+    this.textContentDiff = null;
 };
 
 /**
@@ -746,6 +748,7 @@ adapt.vtree.NodeContext.prototype.cloneItem = function() {
     np.vertical = this.vertical;
     np.overflow = this.overflow;
     np.preprocessedTextContent = this.preprocessedTextContent;
+    np.textContentDiff = this.textContentDiff;
     return np;
 };
 
@@ -813,11 +816,16 @@ adapt.vtree.NodeContext.prototype.toNodePosition = function() {
         }
         nc = nc.parent;
     } while (nc);
+
+    var actualOffsetInNode = this.textContentDiff
+        ? vivliostyle.diff.resolveOldIndex(this.textContentDiff, this.offsetInNode)
+        : this.offsetInNode;
     return {
         steps:steps,
-        offsetInNode: this.offsetInNode,
+        offsetInNode: actualOffsetInNode,
         after: this.after,
-        preprocessedTextContent: this.preprocessedTextContent
+        preprocessedTextContent: this.preprocessedTextContent,
+        textContentDiff: this.textContentDiff
     };
 };
 

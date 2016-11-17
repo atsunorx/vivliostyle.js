@@ -1156,7 +1156,8 @@ adapt.vgen.ViewFactory.prototype.preprocessTextContent = function() {
         return adapt.task.newResult(true);
     }
     var self = this;
-    var textContent = self.sourceNode.textContent;
+    var originl;
+    var textContent = originl = self.sourceNode.textContent;
     /** @type {!adapt.task.Frame.<boolean>} */ var frame
         = adapt.task.newFrame("preprocessTextContent");
     /** @type {!Array.<vivliostyle.plugin.PreProcessTextContentHook>} */ var hooks =
@@ -1170,6 +1171,7 @@ adapt.vgen.ViewFactory.prototype.preprocessTextContent = function() {
         });
     }).then(function() {
         self.nodeContext.preprocessedTextContent = textContent;
+        self.nodeContext.textContentDiff = vivliostyle.diff.diffChars(originl, textContent);
         frame.finish(true);
     });
     return frame.result();
