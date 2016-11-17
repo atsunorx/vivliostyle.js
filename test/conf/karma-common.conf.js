@@ -20,6 +20,7 @@ module.exports = function(config) {
         frameworks: ["jasmine", "commonjs"],
         files: sourceFiles.concat(testFiles).concat(commonJsSourceFiles),
         preprocessors: Object.assign({
+            'src/vivliostyle/diff.js': ['commonjs'],
             'plugins/hyphenation/src/*.js': ['commonjs']
         }, commonJsSourceFiles.reduce(function(r, f) {
             r[f] = ['commonjs'];

@@ -19,6 +19,7 @@
         "vivliostyle/profile.js",
         "vivliostyle/constants.js",
         "vivliostyle/util.js",
+        "vivliostyle/diff.js",
         "vivliostyle/urls.js",
         "vivliostyle/plugin.js",
         "vivliostyle/logical.js",
@@ -59,6 +60,8 @@
     ];
 
     var commonJsModuleList = [
+        "node_modules/fast-diff/diff.js",
+
         "node_modules/hypher/lib/hypher.js"
     ];
 
