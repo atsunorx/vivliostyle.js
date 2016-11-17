@@ -454,11 +454,12 @@ adapt.vgen.ViewFactory.prototype.computeStyle = function(vertical, style, comput
 /**
  * @private
  * @param {adapt.csscasc.ElementStyle} elementStyle
- * @return {adapt.csscasc.ElementStyle}
+ * @return {{lang:?string, elementStyle:adapt.csscasc.ElementStyle}}
  */
 adapt.vgen.ViewFactory.prototype.inheritFromSourceParent = function(elementStyle) {
     var node = this.nodeContext.sourceNode;
     var styles = [];
+    var lang = null;
     // TODO: this is hacky. We need to recover the path through the shadow trees, but we do not
     // have the full shadow tree structure at this point. This code handles coming out of the
     // shadow trees, but does not go back in (through shadow:content element).
@@ -471,6 +472,7 @@ adapt.vgen.ViewFactory.prototype.inheritFromSourceParent = function(elementStyle
                 /** @type {adapt.cssstyler.AbstractStyler} */ (shadowContext.styler) : this.styler;
             var nodeStyle = styler.getStyle(/** @type {Element} */ (node), false);
             styles.push(nodeStyle);
+            lang = lang || adapt.base.getLangAttribute(/** @type {Element} */ (node));
         }
         if (shadowRoot) {
             node = shadowContext.owner;
@@ -508,7 +510,7 @@ adapt.vgen.ViewFactory.prototype.inheritFromSourceParent = function(elementStyle
             props[sname] = elementStyle[sname];
         }
     }
-    return props;
+    return {lang:lang, elementStyle:props};
 };
 
 adapt.vgen.fb2Remap = {
@@ -543,7 +545,8 @@ adapt.vgen.ViewFactory.prototype.resolveURL = function(url) {
  */
 adapt.vgen.ViewFactory.prototype.inheritLangAttribute = function() {
     this.nodeContext.lang = adapt.base.getLangAttribute(/** @type {Element} */ (this.nodeContext.sourceNode))
-        || (this.nodeContext.parent && this.nodeContext.parent.lang);
+        || (this.nodeContext.parent && this.nodeContext.parent.lang)
+        || this.nodeContext.lang;
 };
 
 /**
@@ -605,7 +608,9 @@ adapt.vgen.ViewFactory.prototype.createElementView = function(firstTime, atUnfor
     var elementStyle = styler.getStyle(element, false);
     var computedStyle = {};
     if (!self.nodeContext.parent) {
-        elementStyle = self.inheritFromSourceParent(elementStyle);
+        var inheritedValues = self.inheritFromSourceParent(elementStyle);
+        elementStyle = inheritedValues.elementStyle;
+        self.nodeContext.lang = inheritedValues.lang;
     }
     self.nodeContext.vertical = self.computeStyle(self.nodeContext.vertical, elementStyle, computedStyle);
 
