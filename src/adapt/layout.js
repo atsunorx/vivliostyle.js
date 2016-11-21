@@ -399,7 +399,6 @@ adapt.layout.Column.prototype.openAllViews = function(position) {
                 nodeContext.offsetInNode = self.calculateOffstInNodeForNodeContext(position);
                 nodeContext.after = position.after;
                 nodeContext.preprocessedTextContent = position.preprocessedTextContent;
-                nodeContext.textContentDiff = position.textContentDiff;
                 if (nodeContext.after) {
                     break;
                 }
@@ -421,8 +420,8 @@ adapt.layout.Column.prototype.openAllViews = function(position) {
  * @return {number}
  */
 adapt.layout.Column.prototype.calculateOffstInNodeForNodeContext = function(position) {
-    return position.textContentDiff
-        ? vivliostyle.diff.resolveNewIndex(position.textContentDiff, position.offsetInNode)
+    return position.preprocessedTextContent
+        ? vivliostyle.diff.resolveNewIndex(position.preprocessedTextContent, position.offsetInNode)
         : position.offsetInNode;
 };
 

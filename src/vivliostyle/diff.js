@@ -17,7 +17,7 @@ goog.scope(function() {
     vivliostyle.diff.Change;
 
     /**
-     * @param {string} oldText
+     * @param {string} originalText
      * @param {string} newText
      * @returns {Array.<vivliostyle.diff.Change>}
      */

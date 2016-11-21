@@ -1145,7 +1145,8 @@ adapt.vgen.ViewFactory.prototype.createTextNodeView = function() {
         = adapt.task.newFrame("createTextNodeView");
     this.preprocessTextContent().then(function() {
         var offsetInNode = self.offsetInNode || 0;
-        var textContent = self.nodeContext.preprocessedTextContent.substr(offsetInNode);
+        var textContent = vivliostyle.diff.restoreNewText(
+            self.nodeContext.preprocessedTextContent).substr(offsetInNode);
         self.viewNode = document.createTextNode(textContent);
         frame.finish(true);
     });
@@ -1175,8 +1176,8 @@ adapt.vgen.ViewFactory.prototype.preprocessTextContent = function() {
             return adapt.task.newResult(true);
         });
     }).then(function() {
-        self.nodeContext.preprocessedTextContent = textContent;
-        self.nodeContext.textContentDiff = vivliostyle.diff.diffChars(originl, textContent);
+        self.nodeContext.preprocessedTextContent =
+            vivliostyle.diff.diffChars(originl, textContent);
         frame.finish(true);
     });
     return frame.result();
@@ -1340,7 +1341,7 @@ adapt.vgen.ViewFactory.prototype.nextPositionInTree = function(pos) {
         }
         // no children - was there text content?
         if (pos.sourceNode.nodeType != 1) {
-            var content = pos.preprocessedTextContent;
+            var content = vivliostyle.diff.restoreNewText(pos.preprocessedTextContent);
             boxOffset += content.length - 1 - pos.offsetInNode;
         }
         pos = pos.modify();
