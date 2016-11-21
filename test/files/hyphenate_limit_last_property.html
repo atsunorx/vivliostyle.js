@@ -3,7 +3,7 @@
 <head>
   <style>
     @page {
-      size: 300px 200px;
+      size: 250px 200px;
     }
     body {
       -moz-column-count: 2;
@@ -31,34 +31,24 @@
       hyphenate-limit-last: none;
       -webkit-hyphenate-limit-last: none;
     }
+    .hyphenate-limit-last_spread {
+      hyphenate-limit-last: spread;
+      -webkit-hyphenate-limit-last: spread;
+    }
   </style>
 </head>
 <body>
   <div class="label">hyphenate-limit-last: column</div>
   <div class="hyphens hyphenate-limit-last_column">
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
+    It is not defined whether hyphenation introduced by such emergency breaking influences nearby hyphenation points.
   </div>
   <div class="label">hyphenate-limit-last: none</div>
   <div class="hyphens hyphenate-limit-last_none">
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
-    hyphenation
+    It is not defined whether hyphenation introduced by such emergency breaking influences nearby hyphenation points.
+  </div>
+  <div class="label">hyphenate-limit-last: spread</div>
+  <div class="hyphens hyphenate-limit-last_spread">
+    It is not defined whether hyphenation introduced by such emergency breaking influences nearby hyphenation points.
   </div>
 </body>
 </html>

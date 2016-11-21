@@ -165,6 +165,20 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 expect(context.hyphenateCharacter).toEqual(undefined);
                 expect(style["hyphenate-character"]).toEqual(undefined);
             });
+
+            it("inserts 'hyphenateLimitLast' to a context when hyphenate-limit-last property is 'column'.", function() {
+                context.inheritedProps = {
+                    "hyphenate-limit-last": 'column'
+                };
+                target.preprocessElementStyle(context, style);
+                expect(context.hyphenateLimitLast).toEqual("column");
+                expect(style["hyphenate-limit-last"]).toEqual(adapt.css.ident.column);
+            });
+            it("do nothing when hyphenate-limit-last property is undfined.", function() {
+                target.preprocessElementStyle(context, style);
+                expect(context.hyphenateLimitLast).toEqual(undefined);
+                expect(style["hyphenate-limit-last"]).toEqual(undefined);
+            });
         });
 
         describe("#extractElementStyleAndLang", function() {
@@ -380,8 +394,34 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 expect(target.getPolyfilledInheritedProps()).toEqual([
                     "hyphens",
                     "hyphenate-character",
-                    "hyphenate-limit-chars"
+                    "hyphenate-limit-chars",
+                    "hyphenate-limit-last"
                 ]);
+            });
+        });
+
+        describe("#resolveTextNodeBreaker", function() {
+            it("returns a ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker instance if `hyphenateLimitLast` is 'column'.", function() {
+                expect(target.resolveTextNodeBreaker({
+                    hyphenateLimitLast: 'column'
+                })).toEqual(vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.instance);
+
+                expect(target.resolveTextNodeBreaker({
+                    parent: { hyphenateLimitLast: 'column' }
+                })).toEqual(vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.instance);
+            });
+            it("returns null if `hyphenateLimitLast` is not 'column'.", function() {
+                expect(target.resolveTextNodeBreaker({
+                    hyphenateLimitLast: 'auto'
+                })).toEqual(null);
+                expect(target.resolveTextNodeBreaker({
+                    hyphenateLimitLast: 'always'
+                })).toEqual(null);
+                expect(target.resolveTextNodeBreaker({
+                    parent: { hyphenateLimitLast: 'auto' }
+                })).toEqual(null);
+                expect(target.resolveTextNodeBreaker({
+                })).toEqual(null);
             });
         });
     });
