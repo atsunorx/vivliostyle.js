@@ -17,12 +17,34 @@ goog.scope(function() {
     vivliostyle.diff.Change;
 
     /**
-     * @param {string} textA
-     * @param {string} textB
+     * @param {string} oldText
+     * @param {string} newText
      * @returns {Array.<vivliostyle.diff.Change>}
      */
-    vivliostyle.diff.diffChars = function(textA, textB) {
-        return fastdiff(textA, textB, 0);
+    vivliostyle.diff.diffChars = function(originalText, newText) {
+        return fastdiff(originalText, newText, 0);
+    };
+
+    /**
+     * @param {Array.<vivliostyle.diff.Change>} changes
+     * @returns string
+     */
+    vivliostyle.diff.restoreOriginalText = function(changes) {
+        return changes.reduce(function(result, item) {
+            if (item[0] === fastdiff.INSERT) return result;
+            return result + item[1];
+        }, "");
+    };
+
+    /**
+     * @param {Array.<vivliostyle.diff.Change>} changes
+     * @returns string
+     */
+    vivliostyle.diff.restoreNewText = function(changes) {
+        return changes.reduce(function(result, item) {
+            if (item[0] === fastdiff.DELETE) return result;
+            return result + item[1];
+        }, "");
     };
 
     /**
@@ -39,7 +61,7 @@ goog.scope(function() {
      * @param {number} newIndex
      * @returns {number}
      */
-    vivliostyle.diff.resolveOldIndex = function(changes, newIndex) {
+    vivliostyle.diff.resolveOriginalIndex = function(changes, newIndex) {
         return vivliostyle.diff.resolveIndex(changes, newIndex, -1);
     };
 

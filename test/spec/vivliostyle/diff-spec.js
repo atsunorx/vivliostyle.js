@@ -20,6 +20,56 @@ describe("diff", function() {
         });
     });
 
+    describe("#restoreOriginalText", function() {
+        it("restores the old text from changes.", function() {
+            var diff = vivliostyle.diff.diffChars('aあb', 'aあb');
+            expect(vivliostyle.diff.restoreOriginalText(diff)).toEqual('aあb');
+
+            diff = vivliostyle.diff.diffChars('aあb', 'axあいうb');
+            expect(vivliostyle.diff.restoreOriginalText(diff)).toEqual('aあb');
+
+            diff = vivliostyle.diff.diffChars('aあb', 'xxaあbいう');
+            expect(vivliostyle.diff.restoreOriginalText(diff)).toEqual('aあb');
+
+            diff = vivliostyle.diff.diffChars('axあいうb', 'aあb');
+            expect(vivliostyle.diff.restoreOriginalText(diff)).toEqual('axあいうb');
+
+            diff = vivliostyle.diff.diffChars('xxaあbいう', 'aあb');
+            expect(vivliostyle.diff.restoreOriginalText(diff)).toEqual('xxaあbいう');
+
+            diff = vivliostyle.diff.diffChars('abc', 'efg');
+            expect(vivliostyle.diff.restoreOriginalText(diff)).toEqual('abc');
+
+            diff = vivliostyle.diff.diffChars('aabbaacc', 'aaabacc');
+            expect(vivliostyle.diff.restoreOriginalText(diff)).toEqual('aabbaacc');
+        });
+    });
+
+    describe("#restoreNewText", function() {
+        it("restores the new text from changes.", function() {
+            var diff = vivliostyle.diff.diffChars('aあb', 'aあb');
+            expect(vivliostyle.diff.restoreNewText(diff)).toEqual('aあb');
+
+            diff = vivliostyle.diff.diffChars('aあb', 'axあいうb');
+            expect(vivliostyle.diff.restoreNewText(diff)).toEqual('axあいうb');
+
+            diff = vivliostyle.diff.diffChars('aあb', 'xxaあbいう');
+            expect(vivliostyle.diff.restoreNewText(diff)).toEqual('xxaあbいう');
+
+            diff = vivliostyle.diff.diffChars('axあいうb', 'aあb');
+            expect(vivliostyle.diff.restoreNewText(diff)).toEqual('aあb');
+
+            diff = vivliostyle.diff.diffChars('xxaあbいう', 'aあb');
+            expect(vivliostyle.diff.restoreNewText(diff)).toEqual('aあb');
+
+            diff = vivliostyle.diff.diffChars('abc', 'efg');
+            expect(vivliostyle.diff.restoreNewText(diff)).toEqual('efg');
+
+            diff = vivliostyle.diff.diffChars('aabbaacc', 'aaabacc');
+            expect(vivliostyle.diff.restoreNewText(diff)).toEqual('aaabacc');
+        });
+    });
+
     describe("#resolveNewIndex", function() {
         it("resolves new index from old index.", function() {
             var diff = vivliostyle.diff.diffChars('abc', 'a-b-c');
@@ -113,96 +163,96 @@ describe("diff", function() {
         });
     });
 
-    describe("#resolveOldIndex", function() {
-        it("resolves old index from new index.", function() {
+    describe("#resolveOriginalIndex", function() {
+        it("resolves original index from new index.", function() {
             var diff = vivliostyle.diff.diffChars('abc', 'a-b-c');
-            expect(vivliostyle.diff.resolveOldIndex(diff, 0)).toBe(0);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 1)).toBe(0);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 2)).toBe(1);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 3)).toBe(1);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 4)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 5)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 6)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 0)).toBe(0);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 1)).toBe(0);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 2)).toBe(1);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 3)).toBe(1);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 4)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 5)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 6)).toBe(2);
 
             diff = vivliostyle.diff.diffChars('a-b-c', 'abc');
-            expect(vivliostyle.diff.resolveOldIndex(diff, 0)).toBe(0);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 1)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 2)).toBe(4);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 3)).toBe(4);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 4)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 0)).toBe(0);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 1)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 2)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 3)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 4)).toBe(4);
 
             diff = vivliostyle.diff.diffChars('あいう', '漢あいう字');
-            expect(vivliostyle.diff.resolveOldIndex(diff, 0)).toBe(0);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 1)).toBe(0);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 2)).toBe(1);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 3)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 4)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 5)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 6)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 0)).toBe(0);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 1)).toBe(0);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 2)).toBe(1);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 3)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 4)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 5)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 6)).toBe(2);
 
             diff = vivliostyle.diff.diffChars('漢あいう字', 'あいう');
-            expect(vivliostyle.diff.resolveOldIndex(diff, 0)).toBe(1);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 1)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 2)).toBe(3);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 3)).toBe(4);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 4)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 0)).toBe(1);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 1)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 2)).toBe(3);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 3)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 4)).toBe(4);
 
             diff = vivliostyle.diff.diffChars('aabb--cc', 'aa--bbcc');
-            expect(vivliostyle.diff.resolveOldIndex(diff, 0)).toBe(0);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 1)).toBe(1);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 2)).toBe(1);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 3)).toBe(1);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 4)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 5)).toBe(3);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 6)).toBe(6);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 7)).toBe(7);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 8)).toBe(7);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 9)).toBe(7);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 0)).toBe(0);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 1)).toBe(1);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 2)).toBe(1);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 3)).toBe(1);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 4)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 5)).toBe(3);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 6)).toBe(6);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 7)).toBe(7);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 8)).toBe(7);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 9)).toBe(7);
 
             diff = vivliostyle.diff.diffChars('aa--bbcc', 'aabb--cc');
-            expect(vivliostyle.diff.resolveOldIndex(diff, 0)).toBe(0);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 1)).toBe(1);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 2)).toBe(1);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 3)).toBe(1);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 4)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 5)).toBe(3);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 6)).toBe(6);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 7)).toBe(7);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 8)).toBe(7);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 9)).toBe(7);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 0)).toBe(0);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 1)).toBe(1);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 2)).toBe(1);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 3)).toBe(1);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 4)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 5)).toBe(3);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 6)).toBe(6);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 7)).toBe(7);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 8)).toBe(7);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 9)).toBe(7);
 
             diff = vivliostyle.diff.diffChars('あいう漢字', '漢字えお');
-            expect(vivliostyle.diff.resolveOldIndex(diff, 0)).toBe(3);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 1)).toBe(4);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 2)).toBe(4);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 3)).toBe(4);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 4)).toBe(4);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 5)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 0)).toBe(3);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 1)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 2)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 3)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 4)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 5)).toBe(4);
 
             diff = vivliostyle.diff.diffChars('漢字えお', 'あいう漢字');
-            expect(vivliostyle.diff.resolveOldIndex(diff, 0)).toBe(0);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 1)).toBe(0);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 2)).toBe(0);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 3)).toBe(0);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 4)).toBe(1);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 5)).toBe(3);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 6)).toBe(3);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 0)).toBe(0);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 1)).toBe(0);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 2)).toBe(0);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 3)).toBe(0);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 4)).toBe(1);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 5)).toBe(3);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 6)).toBe(3);
 
             diff = vivliostyle.diff.diffChars('abc', 'fghij');
-            expect(vivliostyle.diff.resolveOldIndex(diff, 0)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 1)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 2)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 3)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 4)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 5)).toBe(2);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 6)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 0)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 1)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 2)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 3)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 4)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 5)).toBe(2);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 6)).toBe(2);
 
             diff = vivliostyle.diff.diffChars('fghij', 'abc');
-            expect(vivliostyle.diff.resolveOldIndex(diff, 0)).toBe(4);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 1)).toBe(4);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 2)).toBe(4);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 3)).toBe(4);
-            expect(vivliostyle.diff.resolveOldIndex(diff, 4)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 0)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 1)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 2)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 3)).toBe(4);
+            expect(vivliostyle.diff.resolveOriginalIndex(diff, 4)).toBe(4);
 
         });
     });

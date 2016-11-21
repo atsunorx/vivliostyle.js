@@ -818,7 +818,7 @@ adapt.vtree.NodeContext.prototype.toNodePosition = function() {
     } while (nc);
 
     var actualOffsetInNode = this.textContentDiff
-        ? vivliostyle.diff.resolveOldIndex(this.textContentDiff, this.offsetInNode)
+        ? vivliostyle.diff.resolveOriginalIndex(this.textContentDiff, this.offsetInNode)
         : this.offsetInNode;
     return {
         steps:steps,
