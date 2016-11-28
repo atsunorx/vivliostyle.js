@@ -4,7 +4,6 @@ describe("layout", function() {
 
         var breaker;
         var textNode, nodeContext;
-        var column, checkPoints, edgePosition;
         beforeEach(function() {
             breaker = new adapt.layout.TextNodeBreaker();
 
@@ -20,48 +19,36 @@ describe("layout", function() {
                 [[0, 'abcdeabcde'], [1, '\u00AD'], [0, 'f gh'], [1, '\u00AD'], [0, 'j']];
             nodeContext.hyphenateCharacter = '_';
             nodeContext.offsetInNode = 0;
-
-            column = {
-                findAcceptableBreakInside: function(checkPoints, edgePosition) {}
-            };
-            spyOn(column, 'findAcceptableBreakInside').and.callThrough();
-
-            checkPoints = edgePosition = {}; // dummy
         });
         afterEach(function() {
             textNode.replaceData.calls.reset();
-            column.findAcceptableBreakInside.calls.reset();
         });
 
         describe("#breakTextNode", function() {
             it("increments `offsetInNode` when nodeContext#after is true.", function() {
                 nodeContext.after = true;
-                var newContext = breaker.breakTextNode(textNode, nodeContext, 8, column, checkPoints, edgePosition);
+                var newContext = breaker.breakTextNode(textNode, nodeContext, 8);
                 expect(newContext.offsetInNode).toEqual(17);
                 expect(newContext.preprocessedTextContent).toEqual(newContext.preprocessedTextContent);
                 expect(textNode.replaceData).not.toHaveBeenCalled();
-                expect(column.findAcceptableBreakInside).not.toHaveBeenCalled();
             });
-            it("removes a string after split point and inserts a hyphenation character when splits a text node at soft-hyphen character.", function() {
-                var newContext = breaker.breakTextNode(textNode, nodeContext, 13, column, checkPoints, edgePosition);
+            it("removes characters after split point and inserts a hyphenation character when splits a text node at the soft-hyphen character.", function() {
+                var newContext = breaker.breakTextNode(textNode, nodeContext, 13);
                 expect(newContext.offsetInNode).toEqual(11);
                 expect(newContext.preprocessedTextContent).toEqual(newContext.preprocessedTextContent);
                 expect(textNode.replaceData).toHaveBeenCalledWith(10, 7, '_');
-                expect(column.findAcceptableBreakInside).not.toHaveBeenCalled();
             });
-            it("removes a string after split point and inserts a hyphenation character when splits a text node at space character.", function() {
-                var newContext = breaker.breakTextNode(textNode, nodeContext, 15, column, checkPoints, edgePosition);
+            it("removes characters after split point and inserts a hyphenation character when splits a text node at the space character.", function() {
+                var newContext = breaker.breakTextNode(textNode, nodeContext, 15);
                 expect(newContext.offsetInNode).toEqual(13);
                 expect(newContext.preprocessedTextContent).toEqual(newContext.preprocessedTextContent);
                 expect(textNode.replaceData).toHaveBeenCalledWith(13, 4, '');
-                expect(column.findAcceptableBreakInside).not.toHaveBeenCalled();
             });
-            it("removes a string after split point and inserts a hyphenation character when splits a text node at normal character.", function() {
-                var newContext = breaker.breakTextNode(textNode, nodeContext, 10, column, checkPoints, edgePosition);
+            it("removes characters after split point and inserts a hyphenation character when splits a text node at the normal character.", function() {
+                var newContext = breaker.breakTextNode(textNode, nodeContext, 10);
                 expect(newContext.offsetInNode).toEqual(8);
                 expect(newContext.preprocessedTextContent).toEqual(newContext.preprocessedTextContent);
                 expect(textNode.replaceData).toHaveBeenCalledWith(8, 9, '_');
-                expect(column.findAcceptableBreakInside).not.toHaveBeenCalled();
             });
         });
 
