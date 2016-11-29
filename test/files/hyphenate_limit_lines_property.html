@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <style>
+    @page {
+      size: 450px 200px;
+    }
+    body {
+      -moz-column-count: 2;
+      column-count: 2;
+      -moz-column-fill: auto;
+      column-fill: auto;
+
+      widows: 1;
+      orphans: 1;
+    }
+    div.label {
+      font-size: xx-small;
+      color: #FF3333;
+    }
+    div.hyphens {
+      font-size: x-large;
+      hyphens: auto;
+      margin-bottom: 20px;
+    }
+    .hyphenate-limit-lines_2 {
+      hyphenate-limit-lines: 2;
+      -webkit-hyphenate-limit-lines: 2;
+      -ms-hyphenate-limit-lines: 2;
+    }
+    .hyphenate-limit-lines_no_limit {
+      hyphenate-limit-lines: no-limit;
+      -webkit-hyphenate-limit-lines: no-limit;
+      -ms-hyphenate-limit-lines: no-limit;
+    }
+    .hyphenate-limit-lines_4 {
+      hyphenate-limit-lines: 4;
+      -webkit-hyphenate-limit-lines: 4;
+      -ms-hyphenate-limit-lines: 4;
+    }
+  </style>
+</head>
+<body>
+  <div class="label">hyphenate-limit-lines: 2</div>
+  <div class="hyphens hyphenate-limit-lines_2">
+    hyphenation hyphenation hyphenation hyphenation
+    hyphenation hyphenation hyphenation hyphenation
+    hyphenation hyphenation hyphenation hyphenation
+    hyphenation hyphenation hyphenation hyphenation
+  </div>
+  <div class="label">hyphenate-limit-lines: no-limit</div>
+  <div class="hyphens hyphenate-limit-lines_no_limit">
+    hyphenation hyphenation hyphenation hyphenation
+    hyphenation hyphenation hyphenation hyphenation
+    hyphenation hyphenation hyphenation hyphenation
+    hyphenation hyphenation hyphenation hyphenation
+  </div>
+  <div class="label">hyphenate-limit-lines: 4</div>
+  <div class="hyphens hyphenate-limit-lines_4">
+    hyphenation hyphenation hyphenation hyphenation
+    hyphenation hyphenation hyphenation hyphenation
+    hyphenation hyphenation hyphenation hyphenation
+    hyphenation hyphenation hyphenation hyphenation
+  </div>
+</body>
+</html>
