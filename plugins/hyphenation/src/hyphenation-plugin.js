@@ -303,6 +303,7 @@ goog.scope(function() {
         this.preprocessHyphenateLimitChars(context, computedStyle);
         this.preprocessHyphenateCharacter(context, computedStyle);
         this.preprocessHyphenateLimitLast(context, computedStyle);
+        this.preprocessHyphenateLimitLines(context, computedStyle);
     };
 
     /**
@@ -388,6 +389,21 @@ goog.scope(function() {
     };
     /**
      * @private
+     * @param {adapt.vtree.NodeContext} context
+     * @param {!Object} computedStyle
+     */
+    vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessHyphenateLimitLines = function(context, computedStyle) {
+        var hyphenateLimitLines = /** @type {adapt.css.Val|string} */ (context.inheritedProps["hyphenate-limit-lines"]);
+        if (!hyphenateLimitLines) return;
+        if (typeof hyphenateLimitLines === 'string') {
+            computedStyle["hyphenate-limit-lines"] =
+                adapt.css.getName(hyphenateLimitLines);
+        } else if (typeof hyphenateLimitLines === 'number') {
+            context['hyphenateLimitLines'] = hyphenateLimitLines;
+        }
+    };
+    /**
+     * @private
      * @param {adapt.css.Val} val
      * @return {number|null}
      */
@@ -417,7 +433,8 @@ goog.scope(function() {
             "hyphens",
             "hyphenate-character",
             "hyphenate-limit-chars",
-            "hyphenate-limit-last"
+            "hyphenate-limit-last",
+            "hyphenate-limit-lines"
         ];
     };
 

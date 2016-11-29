@@ -179,6 +179,28 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 expect(context.hyphenateLimitLast).toEqual(undefined);
                 expect(style["hyphenate-limit-last"]).toEqual(undefined);
             });
+
+            it("inserts 'hyphenateLimitLines' to a context when hyphenate-limit-lines property is '1'.", function() {
+                context.inheritedProps = {
+                    "hyphenate-limit-lines": 1
+                };
+                target.preprocessElementStyle(context, style);
+                expect(context.hyphenateLimitLines).toEqual(1);
+                expect(style["hyphenate-limit-lines"]).toEqual(undefined);
+            });
+            it("do nothing when hyphenate-limit-last property is `no-limit.", function() {
+                context.inheritedProps = {
+                    "hyphenate-limit-lines": 'no-limit'
+                };
+                target.preprocessElementStyle(context, style);
+                expect(context.hyphenateLimitLines).toEqual(undefined);
+                expect(style["hyphenate-limit-lines"]).toEqual(adapt.css.ident.no_limit);
+            });
+            it("do nothing when hyphenate-limit-last property is undfined.", function() {
+                target.preprocessElementStyle(context, style);
+                expect(context.hyphenateLimitLines).toEqual(undefined);
+                expect(style["hyphenate-limit-lines"]).toEqual(undefined);
+            });
         });
 
         describe("#extractElementStyleAndLang", function() {
@@ -395,7 +417,8 @@ describe("vivliostyle.plugins.hyphenation", function() {
                     "hyphens",
                     "hyphenate-character",
                     "hyphenate-limit-chars",
-                    "hyphenate-limit-last"
+                    "hyphenate-limit-last",
+                    "hyphenate-limit-lines"
                 ]);
             });
         });
