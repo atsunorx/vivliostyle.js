@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Added
+
+- Implement hyphenation.
+  - <https://github.com/vivliostyle/vivliostyle-core/pull/1>
+  - Supported properties
+      - [hyphens](https://www.w3.org/TR/css-text-3/#hyphens)
+      - [hyphenate-character](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-character)
+      - [hyphenate-limit-chars](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-chars)
 
 ## [2016.10](https://github.com/vivliostyle/vivliostyle.js/releases/tag/2016.10) - 2016-10-25
 

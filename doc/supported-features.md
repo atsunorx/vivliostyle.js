@@ -538,7 +538,7 @@ Properties where <quote>Allowed prefixes</quote> is indicated may be used with a
 
 - [hyphens](https://www.w3.org/TR/css-text-3/#hyphens)
   - Allowed prefixes: epub, moz, ms, webkit
-  - Support depends on browser capabilities
+  - Supported in all browsers
 - [letter-spacing](https://www.w3.org/TR/css-text-3/#letter-spacing)
   - Support depends on browser capabilities
 - [line-break](https://www.w3.org/TR/css-text-3/#line-break0)
@@ -568,6 +568,15 @@ Properties where <quote>Allowed prefixes</quote> is indicated may be used with a
   - Allowed prefixes: ms
   - Support depends on browser capabilities
   - Note: While the spec states that `word-wrap` must be treated as if it were a shorthand of `overflow-wrap`, Vivliostyle treat them for now as different properties and might result in an incorrect cascading behavior when inconsistent values are specified for both of the properties.
+
+### [CSS Text 4](https://drafts.csswg.org/css-text-4/)
+
+- [hyphenate-character](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-character)
+  - Allowed prefixes: webkit
+  - Support depends on browser capabilities
+- [hyphenate-limit-chars](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-chars)
+  - Allowed prefixes: ms
+  - Supported in all browsers
 
 ### [CSS Text Decoration 3](https://www.w3.org/TR/css-text-decor-3/)
 

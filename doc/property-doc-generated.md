@@ -410,7 +410,7 @@
   - Drafts
       - [CSS 2.1 - font](https://drafts.csswg.org/css21/fonts.html#propdef-font)
       - [CSS Fonts 3 - font](https://drafts.csswg.org/css-fonts-3/#propdef-font)
-  - Values: `FONT font-style font-variant font-weight /* font-size line-height font-family are special-cased */;`
+  - Values: `FONT font-style font-variant font-weight font-stretch /* font-size line-height font-family are special-cased */;`
 - [font-family](https://www.w3.org/TR/CSS22/fonts.html#propdef-font-family)
   - TR
       - [CSS 2.2 - font-family](https://www.w3.org/TR/CSS22/fonts.html#propdef-font-family)
@@ -1450,7 +1450,7 @@
   - Drafts
       - [CSS 2.1 - font](https://drafts.csswg.org/css21/fonts.html#propdef-font)
       - [CSS Fonts 3 - font](https://drafts.csswg.org/css-fonts-3/#propdef-font)
-  - Values: `FONT font-style font-variant font-weight /* font-size line-height font-family are special-cased */;`
+  - Values: `FONT font-style font-variant font-weight font-stretch /* font-size line-height font-family are special-cased */;`
 - [font-family](https://www.w3.org/TR/CSS22/fonts.html#propdef-font-family)
   - TR
       - [CSS 2.2 - font-family](https://www.w3.org/TR/CSS22/fonts.html#propdef-font-family)
@@ -1655,6 +1655,18 @@
   - Values: `normal | break-word;`
 
 ## [CSS Text 4](https://drafts.csswg.org/css-text-4/)
+- [hyphenate-character](#propdef-hyphenate-character)
+    - Allowed prefixes: webkit
+
+  - Drafts
+      - [CSS Text 4 - hyphenate-character](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-character)
+  - Values: `auto | STRING;`
+- [hyphenate-limit-chars](#propdef-hyphenate-limit-chars)
+    - Allowed prefixes: ms
+
+  - Drafts
+      - [CSS Text 4 - hyphenate-limit-chars](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-chars)
+  - Values: `[ auto | INT ]{1,3};`
 - [white-space](https://www.w3.org/TR/CSS22/text.html#propdef-white-space)
   - TR
       - [CSS 2.2 - white-space](https://www.w3.org/TR/CSS22/text.html#propdef-white-space)
@@ -2459,7 +2471,7 @@
       - [SVG 1.1 - alignment-baseline](https://www.w3.org/TR/SVG/text.html#AlignmentBaselineProperty)
   - Drafts
       - [CSS Inline Layout 3 - alignment-baseline](https://drafts.csswg.org/css-inline-3/#propdef-alignment-baseline)
-  - Values: `auto | before-edge | after-edge | baseline | text-bottom | alphabetic | ideographic | middle | central | mathematical | text-top | bottom | center | top;`
+  - Values: `auto | baseline | before-edge | text-before-edge | middle | central | after-edge | text-after-edge | ideographic | alphabetic | hanging | mathematical;`
 - [baseline-shift](https://www.w3.org/TR/css-inline-3/#propdef-baseline-shift)
   - TR
       - [CSS Inline Layout 3 - baseline-shift](https://www.w3.org/TR/css-inline-3/#propdef-baseline-shift)
@@ -2473,7 +2485,7 @@
       - [SVG 1.1 - dominant-baseline](https://www.w3.org/TR/SVG/text.html#DominantBaselineProperty)
   - Drafts
       - [CSS Inline Layout 3 - dominant-baseline](https://drafts.csswg.org/css-inline-3/#propdef-dominant-baseline)
-  - Values: `reset-size | no-change | use-script | auto | text-bottom | alphabetic | ideographic | middle | central | mathematical | hanging | text-top;`
+  - Values: `auto | use-script | no-change | reset-size | ideographic | alphabetic | hanging | mathematical | central | middle | text-after-edge | text-before-edge;`
 - [vertical-align](https://www.w3.org/TR/CSS22/visudet.html#propdef-vertical-align)
   - TR
       - [CSS 2.2 - vertical-align](https://www.w3.org/TR/CSS22/visudet.html#propdef-vertical-align)
@@ -2543,7 +2555,7 @@
       - [SVG 1.1 - alignment-baseline](https://www.w3.org/TR/SVG/text.html#AlignmentBaselineProperty)
   - Drafts
       - [CSS Inline Layout 3 - alignment-baseline](https://drafts.csswg.org/css-inline-3/#propdef-alignment-baseline)
-  - Values: `auto | before-edge | after-edge | baseline | text-bottom | alphabetic | ideographic | middle | central | mathematical | text-top | bottom | center | top;`
+  - Values: `auto | baseline | before-edge | text-before-edge | middle | central | after-edge | text-after-edge | ideographic | alphabetic | hanging | mathematical;`
 - [baseline-shift](https://www.w3.org/TR/css-inline-3/#propdef-baseline-shift)
   - TR
       - [CSS Inline Layout 3 - baseline-shift](https://www.w3.org/TR/css-inline-3/#propdef-baseline-shift)
@@ -2610,7 +2622,7 @@
       - [SVG 1.1 - dominant-baseline](https://www.w3.org/TR/SVG/text.html#DominantBaselineProperty)
   - Drafts
       - [CSS Inline Layout 3 - dominant-baseline](https://drafts.csswg.org/css-inline-3/#propdef-dominant-baseline)
-  - Values: `reset-size | no-change | use-script | auto | text-bottom | alphabetic | ideographic | middle | central | mathematical | hanging | text-top;`
+  - Values: `auto | use-script | no-change | reset-size | ideographic | alphabetic | hanging | mathematical | central | middle | text-after-edge | text-before-edge;`
 - [fill](https://www.w3.org/TR/SVG/painting.html#FillProperty)
   - TR
       - [SVG 1.1 - fill](https://www.w3.org/TR/SVG/painting.html#FillProperty)
@@ -2660,7 +2672,7 @@
   - Drafts
       - [CSS 2.1 - font](https://drafts.csswg.org/css21/fonts.html#propdef-font)
       - [CSS Fonts 3 - font](https://drafts.csswg.org/css-fonts-3/#propdef-font)
-  - Values: `FONT font-style font-variant font-weight /* font-size line-height font-family are special-cased */;`
+  - Values: `FONT font-style font-variant font-weight font-stretch /* font-size line-height font-family are special-cased */;`
 - [font-family](https://www.w3.org/TR/CSS22/fonts.html#propdef-font-family)
   - TR
       - [CSS 2.2 - font-family](https://www.w3.org/TR/CSS22/fonts.html#propdef-font-family)
