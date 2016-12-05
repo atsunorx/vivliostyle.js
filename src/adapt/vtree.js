@@ -540,7 +540,8 @@ adapt.vtree.isSameNodePositionStep = function(nps1, nps2) {
  * @typedef {{
  * 		steps:Array.<adapt.vtree.NodePositionStep>,
  * 		offsetInNode:number,
- *  	after:boolean
+ *  	after:boolean,
+ *  	preprocessedTextContent:?Array.<vivliostyle.diff.Change>
  * }}
  */
 adapt.vtree.NodePosition;
@@ -580,7 +581,7 @@ adapt.vtree.newNodePositionFromNode = function(node) {
         nodeShadow: null,
         shadowSibling: null
     };
-    return {steps:[step], offsetInNode:0, after:false};
+    return {steps:[step], offsetInNode:0, after:false, preprocessedTextContent:null};
 };
 
 /**
@@ -595,7 +596,7 @@ adapt.vtree.newNodePositionFromNodeContext = function(nodeContext) {
         nodeShadow: null,
         shadowSibling: null
     };
-    return {steps:[step], offsetInNode:0, after:false};
+    return {steps:[step], offsetInNode:0, after:false, preprocessedTextContent:nodeContext.preprocessedTextContent};
 };
 
 /**
