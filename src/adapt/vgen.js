@@ -727,6 +727,10 @@ adapt.vgen.ViewFactory.prototype.createElementView = function(firstTime, atUnfor
                 self.nodeContext.whitespace = whitespaceValue;
             }
         }
+        var hyphenateCharacter = computedStyle["hyphenate-character"];
+        if (hyphenateCharacter && hyphenateCharacter !== adapt.css.ident.auto) {
+            self.nodeContext.hyphenateCharacter = hyphenateCharacter.str;
+        }
         // Create the view element
         var custom = false;
         var inner = null;
