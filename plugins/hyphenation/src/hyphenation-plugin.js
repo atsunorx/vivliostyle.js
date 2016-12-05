@@ -63,6 +63,22 @@ goog.scope(function() {
         return !(wordRegexp.test(char));
     };
 
+    /**
+     * @param {string} text
+     * @param {number} index
+     * @param {boolean} isFindPrevious
+     * @return {number}
+     */
+    vivliostyle.plugins.hyphenation.findWordBoundary = function(text, index, isFindPrevious) {
+        var step  = isFindPrevious ? -1 : 1;
+        var limit = isFindPrevious
+            ? function(i) { return i >= 0; }
+            : function(i) { return i < text.length; };
+        for (var i=index; limit(i); i+=step) {
+            if (vivliostyle.plugins.hyphenation.isWordBoundary(text.charAt(i))) return i;
+        }
+        return isFindPrevious ? 0 : text.length;
+    };
 
     /**
      * @constructor
@@ -514,7 +530,7 @@ goog.scope(function() {
      */
     vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.prototype.tryToBreakPreviousWordBoundary = function(
         textNode, text, viewIndex) {
-        var index = this.findWordBoundary(text, viewIndex, true);
+        var index = vivliostyle.plugins.hyphenation.findWordBoundary(text, viewIndex, true);
         if (index > 0) {
             textNode.replaceData(index, text.length - index, '');
             return index+1;
@@ -536,24 +552,6 @@ goog.scope(function() {
         }
         return null;
     };
-
-    /**
-     * @param {string} text
-     * @param {number} index
-     * @param {boolean} isFindPrevious
-     * @return {number}
-     */
-    vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.prototype.findWordBoundary = function(text, index, isFindPrevious) {
-        var step  = isFindPrevious ? -1 : 1;
-        var limit = isFindPrevious
-            ? function(i) { return i >= 0; }
-            : function(i) { return i < text.length; };
-        for (var i=index; limit(i); i+=step) {
-            if (vivliostyle.plugins.hyphenation.isWordBoundary(text.charAt(i))) return i;
-        }
-        return isFindPrevious ? 0 : text.length;
-    };
-
 
     /**
      * @override
