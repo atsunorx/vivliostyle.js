@@ -396,7 +396,7 @@ adapt.layout.Column.prototype.openAllViews = function(position) {
             var step = steps[stepIndex];
             nodeContext = self.makeNodeContext(step, prevContext);
             if (stepIndex == 0) {
-                nodeContext.offsetInNode = self.calculateOffstInNodeForNodeContext(position);
+                nodeContext.offsetInNode = self.calculateOffsetInNodeForNodeContext(position);
                 nodeContext.after = position.after;
                 nodeContext.preprocessedTextContent = position.preprocessedTextContent;
                 if (nodeContext.after) {
@@ -419,7 +419,7 @@ adapt.layout.Column.prototype.openAllViews = function(position) {
  * @param {adapt.vtree.NodePosition} position
  * @return {number}
  */
-adapt.layout.Column.prototype.calculateOffstInNodeForNodeContext = function(position) {
+adapt.layout.Column.prototype.calculateOffsetInNodeForNodeContext = function(position) {
     return position.preprocessedTextContent
         ? vivliostyle.diff.resolveNewIndex(position.preprocessedTextContent, position.offsetInNode)
         : position.offsetInNode;
