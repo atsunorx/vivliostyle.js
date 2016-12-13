@@ -4,6 +4,12 @@
 
 ### Added
 
+- Implement hyphenation.
+  - <https://github.com/vivliostyle/vivliostyle-core/pull/1>
+  - Supported properties
+      - [hyphens](https://www.w3.org/TR/css-text-3/#hyphens)
+      - [hyphenate-character](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-character)
+      - [hyphenate-limit-chars](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-chars)
 - Add support for Compositing and Blending Level 1
   - <https://github.com/vivliostyle/vivliostyle.js/issues/148>
   - Spec: [Compositing and Blending Level 1](https://drafts.fxtf.org/compositing-1/)

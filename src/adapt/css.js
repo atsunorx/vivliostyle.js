@@ -908,6 +908,7 @@ adapt.css.ident = {
     left: adapt.css.getName("left"),
     list_item: adapt.css.getName("list-item"),
     ltr: adapt.css.getName("ltr"),
+    manual: adapt.css.getName("manual"),
     none: adapt.css.getName("none"),
     normal: adapt.css.getName("normal"),
     oeb_page_foot: adapt.css.getName("oeb-page-foot"),
@@ -970,4 +971,3 @@ adapt.css.processingOrderFn = function(name1, name2) {
     var n2 = adapt.css.processingOrder[name2] || Number.MAX_VALUE;
     return n1 - n2;
 };
-

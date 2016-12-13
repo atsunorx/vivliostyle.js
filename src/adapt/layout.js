@@ -475,8 +475,9 @@ adapt.layout.Column.prototype.openAllViews = function(position) {
             var step = steps[stepIndex];
             nodeContext = adapt.vtree.makeNodeContextFromNodePositionStep(step, prevContext);
             if (stepIndex == 0) {
-                nodeContext.offsetInNode = position.offsetInNode;
+                nodeContext.offsetInNode = self.calculateOffsetInNodeForNodeContext(position);
                 nodeContext.after = position.after;
+                nodeContext.preprocessedTextContent = position.preprocessedTextContent;
                 if (nodeContext.after) {
                     break;
                 }
@@ -491,6 +492,16 @@ adapt.layout.Column.prototype.openAllViews = function(position) {
         frame.finish(nodeContext);
     });
     return frame.result();
+};
+
+/**
+ * @param {adapt.vtree.NodePosition} position
+ * @return {number}
+ */
+adapt.layout.Column.prototype.calculateOffsetInNodeForNodeContext = function(position) {
+    return position.preprocessedTextContent
+        ? vivliostyle.diff.resolveNewIndex(position.preprocessedTextContent, position.offsetInNode)
+        : position.offsetInNode;
 };
 
 adapt.layout.firstCharPattern =
@@ -1473,10 +1484,13 @@ adapt.layout.Column.prototype.findAcceptableBreakInside = function(checkPoints, 
         } else {
             // Character with index low is the last one that fits.
             viewIndex = low - nodeContext.boxOffset;
+            var hyphenChar = nodeContext.hyphenateCharacter
+                || (nodeContext.parent && nodeContext.parent.hyphenateCharacter)
+                || "-";
             var text = textNode.data;
             if (text.charCodeAt(viewIndex) == 0xAD) {
                 // convert trailing soft hyphen to a real hyphen
-                textNode.replaceData(viewIndex, text.length - viewIndex, "-");
+                textNode.replaceData(viewIndex, text.length - viewIndex, hyphenChar);
                 viewIndex++;
             } else {
                 // keep the trailing character (it may be a space or not)
@@ -1485,7 +1499,7 @@ adapt.layout.Column.prototype.findAcceptableBreakInside = function(checkPoints, 
                 var ch1 = text.charAt(viewIndex);
                 // If automatic hyphen was inserted here, add a real hyphen.
                 textNode.replaceData(viewIndex, text.length - viewIndex,
-                    adapt.base.isLetter(ch0) && adapt.base.isLetter(ch1) ? "-" : "");
+                    adapt.base.isLetter(ch0) && adapt.base.isLetter(ch1) ? hyphenChar : "");
             }
             if (viewIndex > 0) {
                 nodeContext = nodeContext.modify();
@@ -2555,4 +2569,3 @@ adapt.layout.Column.prototype.redoLayout = function() {
     });
     return frame.result();
 };
-
