@@ -368,7 +368,7 @@ goog.scope(function() {
             computedStyle["hyphenate-character"] =
                 adapt.css.getName(hyphenateCharacter);
         } else {
-            context['hyphenateCharacter'] = hyphenateCharacter.str;
+            context.hyphenateCharacter = hyphenateCharacter.str;
             computedStyle["hyphenate-character"] = hyphenateCharacter;
         }
     };

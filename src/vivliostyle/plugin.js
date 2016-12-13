@@ -75,7 +75,22 @@ goog.scope(function() {
          * Functions called by this hook are expected to
          * return an instnce of {adapt.layout.TextNodeBreaker} or null.
          */
-        "RESOLVE_TEXT_NODE_BREAKER": "RESOLVE_TEXT_NODE_BREAKER"
+        "RESOLVE_TEXT_NODE_BREAKER": "RESOLVE_TEXT_NODE_BREAKER",
+
+        /**
+         * Called when resolving a formatting context.
+         *
+         * The hook is called with a NodeContext object and a boolean flag representing whether this node is encountered for the first time or not.
+         * Functions called by this hook are expected to return a formatting context for the NodeContext.
+         */
+        "RESOLVE_FORMATTING_CONTEXT": "RESOLVE_FORMATTING_CONTEXT",
+        /**
+         * Called when resolving a layout processor (adapt.layout.LayoutProcessor) for a formatting context.
+         *
+         * The hook is called with a formatting context (adapt.vtree.FormattingContext).
+         * Functions called by this hook are expected to return a layout processor corresponding to the formatting context.
+         */
+        "RESOLVE_LAYOUT_PROCESSOR": "RESOLVE_LAYOUT_PROCESSOR"
     };
 
     /** @const */ var HOOKS = vivliostyle.plugin.HOOKS;
@@ -112,6 +127,15 @@ goog.scope(function() {
      * @typedef {function(adapt.vtree.NodeContext):adapt.layout.TextNodeBreaker}
      */
     vivliostyle.plugin.ResolveTextNodeBreakerHook;
+    /**
+     * @typedef {function(adapt.vtree.NodeContext, boolean):adapt.vtree.FormattingContext}
+     */
+    vivliostyle.plugin.ResolveFormattingContextHook;
+
+    /**
+     * @typedef {function(!adapt.vtree.FormattingContext):adapt.layout.LayoutProcessor}
+     */
+    vivliostyle.plugin.ResolveLayoutProcessorHook;
 
     /**
      * @private

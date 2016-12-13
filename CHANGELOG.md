@@ -2,6 +2,33 @@
 
 ## Unreleased
 
+### Added
+
+- Implement hyphenation.
+  - <https://github.com/vivliostyle/vivliostyle-core/pull/1>
+  - Supported properties
+      - [hyphens](https://www.w3.org/TR/css-text-3/#hyphens)
+      - [hyphenate-character](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-character)
+      - [hyphenate-limit-chars](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-chars)
+- Add support for Compositing and Blending Level 1
+  - <https://github.com/vivliostyle/vivliostyle.js/issues/148>
+  - Spec: [Compositing and Blending Level 1](https://drafts.fxtf.org/compositing-1/)
+
+### Fixed
+
+- Fix incorrect page breaking at boundaries of inline-block boxes
+  - <https://github.com/vivliostyle/vivliostyle.js/pull/309>
+- Improve page/column breaking inside tables
+  - <https://github.com/vivliostyle/vivliostyle.js/pull/311>
+  - Following issues are resolved:
+      - Table cell with rowspan disappears after page break
+          - https://github.com/vivliostyle/vivliostyle.js/issues/85
+      - Table (column) width should not change over page breaks
+          - https://github.com/vivliostyle/vivliostyle.js/issues/157
+      - Table breaks occur between the colgroup and the first row
+          - https://github.com/vivliostyle/vivliostyle.js/issues/279
+- Fix incorrect treatment of percentage value for line-height property
+  - <https://github.com/vivliostyle/vivliostyle.js/pull/312>
 
 ## [2016.10](https://github.com/vivliostyle/vivliostyle.js/releases/tag/2016.10) - 2016-10-25
 
