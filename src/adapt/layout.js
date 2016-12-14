@@ -1543,8 +1543,8 @@ adapt.layout.TextNodeBreaker.prototype.breakTextNode = function(textNode,
  * @return {string}
  */
 adapt.layout.TextNodeBreaker.prototype.resolveHyphenateCharacter = function(nodeContext) {
-    return nodeContext['hyphenateCharacter']
-        || (nodeContext.parent && nodeContext.parent['hyphenateCharacter'])
+    return nodeContext.hyphenateCharacter
+        || (nodeContext.parent && nodeContext.parent.hyphenateCharacter)
         || "-";
 };
 
