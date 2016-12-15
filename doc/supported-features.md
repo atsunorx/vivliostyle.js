@@ -577,6 +577,9 @@ Properties where <quote>Allowed prefixes</quote> is indicated may be used with a
 - [hyphenate-limit-chars](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-chars)
   - Allowed prefixes: ms
   - Supported in all browsers
+- [hyphenate-limit-last](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-last)
+  - Supported in all browsers
+  - Only `none` and `column` values are supported.
 
 ### [CSS Text Decoration 3](https://www.w3.org/TR/css-text-decor-3/)
 

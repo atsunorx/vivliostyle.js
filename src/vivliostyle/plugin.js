@@ -64,6 +64,19 @@ goog.scope(function() {
          *  {adapt.base.JSON} command
          */
         "CONFIGURATION": "CONFIGURATION",
+
+        /**
+         * Called when resolving a text node breaker
+         * which detects an acceptable breakpoint and break text node at this point.
+         *
+         * The hook is called with an object with the following properties:
+         *  {adapt.vtree.NodeContext} nodeContext
+         *
+         * Functions called by this hook are expected to
+         * return an instnce of {adapt.layout.TextNodeBreaker} or null.
+         */
+        "RESOLVE_TEXT_NODE_BREAKER": "RESOLVE_TEXT_NODE_BREAKER",
+
         /**
          * Called when resolving a formatting context.
          *
@@ -110,6 +123,10 @@ goog.scope(function() {
      */
     vivliostyle.plugin.ConfigurationHook;
 
+    /**
+     * @typedef {function(adapt.vtree.NodeContext):adapt.layout.TextNodeBreaker}
+     */
+    vivliostyle.plugin.ResolveTextNodeBreakerHook;
     /**
      * @typedef {function(adapt.vtree.NodeContext, boolean):adapt.vtree.FormattingContext}
      */

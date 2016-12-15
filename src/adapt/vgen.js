@@ -769,6 +769,9 @@ adapt.vgen.ViewFactory.prototype.createElementView = function(firstTime, atUnfor
         if (hyphenateCharacter && hyphenateCharacter !== adapt.css.ident.auto) {
             self.nodeContext.hyphenateCharacter = hyphenateCharacter.str;
         }
+        var wordBreak = computedStyle["word-break"];
+        var overflowWrap = computedStyle["overflow-wrap"] || ["word-wrap"];
+        self.nodeContext.breakWord = (wordBreak === adapt.css.ident.break_all) || (overflowWrap === adapt.css.ident.break_word);
         // Resolve formatting context
         self.resolveFormattingContext(self.nodeContext, firstTime);
         if (self.nodeContext.formattingContext) {

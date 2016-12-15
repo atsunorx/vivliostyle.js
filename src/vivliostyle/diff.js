@@ -5,11 +5,14 @@
 goog.provide("vivliostyle.diff");
 
 goog.require("vivliostyle.namespace");
-var fastdiff = require('node_modules/fast-diff/diff');
 
 goog.scope(function() {
 
     "use strict";
+
+    /* eslint-disable global-require */
+    var fastdiff = require('node_modules/fast-diff/diff');
+    /* eslint-enable global-require */
 
     /**
      * @typedef {Array.<(number|string)>}

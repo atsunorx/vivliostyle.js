@@ -44,6 +44,7 @@ adapt.csscasc.inheritedProps = {
     "hyphens": true,
     "hyphenate-character": true,
     "hyphenate-limit-chars": true,
+    "hyphenate-limit-last": true,
     "image-rendering": true,
     "image-resolution": true,
     "letter-spacing": true,
