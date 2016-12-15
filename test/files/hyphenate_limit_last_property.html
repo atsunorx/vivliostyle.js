@@ -10,16 +10,20 @@
       column-count: 2;
       -moz-column-fill: auto;
       column-fill: auto;
+      font-family: Helvetica, Arial, sans-serif;
 
       widows: 1;
       orphans: 1;
     }
     div.label {
-      font-size: xx-small;
+      font-size: 9px;
+      line-height: 11px;
       color: #FF3333;
+      break-before: column;
     }
     div.hyphens {
-      font-size: x-large;
+      font-size: 24px;
+      line-height: 29px;
       hyphens: auto;
       margin-bottom: 20px;
     }
@@ -35,6 +39,13 @@
       hyphenate-limit-last: spread;
       -webkit-hyphenate-limit-last: spread;
     }
+    .break-all {
+      word-break: break-all;
+    }
+    .break-word {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
   </style>
 </head>
 <body>
@@ -42,8 +53,24 @@
   <div class="hyphens hyphenate-limit-last_column">
     It is not defined whether hyphenation introduced by such emergency breaking influences nearby hyphenation points.
   </div>
+  <div class="label">hyphenate-limit-last: column; break-all</div>
+  <div class="hyphens hyphenate-limit-last_column break-all">
+    It is not defined whether hyphenation introduced by such emergency breaking influences nearby hyphenation points.
+  </div>
+  <div class="label">hyphenate-limit-last: column; break-word</div>
+  <div class="hyphens hyphenate-limit-last_column break-word">
+    It is not defined whether hyphenation introduced by such emergency breaking influences nearby hyphenation points.
+  </div>
   <div class="label">hyphenate-limit-last: none</div>
   <div class="hyphens hyphenate-limit-last_none">
+    It is not defined whether hyphenation introduced by such emergency breaking influences nearby hyphenation points.
+  </div>
+  <div class="label">hyphenate-limit-last: none; break-all</div>
+  <div class="hyphens hyphenate-limit-last_none break-all">
+    It is not defined whether hyphenation introduced by such emergency breaking influences nearby hyphenation points.
+  </div>
+  <div class="label">hyphenate-limit-last: none; break-word</div>
+  <div class="hyphens hyphenate-limit-last_none break-word">
     It is not defined whether hyphenation introduced by such emergency breaking influences nearby hyphenation points.
   </div>
   <div class="label">hyphenate-limit-last: spread</div>

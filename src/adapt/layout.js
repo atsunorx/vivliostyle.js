@@ -1559,7 +1559,7 @@ adapt.layout.TextNodeBreaker.prototype.breakAfterSoftHyphen = function(
     textNode, text, viewIndex, nodeContext) {
     // convert trailing soft hyphen to a real hyphen
     textNode.replaceData(viewIndex, text.length - viewIndex,
-        this.resolveHyphenateCharacter(nodeContext));
+        !nodeContext.breakWord ? this.resolveHyphenateCharacter(nodeContext) : "");
     return viewIndex+1;
 };
 /**
@@ -1578,7 +1578,7 @@ adapt.layout.TextNodeBreaker.prototype.breakAfterOtherCharacter = function(
 
     // If automatic hyphen was inserted here, add a real hyphen.
     textNode.replaceData(viewIndex, text.length - viewIndex,
-        adapt.base.isLetter(ch0) && adapt.base.isLetter(ch1)
+        !nodeContext.breakWord && adapt.base.isLetter(ch0) && adapt.base.isLetter(ch1)
             ? this.resolveHyphenateCharacter(nodeContext) : "");
     return viewIndex;
 };

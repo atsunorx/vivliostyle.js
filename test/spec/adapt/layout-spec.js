@@ -38,7 +38,14 @@ describe("layout", function() {
                 expect(newContext.preprocessedTextContent).toEqual(newContext.preprocessedTextContent);
                 expect(textNode.replaceData).toHaveBeenCalledWith(10, 7, '_');
             });
-            it("removes characters after split point and inserts a hyphenation character when splits a text node at the space character.", function() {
+            it("removes characters after split point but does not insert a hyphenation character when splits a text node at the soft-hyphen character and NodeContext#breakWord is true.", function() {
+                nodeContext.breakWord = true;
+                var newContext = breaker.breakTextNode(textNode, nodeContext, 13);
+                expect(newContext.offsetInNode).toEqual(11);
+                expect(newContext.preprocessedTextContent).toEqual(newContext.preprocessedTextContent);
+                expect(textNode.replaceData).toHaveBeenCalledWith(10, 7, '');
+            });
+            it("removes characters after split point but does not insert a hyphenation character when splits a text node at the space character.", function() {
                 var newContext = breaker.breakTextNode(textNode, nodeContext, 15);
                 expect(newContext.offsetInNode).toEqual(13);
                 expect(newContext.preprocessedTextContent).toEqual(newContext.preprocessedTextContent);
@@ -49,6 +56,13 @@ describe("layout", function() {
                 expect(newContext.offsetInNode).toEqual(8);
                 expect(newContext.preprocessedTextContent).toEqual(newContext.preprocessedTextContent);
                 expect(textNode.replaceData).toHaveBeenCalledWith(8, 9, '_');
+            });
+            it("removes characters after split point but does not insert a hyphenation character when splits a text node at the normal character and NodeContext#breakWord is true.", function() {
+                nodeContext.breakWord = true;
+                var newContext = breaker.breakTextNode(textNode, nodeContext, 10);
+                expect(newContext.offsetInNode).toEqual(8);
+                expect(newContext.preprocessedTextContent).toEqual(newContext.preprocessedTextContent);
+                expect(textNode.replaceData).toHaveBeenCalledWith(8, 9, '');
             });
         });
 

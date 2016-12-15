@@ -890,6 +890,8 @@ adapt.css.ident = {
     both: adapt.css.getName("both"),
     bottom: adapt.css.getName("bottom"),
     border_box: adapt.css.getName("border-box"),
+    break_all: adapt.css.getName("break-all"),
+    break_word: adapt.css.getName("break-word"),
     crop: adapt.css.getName("crop"),
     cross: adapt.css.getName("cross"),
     column: adapt.css.getName("column"),
