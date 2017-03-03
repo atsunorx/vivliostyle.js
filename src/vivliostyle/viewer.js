@@ -53,6 +53,7 @@ goog.scope(function() {
      * - pageViewMode: Page view mode (singlePage / spread / autoSpread). default: singlePage
      * - zoom: Zoom factor with which pages are displayed. default: 1
      * - fitToScreen: Auto adjust zoom factor to fit the screen. default: false
+     * - defaultPaperSize: Default paper size in px. Effective when @page size is set to auto. default: undefined (means the windows size is used as paper size).
      * @dict
      * @typedef {{
      *     autoResize: (boolean|undefined),
@@ -61,7 +62,8 @@ goog.scope(function() {
      *     renderAllPages: (boolean|undefined),
      *     pageViewMode: (!vivliostyle.viewer.PageViewMode|undefined),
      *     zoom: (number|undefined),
-     *     fitToScreen: (boolean|undefined)
+     *     fitToScreen: (boolean|undefined),
+     *     defaultPaperSize: ({width: number, height: number}|undefined)
      * }}
      */
     vivliostyle.viewer.ViewerOptions;
@@ -77,7 +79,8 @@ goog.scope(function() {
             "renderAllPages": true,
             "pageViewMode": PageViewMode.AUTO_SPREAD,
             "zoom": 1,
-            "fitToScreen": false
+            "fitToScreen": false,
+            "defaultPaperSize": undefined
         };
     }
 
@@ -384,6 +387,12 @@ goog.scope(function() {
     };
 
     /**
+     * @return {Array<{width: number, height: number}>}
+     */
+    vivliostyle.viewer.Viewer.prototype.getPageSizes = function() {
+        return this.adaptViewer.pageSizes;
+    };
+    /**
      * @enum {string}
      */
     vivliostyle.viewer.PageViewMode = adapt.viewer.PageViewMode;
@@ -399,6 +408,7 @@ goog.scope(function() {
     goog.exportProperty(Viewer.prototype, "navigateToPage", Viewer.prototype.navigateToPage);
     goog.exportProperty(Viewer.prototype, "navigateToInternalUrl", Viewer.prototype.navigateToInternalUrl);
     goog.exportProperty(Viewer.prototype, "queryZoomFactor", Viewer.prototype.queryZoomFactor);
+    goog.exportProperty(Viewer.prototype, "getPageSizes", Viewer.prototype.getPageSizes);
     vivliostyle.namespace.exportSymbol("vivliostyle.viewer.ZoomType", ZoomType);
     goog.exportProperty(ZoomType, "FIT_INSIDE_VIEWPORT", ZoomType.FIT_INSIDE_VIEWPORT);
     vivliostyle.namespace.exportSymbol("vivliostyle.viewer.PageViewMode", PageViewMode);

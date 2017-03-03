@@ -138,6 +138,7 @@ adapt.viewer.Viewer.prototype.init = function() {
     /** @type {boolean} */ this.waitForLoading = false;
     /** @type {boolean} */ this.renderAllPages = true;
     /** @type {adapt.expr.Preferences} */ this.pref = adapt.expr.defaultPreferences();
+    /** @type {!Array<{width: number, height: number}>} */ this.pageSizes = [];
 };
 
 adapt.viewer.Viewer.prototype.addLogListeners = function() {
@@ -393,6 +394,11 @@ adapt.viewer.Viewer.prototype.configure = function(command) {
         this.needRefresh = true;
     }
 
+    if (typeof command["defaultPaperSize"] == "object" && typeof command["defaultPaperSize"].width == "number" && typeof command["defaultPaperSize"].height == "number") {
+        this.viewport = null;
+        this.pref.defaultPaperSize = command["defaultPaperSize"];
+        this.needResize = true;
+    }
     this.configurePlugins(command);
 
     return adapt.task.newResult(true);
@@ -608,6 +614,17 @@ adapt.viewer.Viewer.prototype.sizeIsGood = function() {
 
 /**
  * @private
+ * @param {{width: number, height: number}} pageSize
+ * @param {!Object<string, !{width: number, height: number}>} pageSheetSize
+ * @param {number} spineIndex
+ * @param {number} pageIndex
+ */
+adapt.viewer.Viewer.prototype.setPageSize = function(pageSize, pageSheetSize, spineIndex, pageIndex) {
+    this.pageSizes[pageIndex] = pageSize;
+    this.setPageSizePageRules(pageSheetSize, spineIndex, pageIndex);
+};
+/**
+ * @private
  * @param {!Object<string, !{width: number, height: number}>} pageSheetSize
  * @param {number} spineIndex
  * @param {number} pageIndex
@@ -645,7 +662,7 @@ adapt.viewer.Viewer.prototype.reset = function() {
     this.viewport = this.createViewport();
     this.viewport.resetZoom();
     this.opfView = new adapt.epub.OPFView(this.opf, this.viewport, this.fontMapper, this.pref,
-        this.setPageSizePageRules.bind(this));
+        this.setPageSize.bind(this));
 };
 
 /**

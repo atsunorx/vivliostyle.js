@@ -213,6 +213,8 @@ adapt.ops.StyleInstance = function(style, xmldoc, defaultLang, viewport, clientL
     }
 
     /** @const {!Object<string, !{width: number, height: number}>} */ this.pageSheetSize = {};
+    /** @type {number} */ this.pageSheetHeight = 0;
+    /** @type {number} */ this.pageSheetWidth = 0;
 };
 goog.inherits(adapt.ops.StyleInstance, adapt.expr.Context);
 
@@ -1178,8 +1180,10 @@ adapt.ops.StyleInstance.prototype.layoutNextPage = function(page, cp) {
 adapt.ops.StyleInstance.prototype.setPageSizeAndBleed = function(evaluatedPageSizeAndBleed, page) {
     this.actualPageWidth = evaluatedPageSizeAndBleed.pageWidth;
     this.actualPageHeight = evaluatedPageSizeAndBleed.pageHeight;
-    page.container.style.width = (evaluatedPageSizeAndBleed.pageWidth + evaluatedPageSizeAndBleed.cropOffset * 2) + "px";
-    page.container.style.height = (evaluatedPageSizeAndBleed.pageHeight + evaluatedPageSizeAndBleed.cropOffset * 2) + "px";
+    this.pageSheetWidth = evaluatedPageSizeAndBleed.pageWidth + evaluatedPageSizeAndBleed.cropOffset * 2;
+    this.pageSheetHeight = evaluatedPageSizeAndBleed.pageHeight + evaluatedPageSizeAndBleed.cropOffset * 2;
+    page.container.style.width = this.pageSheetWidth + "px";
+    page.container.style.height = this.pageSheetHeight + "px";
     page.bleedBox.style.left = evaluatedPageSizeAndBleed.bleedOffset + "px";
     page.bleedBox.style.right = evaluatedPageSizeAndBleed.bleedOffset + "px";
     page.bleedBox.style.top = evaluatedPageSizeAndBleed.bleedOffset + "px";
@@ -1417,6 +1421,7 @@ adapt.ops.OPSDocStore = function(fontDeobfuscator) {
     /** @type {Object.<string,Array.<adapt.vtree.Trigger>>} */ this.triggersByDocURL = {};
     /** @type {adapt.cssvalid.ValidatorSet} */ this.validatorSet = null;
     /** @private @const @type {Array.<adapt.ops.StyleSource>} */ this.styleSheets = [];
+    /** @private @type {boolean} */ this.triggerSingleDocumentPreprocessing = false;
 };
 goog.inherits(adapt.ops.OPSDocStore, adapt.net.ResourceStore);
 
@@ -1434,6 +1439,7 @@ adapt.ops.OPSDocStore.prototype.init = function(authorStyleSheets, userStyleShee
         self.validatorSet = validatorSet;
         adapt.ops.loadUABase().then(function() {
             self.load(userAgentXML).then(function() {
+                self.triggerSingleDocumentPreprocessing = true;
                 frame.finish(true);
             });
         });
@@ -1511,6 +1517,13 @@ adapt.ops.OPSDocStore.prototype.parseOPSResource = function(response) {
         if (!xmldoc) {
             frame.finish(null);
             return;
+        }
+        if (self.triggerSingleDocumentPreprocessing) {
+            /** @type {!Array<!vivliostyle.plugin.PreProcessSingleDocumentHook>} */ var hooks =
+                vivliostyle.plugin.getHooksForName(vivliostyle.plugin.HOOKS.PREPROCESS_SINGLE_DOCUMENT);
+            for (var i = 0; i < hooks.length; i++) {
+                hooks[i](xmldoc.document);
+            }
         }
         var triggers = [];
         var triggerList = xmldoc.document.getElementsByTagNameNS(adapt.base.NS.epub, "trigger");
