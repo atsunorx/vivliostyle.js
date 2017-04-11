@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Added
+
+- Implement `repeat-on-break` property
+  - <https://github.com/vivliostyle/vivliostyle.js/pull/323>
+  - Spec proposal: [CSS Repeated Headers and Footers](https://specs.rivoal.net/css-repeat/)
+
+### Changed
+
+- Place footnotes at the bottom of pages (or regions) rather than columns
+  - <https://github.com/vivliostyle/vivliostyle.js/pull/343>
+
 ### Fixed
 
 - Fix footnote layout bugs
