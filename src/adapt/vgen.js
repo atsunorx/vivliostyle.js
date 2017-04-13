@@ -704,7 +704,9 @@ adapt.vgen.ViewFactory.prototype.createElementView = function(firstTime, atUnfor
         if (self.nodeContext.isInsideBFC()) {
             // When the element is already inside a block formatting context (except one from the root),
             // float and clear can be controlled by the browser and we don't need to care.
-            clearSide = null;
+            if (clearSide !== adapt.css.ident.all) {
+                clearSide = null;
+            }
             if (floatSide !== adapt.css.ident.footnote &&
                 !(floatReference && vivliostyle.pagefloat.isPageFloat(floatReference))) {
                 floatSide = null;
@@ -718,6 +720,7 @@ adapt.vgen.ViewFactory.prototype.createElementView = function(firstTime, atUnfor
             floatSide === adapt.css.ident.inline_end ||
             floatSide === adapt.css.ident.block_start ||
             floatSide === adapt.css.ident.block_end ||
+            floatSide === adapt.css.ident.snap_block ||
             floatSide === adapt.css.ident.footnote;
         if (floatSide) {
             // Don't want to set it in view DOM CSS.
@@ -740,7 +743,7 @@ adapt.vgen.ViewFactory.prototype.createElementView = function(firstTime, atUnfor
                 }
             }
             if (clearSide === adapt.css.ident.left || clearSide === adapt.css.ident.right ||
-                clearSide === adapt.css.ident.both) {
+                clearSide === adapt.css.ident.both || clearSide === adapt.css.ident.all) {
                 delete computedStyle["clear"];
                 if (computedStyle["display"] && computedStyle["display"] != adapt.css.ident.inline) {
                     self.nodeContext.clearSide = clearSide.toString();
