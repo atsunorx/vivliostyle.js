@@ -9,10 +9,10 @@ goog.require("vivliostyle.plugin");
 
 goog.scope(function() {
 
-    /* eslint-disable global-require */
+    /* eslint-disable global-require,no-undef */
     var Hypher = require("node_modules/hypher/lib/hypher");
     var fastdiff = require('node_modules/fast-diff/diff');
-    /* eslint-enable global-require */
+    /* eslint-enable global-require,no-undef */
 
     /**
      * @typedef {{
@@ -89,12 +89,13 @@ goog.scope(function() {
                 vivliostyle.plugins.hyphenation.parseDictionary,
                 adapt.net.XMLHttpRequestResponseType.TEXT);
     };
+    var HyphenationDictionaryStore = vivliostyle.plugins.hyphenation.HyphenationDictionaryStore;
 
     /**
      * @param {!string} lang
      * @return {!adapt.task.Result.<HypherDictionary>}
      */
-    vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.load = function(lang) {
+    HyphenationDictionaryStore.prototype.load = function(lang) {
         return this.loadDictionary(lang).thenAsync(function(dictionary) {
             if (dictionary && this.exceptionFileUrl != null) {
                 return this.loadAndMergeExceptions(dictionary, lang);
@@ -109,7 +110,7 @@ goog.scope(function() {
      * @param {!string} lang
      * @return {!adapt.task.Result.<HypherDictionary>}
      */
-    vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.loadDictionary = function(lang) {
+    HyphenationDictionaryStore.prototype.loadDictionary = function(lang) {
         var url = this.resolveDictionaryUrl(lang);
         return /** @type  {!adapt.task.Result.<HypherDictionary>} */ (this.store.load(url, false));
     };
@@ -120,7 +121,7 @@ goog.scope(function() {
      * @param {!string} lang
      * @return {!adapt.task.Result.<HypherDictionary>}
      */
-    vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.loadAndMergeExceptions = function(dictionary, lang) {
+    HyphenationDictionaryStore.prototype.loadAndMergeExceptions = function(dictionary, lang) {
         return this.store.load(this.exceptionFileUrl, false).thenAsync(function(exceptions) {
             if (exceptions) {
                 var exceptionWords = this.collectExceptionWords(lang, exceptions);
@@ -137,7 +138,7 @@ goog.scope(function() {
      * @param {!Object.<string, Array.<string>>} exceptions
      * @return {!Array.<string>}
      */
-    vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.collectExceptionWords = function(lang, exceptions) {
+    HyphenationDictionaryStore.prototype.collectExceptionWords = function(lang, exceptions) {
         if (!exceptions) return [];
         var key = null;
         Object.keys(exceptions).forEach(function(k) {
@@ -156,7 +157,7 @@ goog.scope(function() {
      * @param {Array.<string>} exceptionWords
      * @param {!Object.<string,string>} words
      */
-    vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.collectWords = function(exceptionWords, words) {
+    HyphenationDictionaryStore.prototype.collectWords = function(exceptionWords, words) {
         if (!exceptionWords) return;
         exceptionWords.forEach(function(word) {
             var stripped = word.replace(/\|/g, '');
@@ -167,7 +168,7 @@ goog.scope(function() {
     /**
      * @param {string} exceptionFileUrl
      */
-    vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.setExcpetionFileUrl = function(exceptionFileUrl) {
+    HyphenationDictionaryStore.prototype.setExcpetionFileUrl = function(exceptionFileUrl) {
         exceptionFileUrl = adapt.base.resolveURL(exceptionFileUrl, adapt.base.baseURL);
         if (this.exceptionFileUrl !== exceptionFileUrl) {
             if (this.exceptionFileUrl) this.store.delete(this.exceptionFileUrl);
@@ -179,7 +180,7 @@ goog.scope(function() {
      * @param {!string} lang
      * @return {!string} url
      */
-    vivliostyle.plugins.hyphenation.HyphenationDictionaryStore.prototype.resolveDictionaryUrl = function(lang) {
+    HyphenationDictionaryStore.prototype.resolveDictionaryUrl = function(lang) {
         return adapt.base.resolveURL(lang.toLowerCase() + ".json",
             adapt.base.baseURL  + "plugins/hyphenation/resources/");
     };
@@ -190,10 +191,11 @@ goog.scope(function() {
      */
     vivliostyle.plugins.hyphenation.Hyphenator = function() {
         /** @type {!vivliostyle.plugins.hyphenation.HyphenationDictionaryStore} */ this.dictionaryStore =
-            new vivliostyle.plugins.hyphenation.HyphenationDictionaryStore();
+            new HyphenationDictionaryStore();
         /** @type {Object.<string, vivliostyle.plugins.hyphenation.HypherCache>} */
         this.hypherCache = {};
     };
+    var Hyphenator = vivliostyle.plugins.hyphenation.Hyphenator;
 
     /**
      * @param {!string} string
@@ -203,7 +205,7 @@ goog.scope(function() {
      * @param {(number|null)=} rightmin
      * @return {!adapt.task.Result.<string>}
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.hyphenate = function(string, lang, min, leftmin, rightmin) {
+    Hyphenator.prototype.hyphenate = function(string, lang, min, leftmin, rightmin) {
         /** @type {!adapt.task.Frame.<string>} */ var frame =
             adapt.task.newFrame("hyphenate");
         this.getHypherInstance(lang).then(function(cache) {
@@ -227,7 +229,7 @@ goog.scope(function() {
      * @param {(number|null)=} leftmin
      * @param {(number|null)=} rightmin
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.setHyphenationLimitChars = function(cache, leftmin, rightmin) {
+    Hyphenator.prototype.setHyphenationLimitChars = function(cache, leftmin, rightmin) {
         if (!cache.instance) return;
         if (leftmin  != null) /** @suppress {const} */ cache.instance.leftMin  = leftmin;
         if (rightmin != null) /** @suppress {const} */ cache.instance.rightMin = rightmin;
@@ -236,7 +238,7 @@ goog.scope(function() {
     /**
      * @param {vivliostyle.plugins.hyphenation.HypherCache} cache
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.resetHyphenationLimitChars = function(cache) {
+    Hyphenator.prototype.resetHyphenationLimitChars = function(cache) {
         if (!cache.instance) return;
         /** @suppress {const} */ cache.instance.leftMin  = cache.defaultLeftmin;
         /** @suppress {const} */ cache.instance.rightMin = cache.defaultRightmin;
@@ -246,7 +248,7 @@ goog.scope(function() {
      * @param {string} lang
      * @return {adapt.task.Result.<vivliostyle.plugins.hyphenation.HypherCache>}
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.getHypherInstance = function(lang) {
+    Hyphenator.prototype.getHypherInstance = function(lang) {
         if (this.hypherCache[lang]) return adapt.task.newResult(this.hypherCache[lang]);
         /** @type {!adapt.task.Frame.<vivliostyle.plugins.hyphenation.HypherCache>} */ var frame =
             adapt.task.newFrame("getHypherInstance");
@@ -274,7 +276,7 @@ goog.scope(function() {
      * @param {!string} string
      * @return {!adapt.task.Result.<string>}
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.hyphenateTextNodeContent = function(context, string) {
+    Hyphenator.prototype.hyphenateTextNodeContent = function(context, string) {
         if (/^[\s]*$/.test(string)) return adapt.task.newResult(string);
 
         var styleAndLang = this.extractElementStyleAndLang(context);
@@ -292,14 +294,14 @@ goog.scope(function() {
      * @param {adapt.vtree.NodeContext} context
      * @return {!vivliostyle.plugins.hyphenation.StyleAndLang}
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.extractElementStyleAndLang = function(context) {
+    Hyphenator.prototype.extractElementStyleAndLang = function(context) {
         /** @type {!vivliostyle.plugins.hyphenation.StyleAndLang} */ var styleAndLang = {
             'lang': null, 'hyphens': null, 'hyphenateLimitChars': null
         };
         var collectors = [
-            new vivliostyle.plugins.hyphenation.PropertyCollector(styleAndLang, "hyphens"),
-            new vivliostyle.plugins.hyphenation.PropertyCollector(styleAndLang, "hyphenateLimitChars"),
-            new vivliostyle.plugins.hyphenation.PropertyCollector(styleAndLang, "lang")
+            new PropertyCollector(styleAndLang, "hyphens"),
+            new PropertyCollector(styleAndLang, "hyphenateLimitChars"),
+            new PropertyCollector(styleAndLang, "lang")
         ];
         [context, context.parent].some(function(cont) {
             if (!cont) return true;
@@ -313,7 +315,7 @@ goog.scope(function() {
      * @param {adapt.vtree.NodeContext} context
      * @param {!Object} computedStyle
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessElementStyle = function(context, computedStyle) {
+    Hyphenator.prototype.preprocessElementStyle = function(context, computedStyle) {
         if (!context.inheritedProps) return;
         this.preprocessHyphens(context, computedStyle);
         this.preprocessHyphenateLimitChars(context, computedStyle);
@@ -327,7 +329,7 @@ goog.scope(function() {
      * @param {adapt.vtree.NodeContext} context
      * @param {!Object} computedStyle
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessHyphens = function(context, computedStyle) {
+    Hyphenator.prototype.preprocessHyphens = function(context, computedStyle) {
         var hyphens = context.inheritedProps["hyphens"];
         if (!hyphens) return;
         context['hyphens'] = hyphens;
@@ -341,7 +343,7 @@ goog.scope(function() {
      * @private
      * @param {adapt.vtree.NodeContext} context
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessHyphenateLimitChars = function(context, computedStyle) {
+    Hyphenator.prototype.preprocessHyphenateLimitChars = function(context, computedStyle) {
         var hyphenateLimitChars =
             /** @type {adapt.css.Val|string|number} */ (context.inheritedProps["hyphenate-limit-chars"]);
         if (!hyphenateLimitChars) return;
@@ -378,7 +380,7 @@ goog.scope(function() {
      * @param {adapt.vtree.NodeContext} context
      * @param {!Object} computedStyle
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessHyphenateCharacter = function(context, computedStyle) {
+    Hyphenator.prototype.preprocessHyphenateCharacter = function(context, computedStyle) {
         var hyphenateCharacter = /** @type {adapt.css.Val|string} */ (context.inheritedProps["hyphenate-character"]);
         if (!hyphenateCharacter) return;
         if (typeof hyphenateCharacter === 'string') {
@@ -394,7 +396,7 @@ goog.scope(function() {
      * @param {adapt.vtree.NodeContext} context
      * @param {!Object} computedStyle
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessHyphenateLimitLast = function(context, computedStyle) {
+    Hyphenator.prototype.preprocessHyphenateLimitLast = function(context, computedStyle) {
         var hyphenateLimitLast = /** @type {adapt.css.Val|string} */ (context.inheritedProps["hyphenate-limit-last"]);
         if (!hyphenateLimitLast) return;
         if (typeof hyphenateLimitLast === 'string') {
@@ -408,7 +410,7 @@ goog.scope(function() {
      * @param {adapt.vtree.NodeContext} context
      * @param {!Object} computedStyle
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.preprocessHyphenateLimitLines = function(context, computedStyle) {
+    Hyphenator.prototype.preprocessHyphenateLimitLines = function(context, computedStyle) {
         var hyphenateLimitLines = /** @type {adapt.css.Val|string} */ (context.inheritedProps["hyphenate-limit-lines"]);
         if (!hyphenateLimitLines) return;
         if (typeof hyphenateLimitLines === 'string') {
@@ -423,7 +425,7 @@ goog.scope(function() {
      * @param {adapt.css.Val} val
      * @return {number|null}
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.extractInt = function(val) {
+    Hyphenator.prototype.extractInt = function(val) {
         if (!val || !val.isNum()) return null;
         return val.num;
     };
@@ -432,7 +434,7 @@ goog.scope(function() {
      * @param {adapt.base.JSON} command
      * @return {{needResize:(?boolean|undefined), needRefresh:(?boolean|undefined)}}
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.configure = function(command) {
+    Hyphenator.prototype.configure = function(command) {
         if (typeof command["hyphenationExceptionFileUrl"] == "string"
             && command["hyphenationExceptionFileUrl"] !== this.dictionaryStore.exceptionFileUrl) {
             this.dictionaryStore.setExcpetionFileUrl(command["hyphenationExceptionFileUrl"]);
@@ -444,7 +446,7 @@ goog.scope(function() {
     /**
      * @return {!Array.<string>}
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.getPolyfilledInheritedProps = function() {
+    Hyphenator.prototype.getPolyfilledInheritedProps = function() {
         return [
             "hyphens",
             "hyphenate-character",
@@ -458,22 +460,139 @@ goog.scope(function() {
      * @param {adapt.vtree.NodeContext} nodeContext
      * @return {adapt.layout.TextNodeBreaker}
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.resolveTextNodeBreaker = function(nodeContext) {
+    Hyphenator.prototype.resolveTextNodeBreaker = function(nodeContext) {
         if (nodeContext['hyphenateLimitLast'] === "column") {
-            return vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.instance;
+            return ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.instance;
         }
         if (nodeContext['hyphenateLimitLast'] == null
             && nodeContext.parent
             && nodeContext.parent['hyphenateLimitLast'] === "column") {
-            return vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.instance;
+            return ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.instance;
         }
         return null;
     };
 
     /**
+     * @param {adapt.vtree.NodeContext} nodeContext
+     * @param {Array.<adapt.vtree.NodeContext>} checkPoints
+     * @param {adapt.layout.Column} column
+     */
+    Hyphenator.prototype.postLayoutBlock = function(nodeContext, checkPoints, column) {
+        var hyphenateLimitLines =
+            checkPoints[0]['hyphenateLimitLines']
+            || (checkPoints[0].parent && checkPoints[0].parent['hyphenateLimitLines']);
+        if (typeof hyphenateLimitLines != "number") return;
+        var result;
+        do {
+            var linePositions = column.findLinePositions(checkPoints);
+            var succesiveHyphenationCount = 0;
+            result = linePositions.filter(function(linePosition) {
+                return !column.isOverflown(linePosition);
+            }).some(function(linePosition) {
+                var position = column.findEndOfLine(linePosition, checkPoints, false);
+                if (this.isHyphenated(position)) {
+                    succesiveHyphenationCount++;
+                } else {
+                    succesiveHyphenationCount=0;
+                }
+                if (succesiveHyphenationCount > hyphenateLimitLines) {
+                    this.insertLineBreakBeforePreviousWordOf(position, checkPoints);
+                    return true;
+                }
+                return false;
+            }.bind(this));
+        } while (result);
+    };
+
+    /**
+     * @param {{nodeContext: adapt.vtree.NodeContext, index: number, checkPointIndex: number}} position
+     * @return {boolean}
+     */
+    Hyphenator.prototype.isHyphenated = function(position) {
+        var data = this.extractTextContexntAndViewIndex(position);
+        if (!data) return false;
+        return data.text.charCodeAt(data.viewIndex) == 0xAD
+            || data.text.charAt(data.viewIndex) == '-';
+    };
+
+    /**
+     * @param {{nodeContext: adapt.vtree.NodeContext, index: number, checkPointIndex: number}} position
+     * @param {Array.<adapt.vtree.NodeContext>} checkPoints
+     */
+    Hyphenator.prototype.insertLineBreakBeforePreviousWordOf = function(position, checkPoints) {
+        var data = this.extractTextContexntAndViewIndex(position);
+        if (!data) return;
+
+        var boundary = vivliostyle.plugins.hyphenation.findWordBoundary(
+            data.text, data.viewIndex, true);
+        if (boundary == 0) {
+            this.insertLineBreakBefore(data.textNode);
+        } else {
+            this.splitAndInsertLineBreakBefore(data.textNode, boundary,
+                data.text, checkPoints, position.checkPointIndex);
+        }
+    };
+
+    /**
+     * @param {Text} textNode
+     * @param {number} index
+     * @param {string} text
+     * @param {Array.<adapt.vtree.NodeContext>} checkPoints
+     * @param {number} checkPointIndex
+     */
+    Hyphenator.prototype.splitAndInsertLineBreakBefore = function(
+        textNode, index, text, checkPoints, checkPointIndex) {
+        var br = textNode.ownerDocument.createElementNS(adapt.base.NS.XHTML, "br");
+        var newTextNode =  textNode.cloneNode(true);
+        textNode.replaceData(index, text.length - index, '');
+        newTextNode.replaceData(0, index, '');
+        if (textNode.nextSibling) {
+            textNode.parentNode.insertBefore(newTextNode, textNode.nextSibling);
+            textNode.parentNode.insertBefore(br, newTextNode);
+        } else {
+            textNode.parentNode.appendChild(br);
+            textNode.parentNode.appendChild(newTextNode);
+        }
+        checkPoints[checkPointIndex+1].boxOffset -= text.length - index;
+
+        var newTextNodeContext = checkPoints[checkPointIndex].clone();
+        newTextNodeContext.viewNode = newTextNode;
+        newTextNodeContext.boxOffset = checkPoints[checkPointIndex+1].boxOffset + 1;
+        newTextNodeContext.offsetInNode = checkPoints[checkPointIndex+1].offsetInNode + index;
+        var newTextAfterNodeContext = newTextNodeContext.clone();
+        newTextAfterNodeContext.after = true;
+        newTextAfterNodeContext.boxOffset = checkPoints[checkPointIndex+1].boxOffset + (text.length - index);
+
+        checkPoints.splice(checkPointIndex+2, 0, newTextNodeContext, newTextAfterNodeContext);
+    };
+
+    /**
+     * @param {Text} textNode
+     */
+    Hyphenator.prototype.insertLineBreakBefore = function(textNode) {
+        var br = textNode.ownerDocument.createElementNS(adapt.base.NS.XHTML, "br");
+        textNode.parentNode.insertBefore(br, textNode);
+    };
+
+    /**
+     * @param {{nodeContext: adapt.vtree.NodeContext, index: number, checkPointIndex: number}} position
+     * @return {?{textNode: Text, viewIndex: number, text: string}}
+     */
+    Hyphenator.prototype.extractTextContexntAndViewIndex = function(position) {
+        var viewNode = position.nodeContext.viewNode;
+        if (viewNode.nodeType == 1) return null;
+        var textNode = /** @type {Text} */ (viewNode);
+        return {
+            textNode: textNode,
+            viewIndex: position.index - position.nodeContext.boxOffset,
+            text: textNode.data
+        };
+    };
+
+    /**
      *
      */
-    vivliostyle.plugins.hyphenation.Hyphenator.prototype.registerHooks = function() {
+    Hyphenator.prototype.registerHooks = function() {
         var plugin = vivliostyle.plugin;
         plugin.registerHook(plugin.HOOKS.PREPROCESS_TEXT_CONTENT,
             this.hyphenateTextNodeContent.bind(this));
@@ -485,6 +604,8 @@ goog.scope(function() {
             this.configure.bind(this));
         plugin.registerHook(plugin.HOOKS.RESOLVE_TEXT_NODE_BREAKER,
             this.resolveTextNodeBreaker.bind(this));
+        plugin.registerHook(plugin.HOOKS.POST_LAYOUT_BLOCK,
+            this.postLayoutBlock.bind(this));
     };
 
     /**
@@ -496,10 +617,12 @@ goog.scope(function() {
         this.styleAndLang = styleAndLang;
         this.key = key;
     };
+    var PropertyCollector = vivliostyle.plugins.hyphenation.PropertyCollector;
+
     /**
      * @param {adapt.vtree.NodeContext} context
      */
-    vivliostyle.plugins.hyphenation.PropertyCollector.prototype.collect = function(context) {
+    PropertyCollector.prototype.collect = function(context) {
         if (this.isCollected()) return;
         var value = context[this.key];
         if (value !== undefined) {
@@ -509,7 +632,7 @@ goog.scope(function() {
     /**
      * @return {boolean}
      */
-    vivliostyle.plugins.hyphenation.PropertyCollector.prototype.isCollected = function() {
+    PropertyCollector.prototype.isCollected = function() {
         return this.styleAndLang[this.key] != null;
     };
 
@@ -520,7 +643,8 @@ goog.scope(function() {
     vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker = function() {
         adapt.layout.TextNodeBreaker.call(this);
     };
-    goog.inherits(vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker,
+    var ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker = vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker;
+    goog.inherits(ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker,
         adapt.layout.TextNodeBreaker);
 
     /**
@@ -528,7 +652,7 @@ goog.scope(function() {
      * @param {string} text
      * @param {number} viewIndex
      */
-    vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.prototype.tryToBreakPreviousWordBoundary = function(
+    ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.prototype.tryToBreakPreviousWordBoundary = function(
         textNode, text, viewIndex) {
         var index = vivliostyle.plugins.hyphenation.findWordBoundary(text, viewIndex, true);
         if (index > 0) {
@@ -543,7 +667,7 @@ goog.scope(function() {
      * @param {number} checkpointIndex
      * @param {Array.<adapt.vtree.NodeContext>} checkPoints
      */
-    vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.prototype.tryToBreakPreviousNode = function(
+    ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.prototype.tryToBreakPreviousNode = function(
         checkpointIndex, checkPoints) {
         for (var i=checkpointIndex-1; i>=0; i--) {
             if (checkPoints[i] && checkPoints[i].after) {
@@ -556,11 +680,11 @@ goog.scope(function() {
     /**
      * @override
      */
-    vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.prototype.breakTextNode = function(
+    ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.prototype.breakTextNode = function(
         textNode, nodeContext, low, checkPoints, checkpointIndex, force) {
         if (force) {
             return goog.base(this, 'breakTextNode', textNode,
-                nodeContext, low, checkPoints, checkpointIndex, force);
+                nodeContext, low  - 10, checkPoints, checkpointIndex, force);
         }
         if (nodeContext.after) {
             nodeContext.offsetInNode = textNode.length;
@@ -583,10 +707,9 @@ goog.scope(function() {
         return nodeContext;
     };
 
-    vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.instance =
-        new vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker();
+    ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.instance =
+        new ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker();
 
-    vivliostyle.plugins.hyphenation.hyphenator =
-        new vivliostyle.plugins.hyphenation.Hyphenator();
+    vivliostyle.plugins.hyphenation.hyphenator = new Hyphenator();
     vivliostyle.plugins.hyphenation.hyphenator.registerHooks();
 });

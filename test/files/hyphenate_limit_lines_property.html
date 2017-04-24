@@ -3,7 +3,7 @@
 <head>
   <style>
     @page {
-      size: 450px 200px;
+      size: 450px 300px;
     }
     body {
       -moz-column-count: 2;
@@ -19,7 +19,7 @@
       color: #FF3333;
     }
     div.hyphens {
-      font-size: x-large;
+      font-size: large;
       hyphens: auto;
       margin-bottom: 20px;
       hyphenate-limit-last: column;
@@ -40,29 +40,50 @@
       -webkit-hyphenate-limit-lines: 4;
       -ms-hyphenate-limit-lines: 4;
     }
+    .hyphenate-limit-lines_2 {
+      hyphenate-limit-lines: 2;
+      -webkit-hyphenate-limit-lines: 2;
+      -ms-hyphenate-limit-lines: 2;
+    }
   </style>
 </head>
 <body>
   <div class="label">hyphenate-limit-lines: 3</div>
   <div class="hyphens hyphenate-limit-lines_3">
-    hyphenation hyphenation hyphenation hyphenation
-    hyphenation hyphenation hyphenation hyphenation
-    hyphenation hyphenation hyphenation hyphenation
-    hyphenation hyphenation hyphenation hyphenation
+    incomprehensibilities incomprehensibilities incomprehensibilities
+    incomprehensibilities incomprehensibilities incomprehensibilities
   </div>
   <div class="label">hyphenate-limit-lines: no-limit</div>
   <div class="hyphens hyphenate-limit-lines_no_limit">
-    hyphenation hyphenation hyphenation hyphenation
-    hyphenation hyphenation hyphenation hyphenation
-    hyphenation hyphenation hyphenation hyphenation
-    hyphenation hyphenation hyphenation hyphenation
+    incomprehensibilities incomprehensibilities incomprehensibilities
+    incomprehensibilities incomprehensibilities incomprehensibilities
   </div>
   <div class="label">hyphenate-limit-lines: 4</div>
   <div class="hyphens hyphenate-limit-lines_4">
-    hyphenation hyphenation hyphenation hyphenation
-    hyphenation hyphenation hyphenation hyphenation
-    hyphenation hyphenation hyphenation hyphenation
-    hyphenation hyphenation hyphenation hyphenation
+    incomprehensibilities incomprehensibilities incomprehensibilities
+    incomprehensibilities incomprehensibilities incomprehensibilities
   </div>
+  <div class="label">hyphenate-limit-lines: 2</div>
+  <div class="hyphens hyphenate-limit-lines_2">
+    incomprehensibilities incomprehensibilities incomprehensibilities
+    incomprehensibilities incomprehensibilities
+  </div>
+
+
+  <div class="label">break at the adjusted position</div>
+  <div class="hyphens hyphenate-limit-lines_3">
+    incomprehensibilities1 incomprehensibilities2 incomprehensibilities3
+    incomprehensibilities4 incomprehensibilities5 incomprehensibilities6
+    incomprehensibilities7 incomprehensibilities8 incomprehensibilities9
+  </div>
+
+  <div class="label">adjust text in the inline element</div>
+  <div class="hyphens hyphenate-limit-lines_2">
+    <b>incomprehensibilities1 incomprehensibilities2</b>
+    <span style="color:red;">incomprehensibilities3 incomprehensibilities4</span>
+    incomprehensibilities5
+    <b>incomprehensibilities6 incomprehensibilities7</b>
+  </div>
+
 </body>
 </html>

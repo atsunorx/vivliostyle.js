@@ -1801,8 +1801,6 @@ adapt.layout.Column.prototype.layoutBreakableBlock = function(nodeContext) {
             }
         }
 
-        self.postLayoutBlock(resNodeContext, checkPoints, edge);
-
         if (resNodeContext == null) {
             edge += self.getTrailingMarginEdgeAdjustment(checkPoints);
         }
@@ -1815,6 +1813,7 @@ adapt.layout.Column.prototype.layoutBreakableBlock = function(nodeContext) {
             lineCont = adapt.task.newResult(resNodeContext);
         }
         lineCont.then(function(nodeContext) {
+            self.postLayoutBlock(nodeContext, checkPoints);
             if (checkPoints.length > 0) {
                 self.saveBoxBreakPosition(checkPoints);
                 // TODO: how to signal overflow in the last pagargaph???
@@ -1830,34 +1829,24 @@ adapt.layout.Column.prototype.layoutBreakableBlock = function(nodeContext) {
 };
 
 /**
- *
+ * @private
+ * @param {adapt.vtree.NodeContext} nodeContext
+ * @param {Array.<adapt.vtree.NodeContext>} checkPoints
  */
-adapt.layout.Column.prototype.postLayoutBlock = function(resNodeContext, checkPoints, edge) {
-    var hyphenateLimitLines =
-        checkPoints[0]['hyphenateLimitLines']
-        || (checkPoints[0].parent && checkPoints[0].parent['hyphenateLimitLines']);
-    if (typeof hyphenateLimitLines != "number") return;
-    var result;
-    do {
-        console.log("** postLayoutBlock");
-        var linePositions = this.findLinePositions(checkPoints);
-        var succesiveHyphenationCount = 0;
-        result = linePositions.filter(function(linePosition){
-            return !this.isOverflown(linePosition);
-        }.bind(this)).some(function(linePosition) {
-            var position = this.findEndOfLine(linePosition, checkPoints, false);
-            if (this.isHyphenated(position)) {
-                succesiveHyphenationCount++;
-            } else {
-                succesiveHyphenationCount=0;
-            }
-            if (succesiveHyphenationCount > hyphenateLimitLines) {
-                this.insertLineBreakBeforePreviousWordOf(position, checkPoints);
-                return true;
-            }
-        }.bind(this));
-    } while (result);
+adapt.layout.Column.prototype.postLayoutBlock = function(nodeContext, checkPoints) {
+    /** @type {!Array.<vivliostyle.plugin.PostLayoutBlockHook>} */ var hooks =
+        vivliostyle.plugin.getHooksForName(vivliostyle.plugin.HOOKS.POST_LAYOUT_BLOCK);
+    hooks.forEach(function(hook) {
+        hook(nodeContext, checkPoints, this);
+    }.bind(this));
 };
+
+/**
+ * @param {number} linePosition
+ * @param {Array.<adapt.vtree.NodeContext>} checkPoints
+ * @param {boolean} isUpdateMaxReachedAfterEdge
+ * @return {{nodeContext: adapt.vtree.NodeContext, index: number, checkPointIndex: number}}
+ */
 adapt.layout.Column.prototype.findEndOfLine = function(linePosition, checkPoints, isUpdateMaxReachedAfterEdge) {
     if (goog.DEBUG) {
         adapt.layout.validateCheckPoints(checkPoints);
@@ -1895,54 +1884,6 @@ adapt.layout.Column.prototype.findEndOfLine = function(linePosition, checkPoints
     }
 
     return {nodeContext: checkPoints[low1], index: low, checkPointIndex: low1};
-};
-adapt.layout.Column.prototype.isHyphenated = function(position) {
-    var viewNode = position.nodeContext.viewNode;
-    if (viewNode.nodeType == 1) return false;
-    var textNode = /** @type {Text} */ (viewNode);
-    var viewIndex = position.index - position.nodeContext.boxOffset;
-    var text = textNode.data;
-    return text.charCodeAt(viewIndex) == 0xAD || text.charAt(viewIndex) == '-';
-};
-adapt.layout.Column.prototype.insertLineBreakBeforePreviousWordOf = function(position, checkPoints) {
-    var viewNode = position.nodeContext.viewNode;
-    if (viewNode.nodeType == 1) return;
-    var textNode = /** @type {Text} */ (viewNode);
-    var viewIndex = position.index - position.nodeContext.boxOffset;
-    var text = textNode.data;
-
-    var boundary = vivliostyle.plugins.hyphenation.findWordBoundary(text, viewIndex, true);
-    this.insertLineBreakBefore(textNode, boundary, text, checkPoints, position.checkPointIndex);
-};
-adapt.layout.Column.prototype.insertLineBreakBefore = function(
-    textNode, index, text, checkPoints, checkPointIndex) {
-    var br = textNode.ownerDocument.createElementNS(adapt.base.NS.XHTML, "br");
-    var newTextNode =  textNode.cloneNode();
-    textNode.replaceData(index, text.length - index, '');
-    newTextNode.replaceData(0, index, '');
-    if (textNode.nextSibling) {
-        textNode.parentNode.insertBefore(br, textNode.nextSibling);
-        textNode.parentNode.insertBefore(newTextNode, textNode.nextSibling);
-    } else {
-        textNode.parentNode.appendChild(br);
-        textNode.parentNode.appendChild(newTextNode);
-    }
-    checkPoints[checkPointIndex+1].boxOffset -= text.length - index;
-    var brNodeContext = checkPoints[checkPointIndex].clone();
-    brNodeContext.viewNode = br;
-    brNodeContext.boxOffset = checkPoints[checkPointIndex+1].boxOffset + 1;
-    var brAfterNodeContext = brNodeContext.clone();
-    brAfterNodeContext.after = true;
-    brAfterNodeContext.boxOffset = brNodeContext.boxOffset + 1;
-    var newTextNodeContext = checkPoints[checkPointIndex].clone();
-    newTextNodeContext.viewNode = newTextNode;
-    newTextNodeContext.boxOffset = brAfterNodeContext.boxOffset + 1;
-    newTextNodeContext.offsetInNode = checkPoints[checkPointIndex+1].offsetInNode + index;
-    var newTextAfterNodeContext = newTextNodeContext.clone();
-    newTextAfterNodeContext.after = true;
-    newTextAfterNodeContext.boxOffset = newTextNodeContext.boxOffset + (text.length - index);
-    checkPoints.splice(checkPointIndex+2, 0,
-        brNodeContext, brAfterNodeContext, newTextNodeContext, newTextAfterNodeContext);
 };
 
 /**
