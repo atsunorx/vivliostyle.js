@@ -478,25 +478,52 @@ goog.scope(function() {
      * @param {adapt.layout.Column} column
      */
     Hyphenator.prototype.postLayoutBlock = function(nodeContext, checkPoints, column) {
-        var hyphenateLimitLines =
-            checkPoints[0]['hyphenateLimitLines']
-            || (checkPoints[0].parent && checkPoints[0].parent['hyphenateLimitLines']);
-        if (typeof hyphenateLimitLines != "number") return;
+        var prev = null;
+        var adjustedIndex = 0;
+        for (var i=0; i < checkPoints.length; i++) {
+            var hyphenateLimitLines = checkPoints[i]['hyphenateLimitLines']
+                || (checkPoints[i].parent && checkPoints[i].parent['hyphenateLimitLines'] || null);
+            if (prev !== null && prev !== hyphenateLimitLines) {
+                this.adjustHyphenateLimitLines(checkPoints, column,
+                    prev, adjustedIndex, i);
+                adjustedIndex = i;
+            }
+            prev = hyphenateLimitLines;
+        }
+        if (prev != null) {
+            this.adjustHyphenateLimitLines(checkPoints, column, prev,
+                adjustedIndex, checkPoints.length);
+        }
+    };
+
+    /**
+     * @param {Array.<adapt.vtree.NodeContext>} checkPoints
+     * @param {adapt.layout.Column} column
+     * @param {number} hyphenateLimitLines
+     * @param {number} startIndex
+     * @param {number} endIndex
+     */
+    Hyphenator.prototype.adjustHyphenateLimitLines = function(checkPoints, column,
+        hyphenateLimitLines, startIndex, endIndex) {
         var result;
         do {
-            var linePositions = column.findLinePositions(checkPoints);
+            var linePositions = column.findLinePositions(checkPoints.slice(startIndex, endIndex));
             var succesiveHyphenationCount = 0;
             result = linePositions.filter(function(linePosition) {
                 return !column.isOverflown(linePosition);
             }).some(function(linePosition) {
                 var position = column.findEndOfLine(linePosition, checkPoints, false);
+                if (position.checkPointIndex < startIndex
+                    || position.checkPointIndex >= endIndex) {
+                    return false;
+                }
                 if (this.isHyphenated(position)) {
                     succesiveHyphenationCount++;
                 } else {
                     succesiveHyphenationCount=0;
                 }
                 if (succesiveHyphenationCount > hyphenateLimitLines) {
-                    this.insertLineBreakBeforePreviousWordOf(position, checkPoints);
+                    endIndex += this.insertLineBreakBeforePreviousWordOf(position, checkPoints);
                     return true;
                 }
                 return false;
@@ -518,17 +545,18 @@ goog.scope(function() {
     /**
      * @param {{nodeContext: adapt.vtree.NodeContext, index: number, checkPointIndex: number}} position
      * @param {Array.<adapt.vtree.NodeContext>} checkPoints
+     * @return {number}
      */
     Hyphenator.prototype.insertLineBreakBeforePreviousWordOf = function(position, checkPoints) {
         var data = this.extractTextContexntAndViewIndex(position);
-        if (!data) return;
+        if (!data) return 0;
 
         var boundary = vivliostyle.plugins.hyphenation.findWordBoundary(
             data.text, data.viewIndex, true);
         if (boundary == 0) {
-            this.insertLineBreakBefore(data.textNode);
+            return this.insertLineBreakBefore(data.textNode);
         } else {
-            this.splitAndInsertLineBreakBefore(data.textNode, boundary,
+            return this.splitAndInsertLineBreakBefore(data.textNode, boundary,
                 data.text, checkPoints, position.checkPointIndex);
         }
     };
@@ -539,6 +567,7 @@ goog.scope(function() {
      * @param {string} text
      * @param {Array.<adapt.vtree.NodeContext>} checkPoints
      * @param {number} checkPointIndex
+     * @return {number}
      */
     Hyphenator.prototype.splitAndInsertLineBreakBefore = function(
         textNode, index, text, checkPoints, checkPointIndex) {
@@ -564,14 +593,17 @@ goog.scope(function() {
         newTextAfterNodeContext.boxOffset = checkPoints[checkPointIndex+1].boxOffset + (text.length - index);
 
         checkPoints.splice(checkPointIndex+2, 0, newTextNodeContext, newTextAfterNodeContext);
+        return 2;
     };
 
     /**
      * @param {Text} textNode
+     * @return {number}
      */
     Hyphenator.prototype.insertLineBreakBefore = function(textNode) {
         var br = textNode.ownerDocument.createElementNS(adapt.base.NS.XHTML, "br");
         textNode.parentNode.insertBefore(br, textNode);
+        return 0;
     };
 
     /**
