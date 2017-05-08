@@ -38,7 +38,9 @@ describe("vivliostyle.plugins.hyphenation", function() {
             var context;
             var style;
             beforeEach(function() {
-                context = {};
+                context = {
+                    pluginProps: {}
+                };
                 style = {};
             });
             it("inserts 'hyphens:auto' to a context when hyphens property is 'auto' and modify hyphens to 'manual'.", function() {
@@ -47,7 +49,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 };
                 target.preprocessElementStyle(context, style);
 
-                expect(context.hyphens).toEqual('auto');
+                expect(context.pluginProps['hyphens']).toEqual('auto');
                 expect(style).toEqual({
                     hyphens: adapt.css.ident.manual
                 });
@@ -58,7 +60,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 };
                 target.preprocessElementStyle(context, style);
 
-                expect(context.hyphens).toEqual('manual');
+                expect(context.pluginProps['hyphens']).toEqual('manual');
                 expect(style).toEqual({
                     hyphens: adapt.css.ident.manual
                 });
@@ -69,7 +71,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 };
                 target.preprocessElementStyle(context, style);
 
-                expect(context.hyphens).toEqual('none');
+                expect(context.pluginProps['hyphens']).toEqual('none');
                 expect(style).toEqual({
                     hyphens: adapt.css.ident.none
                 });
@@ -78,6 +80,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 target.preprocessElementStyle(context, style);
 
                 expect(context).toEqual({
+                    pluginProps: {}
                 });
                 expect(style).toEqual({
                 });
@@ -92,7 +95,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                     ])
                 };
                 target.preprocessElementStyle(context, style);
-                expect(context.hyphenateLimitChars).toEqual([null, 1, 2]);
+                expect(context.pluginProps['hyphenateLimitChars']).toEqual([null, 1, 2]);
             });
             it("inserts 'hyphenateLimitChars' to a context when hyphenate-limit-chars property is '10 2'.", function() {
                 context.inheritedProps = {
@@ -102,14 +105,14 @@ describe("vivliostyle.plugins.hyphenation", function() {
                     ])
                 };
                 target.preprocessElementStyle(context, style);
-                expect(context.hyphenateLimitChars).toEqual([10, 2, 2]);
+                expect(context.pluginProps['hyphenateLimitChars']).toEqual([10, 2, 2]);
             });
             it("inserts 'hyphenateLimitChars' to a context when hyphenate-limit-chars property is '10'.", function() {
                 context.inheritedProps = {
                     "hyphenate-limit-chars": 10
                 };
                 target.preprocessElementStyle(context, style);
-                expect(context.hyphenateLimitChars).toEqual([10, null, null]);
+                expect(context.pluginProps['hyphenateLimitChars']).toEqual([10, null, null]);
             });
             it("inserts 'hyphenateLimitChars' to a context when hyphenate-limit-chars property is 'auto auto auto'.", function() {
                 context.inheritedProps = {
@@ -120,7 +123,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                     ])
                 };
                 target.preprocessElementStyle(context, style);
-                expect(context.hyphenateLimitChars).toEqual([null, null, null]);
+                expect(context.pluginProps['hyphenateLimitChars']).toEqual([null, null, null]);
             });
             it("inserts 'hyphenateLimitChars' to a context when hyphenate-limit-chars property is 'auto auto'.", function() {
                 context.inheritedProps = {
@@ -130,18 +133,18 @@ describe("vivliostyle.plugins.hyphenation", function() {
                     ])
                 };
                 target.preprocessElementStyle(context, style);
-                expect(context.hyphenateLimitChars).toEqual([null, null, null]);
+                expect(context.pluginProps['hyphenateLimitChars']).toEqual([null, null, null]);
             });
             it("inserts 'hyphenateLimitChars' to a context when hyphenate-limit-chars property is 'auto'.", function() {
                 context.inheritedProps = {
                     "hyphenate-limit-chars": "auto"
                 };
                 target.preprocessElementStyle(context, style);
-                expect(context.hyphenateLimitChars).toEqual([null, null, null]);
+                expect(context.pluginProps['hyphenateLimitChars']).toEqual([null, null, null]);
             });
             it("do nothing when hyphenate-limit-chars property is undefined.", function() {
                 target.preprocessElementStyle(context, style);
-                expect(context.hyphenateLimitChars).toEqual(undefined);
+                expect(context.pluginProps['hyphenateLimitChars']).toEqual(undefined);
             });
 
             it("inserts 'hyphenateCharacter' to a context when hyphenate-character property is '_'.", function() {
@@ -171,12 +174,12 @@ describe("vivliostyle.plugins.hyphenation", function() {
                     "hyphenate-limit-last": 'column'
                 };
                 target.preprocessElementStyle(context, style);
-                expect(context.hyphenateLimitLast).toEqual("column");
+                expect(context.pluginProps['hyphenateLimitLast']).toEqual("column");
                 expect(style["hyphenate-limit-last"]).toEqual(adapt.css.ident.column);
             });
             it("do nothing when hyphenate-limit-last property is undfined.", function() {
                 target.preprocessElementStyle(context, style);
-                expect(context.hyphenateLimitLast).toEqual(undefined);
+                expect(context.pluginProps['hyphenateLimitLast']).toEqual(undefined);
                 expect(style["hyphenate-limit-last"]).toEqual(undefined);
             });
 
@@ -185,7 +188,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                     "hyphenate-limit-lines": 1
                 };
                 target.preprocessElementStyle(context, style);
-                expect(context.hyphenateLimitLines).toEqual(1);
+                expect(context.pluginProps['hyphenateLimitLines']).toEqual(1);
                 expect(style["hyphenate-limit-lines"]).toEqual(undefined);
             });
             it("do nothing when hyphenate-limit-last property is `no-limit.", function() {
@@ -193,12 +196,12 @@ describe("vivliostyle.plugins.hyphenation", function() {
                     "hyphenate-limit-lines": 'no-limit'
                 };
                 target.preprocessElementStyle(context, style);
-                expect(context.hyphenateLimitLines).toEqual(undefined);
+                expect(context.pluginProps['hyphenateLimitLines']).toEqual(undefined);
                 expect(style["hyphenate-limit-lines"]).toEqual(adapt.css.ident.no_limit);
             });
             it("do nothing when hyphenate-limit-last property is undfined.", function() {
                 target.preprocessElementStyle(context, style);
-                expect(context.hyphenateLimitLines).toEqual(undefined);
+                expect(context.pluginProps['hyphenateLimitLines']).toEqual(undefined);
                 expect(style["hyphenate-limit-lines"]).toEqual(undefined);
             });
         });
@@ -206,8 +209,10 @@ describe("vivliostyle.plugins.hyphenation", function() {
         describe("#extractElementStyleAndLang", function() {
             it("extracts required properties from a context.", function() {
                 expect(target.extractElementStyleAndLang({
-                    hyphens: 'auto',
-                    hyphenateLimitChars: [null, 2, 3],
+                    pluginProps: {
+                        hyphens: 'auto',
+                        hyphenateLimitChars: [null, 2, 3]
+                    },
                     lang: "en"
                 })).toEqual({
                     hyphens: 'auto',
@@ -216,12 +221,18 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 });
 
                 expect(target.extractElementStyleAndLang({
-                    hyphens: "none",
+                    pluginProps: {
+                        hyphens: "none"
+                    },
                     parent: {
-                        hyphenateLimitChars: [10, 2, 3],
+                        pluginProps: {
+                            hyphenateLimitChars: [10, 2, 3]
+                        },
                         lang: "pl",
                         parent: {
-                            hyphens: "auto",
+                            pluginProps: {
+                                hyphens: "auto"
+                            },
                             lang: "en"
                         }
                     }
@@ -232,6 +243,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 });
 
                 expect(target.extractElementStyleAndLang({
+                    pluginProps: {}
                 })).toEqual({
                     hyphens: null,
                     hyphenateLimitChars: null,
@@ -241,8 +253,10 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 expect(target.extractElementStyleAndLang({
                     parent: {
                         parent: {
-                            hyphens: "auto",
-                            hyphenateLimitChars: [10, 2, 3]
+                            pluginProps: {
+                                hyphens: "auto",
+                                hyphenateLimitChars: [10, 2, 3]
+                            }
                         }
                     }
                 })).toEqual({
@@ -252,13 +266,19 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 });
 
                 expect(target.extractElementStyleAndLang({
-                    hyphenateLimitChars: [null, null, null],
+                    pluginProps: {
+                        hyphenateLimitChars: [null, null, null]
+                    },
                     parent: {
-                        hyphens: "auto",
-                        hyphenateLimitChars: [12, 2, 3],
-                        parent: {
+                        pluginProps: {
                             hyphens: "auto",
-                            hyphenateLimitChars: [13, 2, 3]
+                            hyphenateLimitChars: [12, 2, 3]
+                        },
+                        parent: {
+                            pluginProps: {
+                                hyphens: "auto",
+                                hyphenateLimitChars: [13, 2, 3]
+                            }
                         }
                     }
                 })).toEqual({
@@ -268,14 +288,20 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 });
 
                 expect(target.extractElementStyleAndLang({
-                    hyphens: "none",
-                    hyphenateLimitChars: [null, null, null],
+                    pluginProps: {
+                        hyphens: "none",
+                        hyphenateLimitChars: [null, null, null]
+                    },
                     parent: {
-                        hyphens: "auto",
-                        hyphenateLimitChars: [12, 2, 3],
+                        pluginProps: {
+                            hyphens: "auto",
+                            hyphenateLimitChars: [12, 2, 3]
+                        },
                         parent: {
-                            hyphens: "manual",
-                            hyphenateLimitChars: [13, 2, 3]
+                            pluginProps: {
+                                hyphens: "manual",
+                                hyphenateLimitChars: [13, 2, 3]
+                            }
                         }
                     }
                 })).toEqual({
@@ -356,7 +382,9 @@ describe("vivliostyle.plugins.hyphenation", function() {
             var context;
             beforeEach(function() {
                 context = {
-                    hyphens: 'auto',
+                    pluginProps: {
+                        hyphens: 'auto'
+                    },
                     lang: "en"
                 };
             });
@@ -372,7 +400,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
             });
             it("can limit the minimum number of characters in a hyphenated word designated by hyphenateLimitChars.", function(cb) {
                 adapt.task.start(function() {
-                    context.hyphenateLimitChars = [8, 5, 5];
+                    context.pluginProps['hyphenateLimitChars'] = [8, 5, 5];
                     target.hyphenateTextNodeContent(context, "breaking characters before hyphenation opportunities").then(function(result) {
                         expect(result).toEqual("breaking characters before hyphe\u00ADnation oppor\u00ADtu\u00ADnities");
                         expect(dictionaryStore.load).toHaveBeenCalledWith("en");
@@ -390,7 +418,7 @@ describe("vivliostyle.plugins.hyphenation", function() {
                 });
             });
             it("do nothing when hyphens is not 'auto'.", function(cb) {
-                context.hyphens = null;
+                context.pluginProps['hyphens'] = null;
                 adapt.task.start(function() {
                     target.hyphenateTextNodeContent(context, "breaking characters before hyphenation opportunities").then(function(result) {
                         expect(result).toEqual("breaking characters before hyphenation opportunities");
@@ -426,22 +454,36 @@ describe("vivliostyle.plugins.hyphenation", function() {
         describe("#resolveTextNodeBreaker", function() {
             it("returns a ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker instance if `hyphenateLimitLast` is 'column'.", function() {
                 expect(target.resolveTextNodeBreaker({
-                    hyphenateLimitLast: 'column'
+                    pluginProps: {
+                        hyphenateLimitLast: 'column'
+                    }
                 })).toEqual(vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.instance);
 
                 expect(target.resolveTextNodeBreaker({
-                    parent: { hyphenateLimitLast: 'column' }
+                    parent: {
+                        pluginProps: {
+                            hyphenateLimitLast: 'column'
+                        }
+                    }
                 })).toEqual(vivliostyle.plugins.hyphenation.ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.instance);
             });
             it("returns null if `hyphenateLimitLast` is not 'column'.", function() {
                 expect(target.resolveTextNodeBreaker({
-                    hyphenateLimitLast: 'auto'
+                    pluginProps: {
+                        hyphenateLimitLast: 'auto'
+                    }
                 })).toEqual(null);
                 expect(target.resolveTextNodeBreaker({
-                    hyphenateLimitLast: 'always'
+                    pluginProps: {
+                        hyphenateLimitLast: 'always'
+                    }
                 })).toEqual(null);
                 expect(target.resolveTextNodeBreaker({
-                    parent: { hyphenateLimitLast: 'auto' }
+                    parent: {
+                        pluginProps: {
+                            hyphenateLimitLast: 'auto'
+                        }
+                    }
                 })).toEqual(null);
                 expect(target.resolveTextNodeBreaker({
                 })).toEqual(null);

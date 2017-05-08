@@ -299,8 +299,8 @@ goog.scope(function() {
             'lang': null, 'hyphens': null, 'hyphenateLimitChars': null
         };
         var collectors = [
-            new PropertyCollector(styleAndLang, "hyphens"),
-            new PropertyCollector(styleAndLang, "hyphenateLimitChars"),
+            new PluginPropertyCollector(styleAndLang, "hyphens"),
+            new PluginPropertyCollector(styleAndLang, "hyphenateLimitChars"),
             new PropertyCollector(styleAndLang, "lang")
         ];
         [context, context.parent].some(function(cont) {
@@ -330,9 +330,9 @@ goog.scope(function() {
      * @param {!Object} computedStyle
      */
     Hyphenator.prototype.preprocessHyphens = function(context, computedStyle) {
-        var hyphens = context.inheritedProps["hyphens"];
+        var hyphens = /** @type {?string} */ (context.inheritedProps["hyphens"]);
         if (!hyphens) return;
-        context['hyphens'] = hyphens;
+        context.pluginProps['hyphens'] = hyphens;
         if (hyphens === "none") {
             computedStyle["hyphens"] = adapt.css.ident.none;
         } else {
@@ -348,11 +348,11 @@ goog.scope(function() {
             /** @type {adapt.css.Val|string|number} */ (context.inheritedProps["hyphenate-limit-chars"]);
         if (!hyphenateLimitChars) return;
         if (typeof hyphenateLimitChars === 'number') {
-            context['hyphenateLimitChars'] = [hyphenateLimitChars, null, null];
+            context.pluginProps['hyphenateLimitChars'] = [/** @type {number} */(hyphenateLimitChars), null, null];
             return;
         }
         if (hyphenateLimitChars === 'auto') {
-            context['hyphenateLimitChars'] = [null, null, null];
+            context.pluginProps['hyphenateLimitChars'] = [null, null, null];
             return;
         }
         if (!hyphenateLimitChars.isSpaceList
@@ -369,7 +369,7 @@ goog.scope(function() {
         if (hyphenateLimitChars.values.length >= 3) {
             rightmin = hyphenateLimitChars.values[2];
         }
-        context['hyphenateLimitChars'] = [
+        context.pluginProps['hyphenateLimitChars'] = [
             this.extractInt(min),
             this.extractInt(leftmin),
             this.extractInt(rightmin)
@@ -397,10 +397,10 @@ goog.scope(function() {
      * @param {!Object} computedStyle
      */
     Hyphenator.prototype.preprocessHyphenateLimitLast = function(context, computedStyle) {
-        var hyphenateLimitLast = /** @type {adapt.css.Val|string} */ (context.inheritedProps["hyphenate-limit-last"]);
+        var hyphenateLimitLast = /** @type {?string} */ (context.inheritedProps["hyphenate-limit-last"]);
         if (!hyphenateLimitLast) return;
         if (typeof hyphenateLimitLast === 'string') {
-            context['hyphenateLimitLast'] = hyphenateLimitLast;
+            context.pluginProps['hyphenateLimitLast'] = hyphenateLimitLast;
             computedStyle["hyphenate-limit-last"] =
                 adapt.css.getName(hyphenateLimitLast);
         }
@@ -411,13 +411,13 @@ goog.scope(function() {
      * @param {!Object} computedStyle
      */
     Hyphenator.prototype.preprocessHyphenateLimitLines = function(context, computedStyle) {
-        var hyphenateLimitLines = /** @type {adapt.css.Val|string} */ (context.inheritedProps["hyphenate-limit-lines"]);
+        var hyphenateLimitLines = /** @type {?number|?string} */ (context.inheritedProps["hyphenate-limit-lines"]);
         if (!hyphenateLimitLines) return;
         if (typeof hyphenateLimitLines === 'string') {
             computedStyle["hyphenate-limit-lines"] =
                 adapt.css.getName(hyphenateLimitLines);
         } else if (typeof hyphenateLimitLines === 'number') {
-            context['hyphenateLimitLines'] = hyphenateLimitLines;
+            context.pluginProps['hyphenateLimitLines'] = /** @type {number} */ (hyphenateLimitLines);
         }
     };
     /**
@@ -461,12 +461,13 @@ goog.scope(function() {
      * @return {adapt.layout.TextNodeBreaker}
      */
     Hyphenator.prototype.resolveTextNodeBreaker = function(nodeContext) {
-        if (nodeContext['hyphenateLimitLast'] === "column") {
+        if (nodeContext.pluginProps && nodeContext.pluginProps['hyphenateLimitLast'] === "column") {
             return ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.instance;
         }
-        if (nodeContext['hyphenateLimitLast'] == null
+        if ((!nodeContext.pluginProps || (nodeContext.pluginProps['hyphenateLimitLast'] == null))
             && nodeContext.parent
-            && nodeContext.parent['hyphenateLimitLast'] === "column") {
+            && nodeContext.parent.pluginProps
+            && nodeContext.parent.pluginProps['hyphenateLimitLast'] === "column") {
             return ForbidHyphenationAtTheEndOfColumnsTextNodeBreaker.instance;
         }
         return null;
@@ -478,12 +479,13 @@ goog.scope(function() {
      * @param {adapt.layout.Column} column
      */
     Hyphenator.prototype.postLayoutBlock = function(nodeContext, checkPoints, column) {
-        var prev = null;
+        /** @type {?number} */ var prev = null;
         var adjustedIndex = 0;
         for (var i=0; i < checkPoints.length; i++) {
-            var hyphenateLimitLines = checkPoints[i]['hyphenateLimitLines']
-                || (checkPoints[i].parent && checkPoints[i].parent['hyphenateLimitLines'] || null);
-            if (prev !== null && prev !== hyphenateLimitLines) {
+            var hyphenateLimitLines = /** @type {?number} */ (checkPoints[i].pluginProps['hyphenateLimitLines']
+                || (checkPoints[i].parent && checkPoints[i].parent.pluginProps['hyphenateLimitLines'] || null));
+            if (prev != null && prev !== hyphenateLimitLines) {
+                goog.asserts.assert(prev != null);
                 this.adjustHyphenateLimitLines(checkPoints, column,
                     prev, adjustedIndex, i);
                 adjustedIndex = i;
@@ -582,13 +584,14 @@ goog.scope(function() {
             textNode.parentNode.appendChild(br);
             textNode.parentNode.appendChild(newTextNode);
         }
+        checkPoints[checkPointIndex+1] = this.createDummyTextAfterNodeContext(checkPoints[checkPointIndex+1]);
         checkPoints[checkPointIndex+1].boxOffset -= text.length - index;
 
         var newTextNodeContext = checkPoints[checkPointIndex].clone();
         newTextNodeContext.viewNode = newTextNode;
         newTextNodeContext.boxOffset = checkPoints[checkPointIndex+1].boxOffset + 1;
         newTextNodeContext.offsetInNode = checkPoints[checkPointIndex+1].offsetInNode + index;
-        var newTextAfterNodeContext = newTextNodeContext.clone();
+        var newTextAfterNodeContext = this.createDummyTextAfterNodeContext(newTextNodeContext.clone());
         newTextAfterNodeContext.after = true;
         newTextAfterNodeContext.boxOffset = checkPoints[checkPointIndex+1].boxOffset + (text.length - index);
 
@@ -597,6 +600,7 @@ goog.scope(function() {
     };
 
     /**
+     * @private
      * @param {Text} textNode
      * @return {number}
      */
@@ -607,6 +611,7 @@ goog.scope(function() {
     };
 
     /**
+     * @private
      * @param {{nodeContext: adapt.vtree.NodeContext, index: number, checkPointIndex: number}} position
      * @return {?{textNode: Text, viewIndex: number, text: string}}
      */
@@ -619,6 +624,25 @@ goog.scope(function() {
             viewIndex: position.index - position.nodeContext.boxOffset,
             text: textNode.data
         };
+    };
+
+    /**
+     * @private
+     * @param {adapt.vtree.NodeContext} nodeContext
+     * @return {adapt.vtree.NodeContext}
+     */
+    Hyphenator.prototype.createDummyTextAfterNodeContext = function(nodeContext) {
+        var newNodeContext = /** @type {adapt.vtree.NodeContext} */ (Object.create(nodeContext));
+        newNodeContext.toNodePosition = function() {
+            var nodePosition = adapt.vtree.NodeContext.prototype.toNodePosition.call(this);
+            var offsetInNode = this.offsetInNode + this.viewNode.data.length;
+            nodePosition.offsetInNode = this.preprocessedTextContent
+                ? vivliostyle.diff.resolveOriginalIndex(this.preprocessedTextContent, offsetInNode)
+                : offsetInNode;
+            nodePosition.after = false;
+            return nodePosition;
+        };
+        return newNodeContext;
     };
 
     /**
@@ -649,14 +673,14 @@ goog.scope(function() {
         this.styleAndLang = styleAndLang;
         this.key = key;
     };
-    var PropertyCollector = vivliostyle.plugins.hyphenation.PropertyCollector;
+    /** @const */ var PropertyCollector = vivliostyle.plugins.hyphenation.PropertyCollector;
 
     /**
      * @param {adapt.vtree.NodeContext} context
      */
     PropertyCollector.prototype.collect = function(context) {
         if (this.isCollected()) return;
-        var value = context[this.key];
+        var value = this.retrieveValue(context);
         if (value !== undefined) {
             this.styleAndLang[this.key] = value;
         }
@@ -667,6 +691,32 @@ goog.scope(function() {
     PropertyCollector.prototype.isCollected = function() {
         return this.styleAndLang[this.key] != null;
     };
+
+    /**
+     * @param {adapt.vtree.NodeContext} context
+     * @return {(string|number|undefined|null|Array.<?number>)}
+     */
+    PropertyCollector.prototype.retrieveValue = function(context) {
+        return context[this.key];
+    };
+
+    /**
+     * @constructor
+     * @param {!vivliostyle.plugins.hyphenation.StyleAndLang} styleAndLang
+     * @param {!string} key
+     * @extends {vivliostyle.plugins.hyphenation.PropertyCollector}
+     */
+    vivliostyle.plugins.hyphenation.PluginPropertyCollector = function(styleAndLang, key) {
+        vivliostyle.plugins.hyphenation.PropertyCollector.call(this, styleAndLang, key);
+    };
+    /** @const */ var PluginPropertyCollector = vivliostyle.plugins.hyphenation.PluginPropertyCollector;
+    goog.inherits(PluginPropertyCollector, PropertyCollector);
+
+    /** @override */
+    PluginPropertyCollector.prototype.retrieveValue = function(context) {
+        return context.pluginProps && context.pluginProps[this.key];
+    };
+
 
     /**
      * @constructor
