@@ -799,12 +799,22 @@ adapt.layout.Column.prototype.buildDeepElementView = function(position) {
     if (!position.viewNode) {
         return adapt.task.newResult(position);
     }
+    /** @type {Array.<adapt.vtree.NodeContext>} */ var checkPoints = [];
     var sourceNode = position.sourceNode;
     var self = this;
+
     /** @type {!adapt.task.Frame.<adapt.vtree.NodeContext>} */ var frame =
         adapt.task.newFrame("buildDeepElementView");
     // TODO: end the loop based on depth, not sourceNode comparison
     frame.loopWithFrame(function(bodyFrame) {
+        if (position.viewNode && position.inline && !adapt.layout.isSpecialNodeContext(position)) {
+            checkPoints.push(position.copy());
+        } else {
+            if (checkPoints.length > 0) {
+                self.postLayoutBlock(position, checkPoints);
+            }
+            checkPoints = [];
+        }
         self.maybePeelOff(position, 0).then(function(position1Param) {
             var position1 = /** @type {adapt.vtree.NodeContext} */ (position1Param);
             if (position1 !== position) {
@@ -818,6 +828,8 @@ adapt.layout.Column.prototype.buildDeepElementView = function(position) {
                     bodyFrame.breakLoop();
                     return;
                 }
+                if (!adapt.layout.isSpecialNodeContext(position1))
+                    checkPoints.push(position1.copy());
             }
             self.layoutContext.nextInTree(position1).then(function(positionParam) {
                 position = /** @type {adapt.vtree.NodeContext} */ (positionParam);
@@ -837,6 +849,9 @@ adapt.layout.Column.prototype.buildDeepElementView = function(position) {
             });
         });
     }).then(function() {
+        if (checkPoints.length > 0) {
+            self.postLayoutBlock(position, checkPoints);
+        }
         frame.finish(position);
     });
     return frame.result();
@@ -1829,7 +1844,6 @@ adapt.layout.Column.prototype.layoutBreakableBlock = function(nodeContext) {
 };
 
 /**
- * @private
  * @param {adapt.vtree.NodeContext} nodeContext
  * @param {Array.<adapt.vtree.NodeContext>} checkPoints
  */
@@ -2022,7 +2036,6 @@ adapt.layout.isSpecial = function(e) {
 };
 
 /**
- * @private
  * @param {adapt.vtree.NodeContext} nodeContext
  * @returns {boolean}
  */
