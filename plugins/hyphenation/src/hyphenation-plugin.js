@@ -486,9 +486,9 @@ goog.scope(function() {
                 || (checkPoints[i].parent && checkPoints[i].parent.pluginProps['hyphenateLimitLines'] || null));
             if (prev != null && prev !== hyphenateLimitLines) {
                 goog.asserts.assert(prev != null);
-                this.adjustHyphenateLimitLines(checkPoints, column,
-                    prev, adjustedIndex, i);
-                adjustedIndex = i;
+                var insertedCheckPointSize =  this.adjustHyphenateLimitLines(
+                    checkPoints, column, prev, adjustedIndex, i);
+                i = adjustedIndex = i+insertedCheckPointSize;
             }
             prev = hyphenateLimitLines;
         }
@@ -504,10 +504,12 @@ goog.scope(function() {
      * @param {number} hyphenateLimitLines
      * @param {number} startIndex
      * @param {number} endIndex
+     * @return {number}
      */
     Hyphenator.prototype.adjustHyphenateLimitLines = function(checkPoints, column,
         hyphenateLimitLines, startIndex, endIndex) {
         var result;
+        var initialEndIndex = endIndex;
         do {
             var linePositions = column.findLinePositions(checkPoints.slice(startIndex, endIndex));
             var succesiveHyphenationCount = 0;
@@ -531,6 +533,7 @@ goog.scope(function() {
                 return false;
             }.bind(this));
         } while (result);
+        return endIndex - initialEndIndex;
     };
 
     /**
