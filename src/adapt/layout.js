@@ -484,9 +484,7 @@ adapt.layout.validateCheckPoints = function(checkPoints) {
                     vivliostyle.logging.logger.warn("validateCheckPoints: duplicate after points");
                 }
             } else {
-                if (cp0.after) {
-                    //vivliostyle.logging.logger.warn("validateCheckPoints: inconsistent after point");
-                } else {
+                if (!cp0.after) {
                     if (cp1.boxOffset - cp0.boxOffset != cp1.offsetInNode - cp0.offsetInNode) {
                         vivliostyle.logging.logger.warn("validateCheckPoints: boxOffset inconsistent with offsetInNode");
                     }
