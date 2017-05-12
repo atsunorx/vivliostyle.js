@@ -75,7 +75,9 @@
         "adapt/viewer.js",
         "vivliostyle/viewer.js",
 
-        "../plugins/hyphenation/src/hyphenation-plugin.js"
+        "../plugins/hyphenation/src/hyphenation-plugin.js",
+
+        "../plugins/wiley-table-row-shading/src/wiley-table-row-shading.js"
     ];
 
     var commonJsModuleList = [

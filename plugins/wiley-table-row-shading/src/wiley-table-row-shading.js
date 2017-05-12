@@ -1,10 +1,6 @@
-$(document).ready(function()
-{
-	stripy_tables();
-});
+vivliostyle.plugin.registerHook("PREPROCESS_SINGLE_DOCUMENT", stripy_tables);
 
-
-function stripy_tables() 
+function stripy_tables(document) 
 {
 	var tables = document.getElementsByTagName('table');
 	
