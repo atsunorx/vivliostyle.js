@@ -398,7 +398,7 @@ goog.scope(function() {
      */
     Hyphenator.prototype.preprocessHyphenateLimitLast = function(context, computedStyle) {
         var hyphenateLimitLast = /** @type {?string} */ (context.inheritedProps["hyphenate-limit-last"]);
-        if (!hyphenateLimitLast) return;
+        if (!hyphenateLimitLast || context.inline) return;
         if (typeof hyphenateLimitLast === 'string') {
             context.pluginProps['hyphenateLimitLast'] = hyphenateLimitLast;
             computedStyle["hyphenate-limit-last"] =
@@ -412,7 +412,7 @@ goog.scope(function() {
      */
     Hyphenator.prototype.preprocessHyphenateLimitLines = function(context, computedStyle) {
         var hyphenateLimitLines = /** @type {?number|?string} */ (context.inheritedProps["hyphenate-limit-lines"]);
-        if (!hyphenateLimitLines) return;
+        if (!hyphenateLimitLines || context.inline) return;
         if (typeof hyphenateLimitLines === 'string') {
             computedStyle["hyphenate-limit-lines"] =
                 adapt.css.getName(hyphenateLimitLines);
@@ -479,22 +479,16 @@ goog.scope(function() {
      * @param {adapt.layout.Column} column
      */
     Hyphenator.prototype.postLayoutBlock = function(nodeContext, checkPoints, column) {
-        /** @type {?number} */ var prev = null;
-        var adjustedIndex = 0;
-        for (var i=0; i < checkPoints.length; i++) {
-            var hyphenateLimitLines = /** @type {?number} */ (checkPoints[i].pluginProps['hyphenateLimitLines']
-                || (checkPoints[i].parent && checkPoints[i].parent.pluginProps['hyphenateLimitLines'] || null));
-            if (prev != null && prev !== hyphenateLimitLines) {
-                goog.asserts.assert(prev != null);
-                var insertedCheckPointSize =  this.adjustHyphenateLimitLines(
-                    checkPoints, column, prev, adjustedIndex, i);
-                i = adjustedIndex = i+insertedCheckPointSize;
-            }
-            prev = hyphenateLimitLines;
+        var blockParent = null;
+        for (var n = checkPoints[0]; n; n = n.parent) {
+            if (n.inline) continue;
+            blockParent = n;
+            break;
         }
-        if (prev != null) {
-            this.adjustHyphenateLimitLines(checkPoints, column, prev,
-                adjustedIndex, checkPoints.length);
+        var hyphenateLimitLines = /** @type {?number} */ (blockParent.pluginProps['hyphenateLimitLines']);
+        if (hyphenateLimitLines) {
+            this.adjustHyphenateLimitLines(
+                checkPoints, column, hyphenateLimitLines);
         }
     };
 
@@ -502,38 +496,29 @@ goog.scope(function() {
      * @param {Array.<adapt.vtree.NodeContext>} checkPoints
      * @param {adapt.layout.Column} column
      * @param {number} hyphenateLimitLines
-     * @param {number} startIndex
-     * @param {number} endIndex
-     * @return {number}
      */
-    Hyphenator.prototype.adjustHyphenateLimitLines = function(checkPoints, column,
-        hyphenateLimitLines, startIndex, endIndex) {
+    Hyphenator.prototype.adjustHyphenateLimitLines = function(checkPoints,
+        column, hyphenateLimitLines) {
         var result;
-        var initialEndIndex = endIndex;
         do {
-            var linePositions = column.findLinePositions(checkPoints.slice(startIndex, endIndex));
+            var linePositions = column.findLinePositions(checkPoints);
             var succesiveHyphenationCount = 0;
             result = linePositions.filter(function(linePosition) {
                 return !column.isOverflown(linePosition);
             }).some(function(linePosition) {
                 var position = column.findEndOfLine(linePosition, checkPoints, false);
-                if (position.checkPointIndex < startIndex
-                    || position.checkPointIndex >= endIndex) {
-                    return false;
-                }
                 if (this.isHyphenated(position)) {
                     succesiveHyphenationCount++;
                 } else {
                     succesiveHyphenationCount=0;
                 }
                 if (succesiveHyphenationCount > hyphenateLimitLines) {
-                    endIndex += this.insertLineBreakBeforePreviousWordOf(position, checkPoints);
+                    this.insertLineBreakBeforePreviousWordOf(position, checkPoints);
                     return true;
                 }
                 return false;
             }.bind(this));
         } while (result);
-        return endIndex - initialEndIndex;
     };
 
     /**
