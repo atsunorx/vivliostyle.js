@@ -14,6 +14,8 @@ goog.scope(function() {
     var fastdiff = require('node_modules/fast-diff/diff');
     /* eslint-enable global-require,no-undef */
 
+    /** @const */ var diff = vivliostyle.diff;
+
     /**
      * @typedef {{
      *  leftmin: number,
@@ -492,6 +494,7 @@ goog.scope(function() {
                     checkPoints, column, hyphenateLimitLines);
             }
         }
+        this.deleteUnnecessarySoftHyphen(checkPoints, column);
     };
 
     /**
@@ -580,16 +583,19 @@ goog.scope(function() {
             textNode.parentNode.appendChild(newTextNode);
         }
         if (this.isJustified(textNode)) this.fixJustification(br, vertical, column, nodeContext);
-        checkPoints[checkPointIndex+1] = this.createDummyTextAfterNodeContext(checkPoints[checkPointIndex+1]);
+
+        checkPoints[checkPointIndex+1] = checkPoints[checkPointIndex+1].modify();
         checkPoints[checkPointIndex+1].boxOffset -= text.length - index;
+        this.registerNodePositionModifierForTextAfterNodeContext(checkPoints[checkPointIndex+1]);
 
         var newTextNodeContext = checkPoints[checkPointIndex].clone();
         newTextNodeContext.viewNode = newTextNode;
         newTextNodeContext.boxOffset = checkPoints[checkPointIndex+1].boxOffset + 1;
         newTextNodeContext.offsetInNode = checkPoints[checkPointIndex+1].offsetInNode + index;
-        var newTextAfterNodeContext = this.createDummyTextAfterNodeContext(newTextNodeContext.clone());
+        var newTextAfterNodeContext = newTextNodeContext.clone();
         newTextAfterNodeContext.after = true;
         newTextAfterNodeContext.boxOffset = checkPoints[checkPointIndex+1].boxOffset + (text.length - index);
+        this.registerNodePositionModifierForTextAfterNodeContext(newTextAfterNodeContext);
 
         checkPoints.splice(checkPointIndex+2, 0, newTextNodeContext, newTextAfterNodeContext);
         return 2;
@@ -640,6 +646,65 @@ goog.scope(function() {
 
     /**
      * @private
+     * @param {Array.<adapt.vtree.NodeContext>} checkPoints
+     * @param {adapt.layout.Column} column
+     */
+    Hyphenator.prototype.deleteUnnecessarySoftHyphen = function(checkPoints, column) {
+        var linePositions = column.findLinePositions(checkPoints);
+        var hyphenatedPositions = linePositions.map(function(linePosition) {
+            return column.findEndOfLine(linePosition, checkPoints, false);
+        }).filter(function(position) {
+            return this.isHyphenated(position);
+        }.bind(this));
+        for (var i=0; i < checkPoints.length; i++) {
+            var checkPoint = checkPoints[i];
+            if (checkPoint.after || checkPoint.viewNode.nodeType == 1) continue;
+            var textNode = /** @type {Text} */ (checkPoint.viewNode);
+            var originalText = textNode.data;
+            var newText = this.updateTextNodeContent(hyphenatedPositions, checkPoint, textNode);
+            checkPoint = checkPoints[i] = checkPoints[i].modify();
+            this.registerNodePositionModifierForSoftHyphenDeletion(checkPoint, newText, originalText);
+        }
+    };
+
+    /**
+     * @private
+     * @param {Array.<{nodeContext: adapt.vtree.NodeContext, index: number, checkPointIndex: number}>} hyphenatedPositions
+     * @param {adapt.vtree.NodeContext} checkPoint
+     * @param {Text} textNode
+     * @return {string}
+     */
+    Hyphenator.prototype.updateTextNodeContent = function(hyphenatedPositions, checkPoint, textNode) {
+        var newText = textNode.data.replace(/\xAD/g, function(match, offset) {
+            if (this.isUnnecessarySoftHyphen(hyphenatedPositions, checkPoint, offset)) {
+                return '';
+            } else {
+                return "\xAD";
+            }
+        }.bind(this));
+        textNode.data = newText;
+        return newText;
+    };
+
+    /**
+     * @private
+     * @param {adapt.vtree.NodeContext} checkPoint
+     * @param {string} newText
+     * @param {string} originalText
+     */
+    Hyphenator.prototype.registerNodePositionModifierForSoftHyphenDeletion = function(checkPoint, newText, originalText) {
+        var changes = diff.diffChars(originalText, newText);
+        var originalOffsetInNode = checkPoint.offsetInNode;
+        checkPoint.nodePositionModifiers.push(function(generator, nodeContext) {
+            var actualOffsetInNode = diff.resolveOriginalIndex(
+                changes, nodeContext.offsetInNode - originalOffsetInNode) + originalOffsetInNode;
+            nodeContext.offsetInNode = actualOffsetInNode;
+            return generator();
+        });
+    };
+
+    /**
+     * @private
      * @param {Document} doc
      * @return {Element}
      */
@@ -647,6 +712,20 @@ goog.scope(function() {
         var br = doc.createElementNS(adapt.base.NS.XHTML, "div");
         br.setAttribute(adapt.vtree.SPECIAL_ATTR, "1");
         return br;
+    };
+
+    /**
+     * @private
+     * @param {Array.<{nodeContext: adapt.vtree.NodeContext, index: number, checkPointIndex: number}>} hyphenatedPositions
+     * @param {adapt.vtree.NodeContext} checkPoint
+     * @param {number} offset
+     * @return {boolean}
+     */
+    Hyphenator.prototype.isUnnecessarySoftHyphen = function(hyphenatedPositions, checkPoint, offset) {
+        return !hyphenatedPositions.some(function(position) {
+            return checkPoint === position.nodeContext
+                && offset === position.index - position.nodeContext.boxOffset;
+        });
     };
 
     /**
@@ -668,20 +747,17 @@ goog.scope(function() {
     /**
      * @private
      * @param {adapt.vtree.NodeContext} nodeContext
-     * @return {adapt.vtree.NodeContext}
      */
-    Hyphenator.prototype.createDummyTextAfterNodeContext = function(nodeContext) {
-        var newNodeContext = /** @type {adapt.vtree.NodeContext} */ (Object.create(nodeContext));
-        newNodeContext.toNodePosition = function() {
-            var nodePosition = adapt.vtree.NodeContext.prototype.toNodePosition.call(this);
-            var offsetInNode = this.offsetInNode + this.viewNode.data.length;
-            nodePosition.offsetInNode = this.preprocessedTextContent
-                ? vivliostyle.diff.resolveOriginalIndex(this.preprocessedTextContent, offsetInNode)
+    Hyphenator.prototype.registerNodePositionModifierForTextAfterNodeContext = function(nodeContext) {
+        nodeContext.nodePositionModifiers.push(function(generator, nodeContext) {
+            var nodePosition = generator();
+            var offsetInNode = nodeContext.offsetInNode + nodeContext.viewNode.data.length;
+            nodePosition.offsetInNode = nodeContext.preprocessedTextContent
+                ? diff.resolveOriginalIndex(nodeContext.preprocessedTextContent, offsetInNode)
                 : offsetInNode;
             nodePosition.after = false;
             return nodePosition;
-        };
-        return newNodeContext;
+        });
     };
 
     /**
