@@ -541,13 +541,14 @@ goog.scope(function() {
         var data = this.extractTextContentAndViewIndex(position);
         if (!data) return 0;
 
+        var vertical = position.nodeContext.vertical;
         var boundary = vivliostyle.plugins.hyphenation.findWordBoundary(
             data.text, data.viewIndex, true);
         if (boundary == 0) {
-            return this.insertLineBreakBefore(data.textNode);
+            return this.insertLineBreakBefore(data.textNode, vertical);
         } else {
             return this.splitAndInsertLineBreakBefore(data.textNode, boundary,
-                data.text, checkPoints, position.checkPointIndex);
+                data.text, checkPoints, position.checkPointIndex, vertical);
         }
     };
 
@@ -560,8 +561,8 @@ goog.scope(function() {
      * @return {number}
      */
     Hyphenator.prototype.splitAndInsertLineBreakBefore = function(
-        textNode, index, text, checkPoints, checkPointIndex) {
-        var br = textNode.ownerDocument.createElementNS(adapt.base.NS.XHTML, "br");
+        textNode, index, text, checkPoints, checkPointIndex, vertical) {
+        var br = this.createLineBreak(textNode.ownerDocument);
         var newTextNode =  textNode.cloneNode(true);
         textNode.replaceData(index, text.length - index, '');
         newTextNode.replaceData(0, index, '');
@@ -572,6 +573,7 @@ goog.scope(function() {
             textNode.parentNode.appendChild(br);
             textNode.parentNode.appendChild(newTextNode);
         }
+        if (this.isJustified(textNode)) this.fixJustification(br, vertical);
         checkPoints[checkPointIndex+1] = this.createDummyTextAfterNodeContext(checkPoints[checkPointIndex+1]);
         checkPoints[checkPointIndex+1].boxOffset -= text.length - index;
 
@@ -592,10 +594,55 @@ goog.scope(function() {
      * @param {Text} textNode
      * @return {number}
      */
-    Hyphenator.prototype.insertLineBreakBefore = function(textNode) {
-        var br = textNode.ownerDocument.createElementNS(adapt.base.NS.XHTML, "br");
+    Hyphenator.prototype.insertLineBreakBefore = function(textNode, vertical) {
+        var br = this.createLineBreak(textNode.ownerDocument);
         textNode.parentNode.insertBefore(br, textNode);
+        if (this.isJustified(textNode)) this.fixJustification(br, vertical);
         return 0;
+    };
+
+    /**
+     * @private
+     * @param {Node} node
+     * @return {boolean}
+     */
+    Hyphenator.prototype.isJustified = function(node) {
+        var textAlign = "";
+        for (; node && !textAlign; node = node.parentNode) {
+            if (node.nodeType != 1)
+                continue;
+            textAlign = (/** @type {HTMLElement} */ (node)).style.textAlign;
+        }
+        return textAlign === "justify";
+    };
+
+    /**
+     * @param {Node} br
+     * @param {boolean} vertical
+     * @return {void}
+     */
+    Hyphenator.prototype.fixJustification = function(br, vertical) {
+        var doc = br.ownerDocument;
+        var span = adapt.layout.createJustificationAdjustmentElement(doc, vertical);
+        br.parentNode.insertBefore(span, br);
+        if (vertical) {
+            br.style.marginRight = "-80px";
+            br.style.width = "0px";
+        } else {
+            br.style.marginTop = "-80px";
+            br.style.height = "0px";
+        }
+    };
+
+    /**
+     * @private
+     * @param {Document} doc
+     * @return {Node}
+     */
+    Hyphenator.prototype.createLineBreak = function(doc) {
+        var br = doc.createElementNS(adapt.base.NS.XHTML, "div");
+        br.setAttribute(adapt.vtree.SPECIAL_ATTR, "1");
+        return br;
     };
 
     /**

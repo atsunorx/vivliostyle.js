@@ -1647,24 +1647,7 @@ adapt.layout.Column.prototype.fixJustificationIfNeeded = function(nodeContext, e
         return;
     node = nodeContext.viewNode;
     var doc = node.ownerDocument;
-    var span = /** @type {HTMLElement} */ (doc.createElement("span"));
-    span.style.visibility = "hidden";
-    if (adapt.base.checkInlineBlockJustificationBug(document.body)) {
-        if (nodeContext.vertical) {
-            span.style.marginTop = "100%";
-        } else {
-            span.style.marginLeft = "100%";
-        }
-    } else {
-        span.style.display = "inline-block";
-        if (nodeContext.vertical) {
-            span.style.height = "100%";
-        } else {
-            span.style.width = "100%";
-        }
-    }
-    span.textContent = " #";
-    span.setAttribute(adapt.vtree.SPECIAL_ATTR, "1");
+    var span = adapt.layout.createJustificationAdjustmentElement(doc, nodeContext.vertical);
     var insertionPoint = endOfColumn && (nodeContext.after || node.nodeType != 1) ? node.nextSibling : node;
     var parent = node.parentNode;
     if (!parent) {
@@ -3160,6 +3143,34 @@ adapt.layout.isOrphan = function(node) {
         node = node.parentNode;
     }
     return true;
+};
+
+/**
+ * @param {Document} doc
+ * @param {boolean} vertical
+ * @return {HTMLElement}
+ */
+adapt.layout.createJustificationAdjustmentElement = function(doc, vertical) {
+    var span = /** @type {HTMLElement} */ (doc.createElement("span"));
+    span.style.visibility = "hidden";
+    if (adapt.base.checkInlineBlockJustificationBug(document.body)) {
+        if (vertical) {
+            span.style.marginTop = "100%";
+        } else {
+            span.style.marginLeft = "100%";
+        }
+    } else {
+        span.style.display = "inline-block";
+        if (vertical) {
+            span.style.height = "100%";
+        } else {
+            span.style.width = "100%";
+        }
+    }
+    span.textContent = " #";
+    span.style.lineHeight = "80px";
+    span.setAttribute(adapt.vtree.SPECIAL_ATTR, "1");
+    return span;
 };
 
 /**
