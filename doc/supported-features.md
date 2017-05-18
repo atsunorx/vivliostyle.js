@@ -586,6 +586,8 @@ Properties where <quote>Allowed prefixes</quote> is indicated may be used with a
 - [hyphenate-limit-last](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-last)
   - Supported in all browsers
   - Only `none` and `column` values are supported.
+- [hyphenate-limit-lines](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-lines)
+  - Supported in all browsers
 
 ### [CSS Text Decoration 3](https://www.w3.org/TR/css-text-decor-3/)
 

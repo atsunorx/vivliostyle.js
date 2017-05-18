@@ -930,6 +930,7 @@ adapt.css.ident = {
     manual: adapt.css.getName("manual"),
     none: adapt.css.getName("none"),
     normal: adapt.css.getName("normal"),
+    no_limit : adapt.css.getName("no-limit"),
     oeb_page_foot: adapt.css.getName("oeb-page-foot"),
     oeb_page_head: adapt.css.getName("oeb-page-head"),
     page: adapt.css.getName("page"),

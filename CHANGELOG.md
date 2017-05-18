@@ -19,7 +19,8 @@
 - Add support for `::nth-fragment()` pseudo-element selector
   - Spec: [CSS Overflow Module Level 4 - Fragmen styling](https://drafts.csswg.org/css-overflow-4/#fragment-styling)
 - Add support for `::after-if-continues` pseudo-element
-
+- Support `hyphenate-limit-lines` property
+    - Spec: [hyphenate-limit-lines](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-lines)
 
 ### Changed
 
