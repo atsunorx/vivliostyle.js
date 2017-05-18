@@ -801,7 +801,7 @@ goog.scope(function() {
         textNode, nodeContext, low, checkPoints, checkpointIndex, force) {
         if (force) {
             return goog.base(this, 'breakTextNode', textNode,
-                nodeContext, low  - 10, checkPoints, checkpointIndex, force);
+                nodeContext, low, checkPoints, checkpointIndex, force);
         }
         if (nodeContext.after) {
             nodeContext.offsetInNode = textNode.length;
