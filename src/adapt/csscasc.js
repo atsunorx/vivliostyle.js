@@ -3301,6 +3301,7 @@ adapt.csscasc.CascadeParserHandler.prototype.pseudoelementSelector = function(na
         case "footnote-call":
         case "footnote-marker":
         case "inner":
+        case "after-if-continues":
             if (!this.pseudoelement) {
                 this.pseudoelement = name;
             } else {
