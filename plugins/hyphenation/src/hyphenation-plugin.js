@@ -526,7 +526,7 @@ goog.scope(function() {
      * @return {boolean}
      */
     Hyphenator.prototype.isHyphenated = function(position) {
-        var data = this.extractTextContexntAndViewIndex(position);
+        var data = this.extractTextContentAndViewIndex(position);
         if (!data) return false;
         return data.text.charCodeAt(data.viewIndex) == 0xAD
             || data.text.charAt(data.viewIndex) == '-';
@@ -538,7 +538,7 @@ goog.scope(function() {
      * @return {number}
      */
     Hyphenator.prototype.insertLineBreakBeforePreviousWordOf = function(position, checkPoints) {
-        var data = this.extractTextContexntAndViewIndex(position);
+        var data = this.extractTextContentAndViewIndex(position);
         if (!data) return 0;
 
         var boundary = vivliostyle.plugins.hyphenation.findWordBoundary(
@@ -603,7 +603,7 @@ goog.scope(function() {
      * @param {{nodeContext: adapt.vtree.NodeContext, index: number, checkPointIndex: number}} position
      * @return {?{textNode: Text, viewIndex: number, text: string}}
      */
-    Hyphenator.prototype.extractTextContexntAndViewIndex = function(position) {
+    Hyphenator.prototype.extractTextContentAndViewIndex = function(position) {
         var viewNode = position.nodeContext.viewNode;
         if (viewNode.nodeType == 1) return null;
         var textNode = /** @type {Text} */ (viewNode);
