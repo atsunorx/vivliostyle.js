@@ -1660,8 +1660,13 @@ adapt.layout.Column.prototype.fixJustificationIfNeeded = function(nodeContext, e
         parent.insertBefore(br, insertionPoint);
         // TODO: see if it can be reduced
         span.style.lineHeight = "80px";
-        br.style.marginTop = "-80px";
-        br.style.height = "0px";
+        if (nodeContext.vertical) {
+            br.style.marginRight = "-80px";
+            br.style.width = "0px";
+        } else {
+            br.style.marginTop = "-80px";
+            br.style.height = "0px";
+        }
         br.setAttribute(adapt.vtree.SPECIAL_ATTR, "1");
     }
 };
