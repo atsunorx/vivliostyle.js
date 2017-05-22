@@ -485,10 +485,12 @@ goog.scope(function() {
             blockParent = n;
             break;
         }
-        var hyphenateLimitLines = /** @type {?number} */ (blockParent.pluginProps['hyphenateLimitLines']);
-        if (hyphenateLimitLines) {
-            this.adjustHyphenateLimitLines(
-                checkPoints, column, hyphenateLimitLines);
+        if (blockParent) {
+            var hyphenateLimitLines = /** @type {?number} */ (blockParent.pluginProps['hyphenateLimitLines']);
+            if (hyphenateLimitLines) {
+                this.adjustHyphenateLimitLines(
+                    checkPoints, column, hyphenateLimitLines);
+            }
         }
     };
 
