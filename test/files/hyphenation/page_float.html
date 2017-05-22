@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Column page floats</title>
+  <style>
+    @page {
+      size: 620px;
+      margin: 10px;
+    }
+    :root {
+      column-count: 2;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      line-height: 20px;
+      widows: 1;
+      orphans: 1;
+    }
+    body {
+      margin: 8px;
+
+      hyphens: auto;
+
+      hyphenate-limit-last: column;
+      -webkit-hyphenate-limit-last: column;
+
+      hyphenate-limit-lines: 2;
+      -webkit-hyphenate-limit-lines: 2;
+      -ms-hyphenate-limit-lines: 2;
+    }
+    .float {
+      float-reference: column;
+      background: rgba(100, 100, 255, 0.2);
+    }
+    .top {
+      float: block-start;
+      -ah-float: top page;
+    }
+  </style>
+</head>
+<body>
+<p>This is normal text inside two columns. This is normal text inside two columns. This is normal text inside two columns. This is normal text inside two columns. This is normal text inside two columns. This is normal text inside two columns.</p>
+<div class="float top">
+  This is a page float. incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities
+</div>
+</body>
+</html>

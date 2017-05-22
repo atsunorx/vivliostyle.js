@@ -217,6 +217,7 @@ z-index = auto | INT;
 [webkit]hyphenate-character = auto | STRING;
 [ms]hyphenate-limit-chars = [ auto | INT ]{1,3};
 hyphenate-limit-last = none | always | column | page | spread;
+[webkit,ms]hyphenate-limit-lines = no-limit | INT;
 [adapt,webkit]margin-before = APLENGTH;
 [adapt,webkit]margin-after = APLENGTH;
 [adapt,webkit]margin-start = APLENGTH;
@@ -441,6 +442,9 @@ BLEND_MODE = normal | multiply | screen | overlay | darken | lighten | color-dod
 mix-blend-mode = BLEND_MODE;
 isolation = auto | isolate;
 background-blend-mode = COMMA( BLEND_MODE+ );
+
+/* CSS GCPM */
+footnote-policy = auto | line;
 
 [viv]repeat-on-break = auto | none | header | footer;
 

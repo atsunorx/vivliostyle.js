@@ -18,7 +18,11 @@
   - When `all` is specified, the block-start edge of the box gets pushed down so that the edge comes after any block-start/block-end page float of which anchors are before the box in the document order.
 - Add support for `::nth-fragment()` pseudo-element selector
   - Spec: [CSS Overflow Module Level 4 - Fragmen styling](https://drafts.csswg.org/css-overflow-4/#fragment-styling)
-
+- Add support for `::after-if-continues` pseudo-element
+- Support `hyphenate-limit-lines` property
+    - Spec: [hyphenate-limit-lines](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-lines)
+- Support `footnote-policy: line`
+  - Spec: [CSS Generated Content for Paged Media Module Level 3 - Rendering footnotes and footnote policy](https://www.w3.org/TR/css-gcpm-3/#propdef-footnote-policy)
 
 ### Changed
 

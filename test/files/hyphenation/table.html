@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <style>
+    @page {
+      size: 800px 400px;
+    }
+    body {
+      -moz-column-count: 2;
+      column-count: 2;
+      font-family: Helvetica, Arial, sans-serif;
+
+      widows: 1;
+      orphans: 1;
+    }
+
+
+    th, td {
+        border: 1px gray solid;
+        width: 140px;
+    }
+
+    .hyphenated {
+      hyphenate-limit-last: column;
+      -webkit-hyphenate-limit-last: column;
+
+      hyphenate-limit-lines: 2;
+      -webkit-hyphenate-limit-lines: 2;
+      -ms-hyphenate-limit-lines: 2;
+    }
+
+    thead {
+        background-color: #FFAAAA;
+    }
+    tfoot {
+        background-color: #AAAAFF;
+    }
+  </style>
+</head>
+<body>
+
+  <section>
+    <p>(1) Number of successive hyphenated lines is limited to 2 in the left column</p>
+    <table>
+      <thead>
+        <tr>
+          <td class="hyphenated">
+            header
+            incomprehensibilities incomprehensibilities incomprehensibilities
+          </td>
+          <td>
+            header2
+            incomprehensibilities incomprehensibilities incomprehensibilities
+          </td>
+        </tr>
+      </thead>
+      <tfoot>
+        <tr>
+          <td class="hyphenated">
+            footer
+            incomprehensibilities incomprehensibilities incomprehensibilities
+          </td>
+          <td>
+            footer2
+            incomprehensibilities incomprehensibilities incomprehensibilities
+          </td>
+        </tr>
+      </tfoot>
+      <tbody>
+        <tr>
+          <td class="hyphenated">
+            cell1
+            incomprehensibilities1 incomprehensibilities2
+            incomprehensibilities3 incomprehensibilities4 incomprehensibilities5
+            incomprehensibilities6
+          </td>
+          <td>
+            cell2
+            incomprehensibilities1 incomprehensibilities2
+            incomprehensibilities3 incomprehensibilities4 incomprehensibilities5
+            incomprehensibilities6
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </section>
+
+  <section>
+    <p>(2) layout table using EntireTableLayoutStrategy</p>
+    <table>
+      <tbody>
+        <tr>
+          <td class="hyphenated">
+            cell1
+            incomprehensibilities1 incomprehensibilities2
+            incomprehensibilities3 incomprehensibilities4
+          </td>
+          <td>
+            cell2
+            incomprehensibilities1 incomprehensibilities2
+            incomprehensibilities3 incomprehensibilities4
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </section>
+
+</body>
+</html>

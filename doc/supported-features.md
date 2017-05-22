@@ -586,6 +586,8 @@ Properties where <quote>Allowed prefixes</quote> is indicated may be used with a
 - [hyphenate-limit-last](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-last)
   - Supported in all browsers
   - Only `none` and `column` values are supported.
+- [hyphenate-limit-lines](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-lines)
+  - Supported in all browsers
 
 ### [CSS Text Decoration 3](https://www.w3.org/TR/css-text-decor-3/)
 
@@ -881,6 +883,11 @@ Properties where <quote>Allowed prefixes</quote> is indicated may be used with a
   - Supports [`block-start`, `block-end`, `inline-start`, `inline-end`, `snap-block`, `left`, `right`, `top`, `bottom` and `none`](https://drafts.csswg.org/css-page-floats/#propdef-float) values.
   - Supported in all browsers
 - [float-reference](https://drafts.csswg.org/css-page-floats-3/#propdef-float-reference)
+  - Supported in all browsers
+
+## [CSS GCPM 3](https://www.w3.org/TR/css-gcpm-3/)
+- [footnote-policy](https://www.w3.org/TR/css-gcpm-3/#propdef-footnote-policy)
+  - Supports [`auto`, `line`](https://www.w3.org/TR/css-gcpm-3/#propdef-footnote-policy) values.
   - Supported in all browsers
 
 ## [Filter Effects 1](https://www.w3.org/TR/filter-effects-1/)

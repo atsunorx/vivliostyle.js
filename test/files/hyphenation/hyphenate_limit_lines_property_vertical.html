@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <style>
+    @page {
+      size: 300px 450px;
+    }
+    :root {
+      writing-mode: vertical-rl;
+    }
+    body {
+      -moz-column-count: 2;
+      column-count: 2;
+      -moz-column-fill: auto;
+      column-fill: auto;
+
+      widows: 1;
+      orphans: 1;
+
+      font-family: Helvetica, Arial, sans-serif;
+    }
+
+    section {
+      break-after: column;
+    }
+
+    div.label {
+      font-size: 16px;
+      color: #FF3333;
+    }
+    .hyphens {
+      font-size: 20px;
+      hyphens: auto;
+      margin-left: 20px;
+    }
+    .hyphenate-limit-lines_3 {
+      hyphenate-limit-lines: 3;
+      -webkit-hyphenate-limit-lines: 3;
+      -ms-hyphenate-limit-lines: 3;
+    }
+    .hyphenate-limit-lines_no_limit {
+      hyphenate-limit-lines: no-limit;
+      -webkit-hyphenate-limit-lines: no-limit;
+      -ms-hyphenate-limit-lines: no-limit;
+    }
+    .hyphenate-limit-lines_4 {
+      hyphenate-limit-lines: 4;
+      -webkit-hyphenate-limit-lines: 4;
+      -ms-hyphenate-limit-lines: 4;
+    }
+    .hyphenate-limit-lines_2 {
+      hyphenate-limit-lines: 2;
+      -webkit-hyphenate-limit-lines: 2;
+      -ms-hyphenate-limit-lines: 2;
+    }
+
+    .test7 div.hyphens {
+      font-size: 16px;
+      line-height:110%;
+      margin-left: 0px;
+    }
+
+    .test9 div.hyphens {
+      text-align: justify;
+      hyphenate-limit-last: column;
+    }
+
+  </style>
+</head>
+<body>
+
+  <section>
+    <div class="label">(1) hyphenate-limit-lines: 3</div>
+    <div class="hyphens hyphenate-limit-lines_3">
+      incomprehensibilities incomprehensibilities incomprehensibilities
+      incomprehensibilities incomprehensibilities incomprehensibilities
+    </div>
+  </section>
+
+  <section>
+    <div class="label">(2) hyphenate-limit-lines: no-limit</div>
+    <div class="hyphens hyphenate-limit-lines_no_limit">
+      incomprehensibilities incomprehensibilities incomprehensibilities
+      incomprehensibilities incomprehensibilities incomprehensibilities
+    </div>
+  </section>
+
+  <section>
+    <div class="label">(3) hyphenate-limit-lines: 4</div>
+    <div class="hyphens hyphenate-limit-lines_4">
+      incomprehensibilities incomprehensibilities incomprehensibilities
+      incomprehensibilities incomprehensibilities incomprehensibilities
+    </div>
+  </section>
+
+  <section>
+    <div class="label">(4) hyphenate-limit-lines: 2</div>
+    <div class="hyphens hyphenate-limit-lines_2">
+      incomprehensibilities incomprehensibilities incomprehensibilities
+      incomprehensibilities incomprehensibilities
+    </div>
+  </section>
+
+  <section>
+    <div class="label">(5) break at the adjusted position</div>
+    <div class="hyphens hyphenate-limit-lines_3">
+      incomprehensibilities1 incomprehensibilities2 incomprehensibilities3
+      incomprehensibilities4 incomprehensibilities5 incomprehensibilities6
+      incomprehensibilities7 incomprehensibilities8 incomprehensibilities9
+    </div>
+  </section>
+
+  <section>
+    <div class="label">(6) adjust text in the inline element</div>
+    <div class="hyphens hyphenate-limit-lines_2">
+      <b>incomprehensibilities1 incomprehensibilities2</b>
+      <span style="color:red;">incomprehensibilities3 incomprehensibilities4</span>incomprehensibilities5
+      <b>incomprehensibilities6 incomprehensibilities7</b>
+    </div>
+  </section>
+
+  <section class="test7">
+    <div class="label">(7) property value changes in the middle of content</div>
+    <div class="hyphens hyphenate-limit-lines_4">
+      <b style="font-size: 12px;">hyphenate-limit-lines=4→</b>
+      incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities
+      incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities
+      incomprehensibilities incomprehensibilities
+      <div class="hyphens hyphenate-limit-lines_2">
+        <b style="font-size: 12px;">hyphenate-limit-lines=2→</b>
+        incomprehensibilities incomprehensibilities incomprehensibilities
+        incomprehensibilities incomprehensibilities
+      </div>
+      <b style="font-size: 12px;">hyphenate-limit-lines=4→</b>
+      incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities
+      incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities
+      <div class="hyphens hyphenate-limit-lines_3">
+        <b style="font-size: 12px;">hyphenate-limit-lines=3→</b>
+        incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities
+        incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities
+        <div class="hyphens hyphenate-limit-lines_2">
+          <b style="font-size: 12px;">hyphenate-limit-lines=2→</b>
+          incomprehensibilities incomprehensibilities incomprehensibilities
+          incomprehensibilities incomprehensibilities
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="label">(8) Ignored when specified for an inline element</div>
+    <div>
+      <span class="hyphens hyphenate-limit-lines_3">
+        incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities
+        incomprehensibilities incomprehensibilities incomprehensibilities incomprehensibilities
+        incomprehensibilities incomprehensibilities
+      </span>
+    </div>
+  </section>
+
+  <section class="test9">
+    <div class="label">(9) justification</div>
+    <div class="hyphens hyphenate-limit-lines_2">
+        hyphenation opportunities determined aa automatically.
+        <span>hyphenation bb opportunities cc </span>determined automatically.
+        hyphenation dd opportunities determined aa automatically.
+    </div>
+  </section>
+
+</body>
+</html>
