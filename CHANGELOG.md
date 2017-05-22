@@ -21,6 +21,8 @@
 - Add support for `::after-if-continues` pseudo-element
 - Support `hyphenate-limit-lines` property
     - Spec: [hyphenate-limit-lines](https://drafts.csswg.org/css-text-4/#propdef-hyphenate-limit-lines)
+- Support `footnote-policy: line`
+  - Spec: [CSS Generated Content for Paged Media Module Level 3 - Rendering footnotes and footnote policy](https://www.w3.org/TR/css-gcpm-3/#propdef-footnote-policy)
 
 ### Changed
 
