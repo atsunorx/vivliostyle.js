@@ -13,12 +13,12 @@ function move_creators_affiliations_notes(document)
 		var oRefs = document.querySelectorAll('article header span.link[data-note_label="yes"][data-href]>a, article div[role="contentinfo"] span.link[data-note_label="yes"][data-href]>a'); // all other refs
 		if (notes.length && cRefs.length)
 		{
-			for (n=0; n<notes.length; n++) {
+			for (var n=0; n<notes.length; n++) {
 				var noteId = "#" + notes[n].getAttribute('id');
-				for (r=0; r<cRefs.length; r++) {
+				for (var r=0; r<cRefs.length; r++) {
 					if (noteId === cRefs[r].getAttribute('href')) // check creators refs
 					{
-						for (o=0; o<oRefs.length; o++) {
+						for (var o=0; o<oRefs.length; o++) {
 							if (noteId === oRefs[o].getAttribute('href')) break; // exclude other refs
 							movingNotes.appendChild(notes[n]);							
 						}
@@ -44,7 +44,7 @@ function move_creators_affiliations_notes(document)
 			
 			if (document.querySelector('section.keywordGroup')) {
 				var keywordGroups = document.querySelectorAll('section.keywordGroup')
-				for (i=0; i<keywordGroups.length; i++)
+				for (var i=0; i<keywordGroups.length; i++)
 					fragment.appendChild(keywordGroups[i]);
 			}
 			
@@ -82,7 +82,7 @@ function move_creators_affiliations_notes(document)
 			if (type==='editorial')
 			{
 				var jobs = document.querySelectorAll('section.creators li.creator span.jobTitle')
-				for (i=0; i<jobs.length; i++) 
+				for (var i=0; i<jobs.length; i++) 
 					if (jobs[i].innerHTML.toLowerCase().indexOf('editor') >= 0)
 						jobs[i].setAttribute('class','jobTitle editor');
 			}

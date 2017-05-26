@@ -9,7 +9,7 @@ function add_orcid_section(document)
                                section.setAttribute('class','section');
                                section.innerHTML='<header class="titleGroup"><h2 class="title" data-type="main">ORCID</h2></header>';               
                               
-                               for (i=0; i<orcids.length; i++)
+                               for (var i=0; i<orcids.length; i++)
                                {
                                                var url = orcids[i].getAttribute("data-value");
                                                var div = orcids[i].parentElement.parentElement;
