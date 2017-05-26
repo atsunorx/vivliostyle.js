@@ -1,5 +1,6 @@
+vivliostyle.plugin.registerHook("PREPROCESS_SINGLE_DOCUMENT", move_creators_affiliations_notes);
 
-function move_creators_affiliations_notes()
+function move_creators_affiliations_notes(document)
 {
 	var type = document.querySelector('body').getAttribute('data-unit-type');
 	if (type==='bookReview' || type==='mediaReview' || type==='editorial' || type==='letter' || type==='obituary')

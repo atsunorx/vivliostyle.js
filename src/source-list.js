@@ -77,6 +77,7 @@
 
         "../plugins/hyphenation/src/hyphenation-plugin.js",
 
+        "../plugins/wiley-move-creators-affiliations-notes/src/wiley-move-creators-affiliations-notes.js",
         "../plugins/wiley-table-row-shading/src/wiley-table-row-shading.js"
     ];
 
