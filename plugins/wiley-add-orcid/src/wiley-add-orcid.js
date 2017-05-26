@@ -1,4 +1,6 @@
-function add_orcid_section()
+vivliostyle.plugin.registerHook("PREPROCESS_SINGLE_DOCUMENT", add_orcid_section);
+
+function add_orcid_section(document)
 {
                 var orcids  = document.querySelectorAll('li.creator span[data-type="orcid"]');
                 if (orcids.length)
