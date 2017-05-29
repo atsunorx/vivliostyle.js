@@ -515,7 +515,7 @@ goog.scope(function() {
                     succesiveHyphenationCount=0;
                 }
                 if (succesiveHyphenationCount > hyphenateLimitLines) {
-                    this.insertLineBreakBeforePreviousWordOf(position, checkPoints);
+                    this.insertLineBreakBeforePreviousWordOf(position, checkPoints, column);
                     return true;
                 }
                 return false;
@@ -537,9 +537,10 @@ goog.scope(function() {
     /**
      * @param {{nodeContext: adapt.vtree.NodeContext, index: number, checkPointIndex: number}} position
      * @param {Array.<adapt.vtree.NodeContext>} checkPoints
+     * @param {adapt.layout.Column} column
      * @return {number}
      */
-    Hyphenator.prototype.insertLineBreakBeforePreviousWordOf = function(position, checkPoints) {
+    Hyphenator.prototype.insertLineBreakBeforePreviousWordOf = function(position, checkPoints, column) {
         var data = this.extractTextContentAndViewIndex(position);
         if (!data) return 0;
 
@@ -547,10 +548,10 @@ goog.scope(function() {
         var boundary = vivliostyle.plugins.hyphenation.findWordBoundary(
             data.text, data.viewIndex, true);
         if (boundary == 0) {
-            return this.insertLineBreakBefore(data.textNode, vertical);
+            return this.insertLineBreakBefore(data.textNode, vertical, column, position.nodeContext);
         } else {
             return this.splitAndInsertLineBreakBefore(data.textNode, boundary,
-                data.text, checkPoints, position.checkPointIndex, vertical);
+                data.text, checkPoints, position.checkPointIndex, vertical, column, position.nodeContext);
         }
     };
 
@@ -560,10 +561,13 @@ goog.scope(function() {
      * @param {string} text
      * @param {Array.<adapt.vtree.NodeContext>} checkPoints
      * @param {number} checkPointIndex
+     * @param {boolean} vertical
+     * @param {adapt.layout.Column} column
+     * @param {adapt.vtree.NodeContext} nodeContext
      * @return {number}
      */
     Hyphenator.prototype.splitAndInsertLineBreakBefore = function(
-        textNode, index, text, checkPoints, checkPointIndex, vertical) {
+        textNode, index, text, checkPoints, checkPointIndex, vertical, column, nodeContext) {
         var br = this.createLineBreak(textNode.ownerDocument);
         var newTextNode =  textNode.cloneNode(true);
         textNode.replaceData(index, text.length - index, '');
@@ -575,7 +579,7 @@ goog.scope(function() {
             textNode.parentNode.appendChild(br);
             textNode.parentNode.appendChild(newTextNode);
         }
-        if (this.isJustified(textNode)) this.fixJustification(br, vertical);
+        if (this.isJustified(textNode)) this.fixJustification(br, vertical, column, nodeContext);
         checkPoints[checkPointIndex+1] = this.createDummyTextAfterNodeContext(checkPoints[checkPointIndex+1]);
         checkPoints[checkPointIndex+1].boxOffset -= text.length - index;
 
@@ -594,12 +598,15 @@ goog.scope(function() {
     /**
      * @private
      * @param {Text} textNode
+     * @param {boolean} vertical
+     * @param {adapt.layout.Column} column
+     * @param {adapt.vtree.NodeContext} nodeContext
      * @return {number}
      */
-    Hyphenator.prototype.insertLineBreakBefore = function(textNode, vertical) {
+    Hyphenator.prototype.insertLineBreakBefore = function(textNode, vertical, column, nodeContext) {
         var br = this.createLineBreak(textNode.ownerDocument);
         textNode.parentNode.insertBefore(br, textNode);
-        if (this.isJustified(textNode)) this.fixJustification(br, vertical);
+        if (this.isJustified(textNode)) this.fixJustification(br, vertical, column, nodeContext);
         return 0;
     };
 
@@ -619,27 +626,24 @@ goog.scope(function() {
     };
 
     /**
-     * @param {Node} br
+     * @param {Element} br
      * @param {boolean} vertical
+     * @param {adapt.layout.Column} column
+     * @param {adapt.vtree.NodeContext} nodeContext
      * @return {void}
      */
-    Hyphenator.prototype.fixJustification = function(br, vertical) {
+    Hyphenator.prototype.fixJustification = function(br, vertical, column, nodeContext) {
         var doc = br.ownerDocument;
         var span = adapt.layout.createJustificationAdjustmentElement(doc, vertical);
+        adapt.layout.fixJustificationOnHyphen(nodeContext, false, br, br);
         br.parentNode.insertBefore(span, br);
-        if (vertical) {
-            br.style.marginRight = "-80px";
-            br.style.width = "0px";
-        } else {
-            br.style.marginTop = "-80px";
-            br.style.height = "0px";
-        }
+        column.compensateJustificationLineHeight(span, br, nodeContext);
     };
 
     /**
      * @private
      * @param {Document} doc
-     * @return {Node}
+     * @return {Element}
      */
     Hyphenator.prototype.createLineBreak = function(doc) {
         var br = doc.createElementNS(adapt.base.NS.XHTML, "div");
