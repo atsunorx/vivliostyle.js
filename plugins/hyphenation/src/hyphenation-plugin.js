@@ -634,9 +634,7 @@ goog.scope(function() {
      */
     Hyphenator.prototype.fixJustification = function(br, vertical, column, nodeContext) {
         var doc = br.ownerDocument;
-        var span = adapt.layout.createJustificationAdjustmentElement(doc, vertical);
-        adapt.layout.fixJustificationOnHyphen(nodeContext, false, br, br);
-        br.parentNode.insertBefore(span, br);
+        var span = column.addAndAdjustJustificationElement(nodeContext, false, br, br, doc, br.parentNode);
         column.compensateJustificationLineHeight(span, br, nodeContext);
     };
 
