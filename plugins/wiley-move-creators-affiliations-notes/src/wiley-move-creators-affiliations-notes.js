@@ -44,7 +44,9 @@ function move_creators_affiliations_notes(document)
                                var remainNotes = document.querySelectorAll('div[role="contentinfo"]>section.noteGroup>ol>li');
                                if (!remainNotes.length) {                         
                                                var noteGroup = document.querySelector('div[role="contentinfo"]>section.noteGroup');
-                                               noteGroup.parentNode.removeChild(noteGroup);
+                                               if (noteGroup) {
+                                                               noteGroup.parentNode.removeChild(noteGroup);
+                                               }
                                }
                                               
                                // If there is a <figure class="blockFixed" data-type="signatureBlock"> that occurs at the end of the article, hide authors/affiliations/correspondence
