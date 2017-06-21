@@ -65,7 +65,8 @@ module.exports = [
             {file: "page_breaks/page_break_between_flow_elements.html", title: "Page break between flow elements"},
             {file: "page_breaks/break_on_pseudo_of_flow_elements.html", title: "Break on pseudoelements of flow elements"},
             {file: "page_breaks/page_break_bug_with_exclusions.html", title: "Page break bug with exclusions (on Firefox)"},
-            {file: "page_breaks/page_break_bug_in_vertical_text.html", title: "Page break bug in vertical text (on Firefox)"}
+            {file: "page_breaks/page_break_bug_in_vertical_text.html", title: "Page break bug in vertical text (on Firefox)"},
+            {file: "page_breaks/hyphenation_page_break.html", title: "Page break bug with hyphenation"}
         ]
     },
     {
@@ -140,6 +141,17 @@ module.exports = [
             {file: "repeating_elements/priority_of_dropping.html", title: "priority of dropping"},
             {file: "repeating_elements/repeating_page_floats.html", title: "Page floats with repeating elements"},
             {file: "repeating_elements/repeating_page_floats_vertical.html", title: "Page floats with repeating elements (vertical writing-mode)"}
+        ]
+    },
+    {
+        category: "Hyphenation",
+        files: [
+            {file: "hyphenation/hyphens_property.html", title: "hyphens property"},
+            {file: "hyphenation/hyphenate_limit_last_property.html", title: "hyphenate-limit-last property"},
+            {file: "hyphenation/hyphenate_limit_lines_property.html", title: "hyphenate-limit-lines property"},
+            {file: "hyphenation/hyphenate_limit_lines_property_vertical.html", title: "hyphenate-limit-lines property (vertical writing-mode)"},
+            {file: "hyphenation/table.html", title: "table"},
+            {file: "hyphenation/page_float.html", title: "page float"}
         ]
     },
     {
