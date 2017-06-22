@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## [2017.6](https://github.com/vivliostyle/vivliostyle.js/releases/tag/2017.6) - 2017-6-22
 
 ### Added
 
@@ -28,6 +28,8 @@
 
 - Place footnotes at the bottom of pages (or regions) rather than columns
   - <https://github.com/vivliostyle/vivliostyle.js/pull/343>
+- Disable hyphenation by default
+  - <https://github.com/vivliostyle/vivliostyle.js/pull/363>
 
 ### Fixed
 
