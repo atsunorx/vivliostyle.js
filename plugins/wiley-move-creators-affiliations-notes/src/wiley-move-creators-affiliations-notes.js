@@ -108,11 +108,39 @@ function move_creators_affiliations_notes(document)
 			}
 		}
 		
-		// wrap all authors and corresponding text within h1 citaions in <span class="authors-set">
+		// wrap all authors and corresponding text within h1 citaions in <span class="authors-set"> and free text before citation in <span class="main-title">
 		if (document.querySelectorAll('h1>.title>.RDFa>.citation').length)
 		{
+			// search and wrap free text before first <citation>
+			var rdfa = document.querySelector('h1>.title>.RDFa');
+			var citationPassed = false,
+				freeText = false;			
+			var main;
+			for (var n=0; n<rdfa.childNodes.length; n++)
+			{
+				var curNode = rdfa.childNodes[n];
+				if (curNode.nodeName === "#text") {
+					if (curNode.nodeValue.match(/\S/) && !citationPassed && !freeText) {
+						main = document.createElement("span");
+						main.setAttribute('class','main-title');
+						main.appendChild(curNode);
+						freeText = true;
+						n--;						
+					}
+				}
+				else if (curNode.getAttribute("class") === 'citation' && !citationPassed) {
+					citationPassed = true;
+					if (freeText) {
+						rdfa.insertBefore(main, curNode);
+					}
+				}
+			}
+						
+			// mark h1		
 			var h1 = document.querySelector('h1');
 			h1.setAttribute('formatting','yes');
+			
+			// wrap authors
 			var citations = document.querySelectorAll('h1>.title>.RDFa>.citation');
 			for (var c=0; c<citations.length; c++)
 			{
@@ -130,8 +158,7 @@ function move_creators_affiliations_notes(document)
 							i--;						
 						}
 					}
-					else 
-					{
+					else {
 						var curNodeClass = curNode.getAttribute("class")
 						if (curNodeClass === 'bookTitle' || curNodeClass === 'bookSeriesTitle' || curNodeClass === 'articleTitle' || curNodeClass === 'journalTitle' || curNodeClass === 'chapterTitle' || curNodeClass === 'otherTitle' || curNodeClass === 'statuteTitle') {
 							titlesPassed = true;
