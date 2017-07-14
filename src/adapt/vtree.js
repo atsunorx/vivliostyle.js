@@ -766,6 +766,12 @@ adapt.vtree.FirstPseudo = function(outer, count) {
     /** @const */ this.count = count;
 };
 
+
+/***
+ * @typedef {function(function():adapt.vtree.NodePosition, adapt.vtree.NodeContext):adapt.vtree.NodePosition}
+ */
+adapt.vtree.NodePositionModifier;
+
 /**
  * NodeContext represents a position in the document + layout-related
  * information attached to it. When after=false and offsetInNode=0, the
@@ -826,6 +832,7 @@ adapt.vtree.NodeContext = function(sourceNode, parent, boxOffset) {
     /** @type {number} */ this.fragmentIndex = 1;
     /** @type {vivliostyle.selectors.AfterIfContinues} */ this.afterIfContinues = null;
     /** @type {?adapt.css.Ident} */ this.footnotePolicy = null;
+    /** @type {Array.<adapt.vtree.NodePositionModifier>} */ this.nodePositionModifiers = [];
 };
 
 /**
@@ -862,6 +869,7 @@ adapt.vtree.NodeContext.prototype.resetView = function() {
     this.fragmentIndex = 1;
     this.afterIfContinues = null;
     this.footnotePolicy = null;
+    this.nodePositionModifiers = [];
 };
 
 /**
@@ -907,6 +915,7 @@ adapt.vtree.NodeContext.prototype.cloneItem = function() {
     np.fragmentIndex = this.fragmentIndex;
     np.afterIfContinues = this.afterIfContinues;
     np.footnotePolicy = this.footnotePolicy;
+    np.nodePositionModifiers = [].concat(this.nodePositionModifiers);
     return np;
 };
 
@@ -967,25 +976,32 @@ adapt.vtree.NodeContext.prototype.toNodePositionStep = function() {
  * @return {adapt.vtree.NodePosition}
  */
 adapt.vtree.NodeContext.prototype.toNodePosition = function() {
-    var nc = this;
-    var steps = [];
-    do {
-        // We need fully "peeled" path, so don't record first-XXX pseudoelement containers
-        if (!nc.firstPseudo || !nc.parent || nc.parent.firstPseudo === nc.firstPseudo) {
-            steps.push(nc.toNodePositionStep());
-        }
-        nc = nc.parent;
-    } while (nc);
+    var generator = function() {
+        var nc = this;
+        var steps = [];
+        do {
+            // We need fully "peeled" path, so don't record first-XXX pseudoelement containers
+            if (!nc.firstPseudo || !nc.parent || nc.parent.firstPseudo === nc.firstPseudo) {
+                steps.push(nc.toNodePositionStep());
+            }
+            nc = nc.parent;
+        } while (nc);
 
-    var actualOffsetInNode = this.preprocessedTextContent
-        ? vivliostyle.diff.resolveOriginalIndex(this.preprocessedTextContent, this.offsetInNode)
-        : this.offsetInNode;
-    return {
-        steps:steps,
-        offsetInNode: actualOffsetInNode,
-        after: this.after,
-        preprocessedTextContent: this.preprocessedTextContent
-    };
+        var actualOffsetInNode = this.preprocessedTextContent
+            ? vivliostyle.diff.resolveOriginalIndex(this.preprocessedTextContent, this.offsetInNode)
+            : this.offsetInNode;
+        return {
+            steps:steps,
+            offsetInNode: actualOffsetInNode,
+            after: this.after,
+            preprocessedTextContent: this.preprocessedTextContent
+        };
+    }.bind(this);
+    return (this.nodePositionModifiers.reduce(function(prev, current) {
+        return function() {
+            return current(prev, this);
+        }.bind(this);
+    }.bind(this), generator))();
 };
 
 /**
