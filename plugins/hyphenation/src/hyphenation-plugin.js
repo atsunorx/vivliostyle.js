@@ -487,14 +487,20 @@ goog.scope(function() {
             blockParent = n;
             break;
         }
+
+        var softHyphenDeleted = false;
+
         if (blockParent) {
             var hyphenateLimitLines = /** @type {?number} */ (blockParent.pluginProps['hyphenateLimitLines']);
             if (hyphenateLimitLines) {
                 this.adjustHyphenateLimitLines(
                     checkPoints, column, hyphenateLimitLines);
+                softHyphenDeleted = true;
             }
         }
-        this.deleteUnnecessarySoftHyphen(checkPoints, column);
+
+        if (!softHyphenDeleted)
+            this.deleteUnnecessarySoftHyphen(checkPoints, column);
     };
 
     /**
@@ -504,14 +510,16 @@ goog.scope(function() {
      */
     Hyphenator.prototype.adjustHyphenateLimitLines = function(checkPoints,
         column, hyphenateLimitLines) {
-        var result;
+        var result, endOfLinePositions;
         do {
             var linePositions = column.findLinePositions(checkPoints);
+            endOfLinePositions = [];
             var succesiveHyphenationCount = 0;
             result = linePositions.filter(function(linePosition) {
                 return !column.isOverflown(linePosition);
             }).some(function(linePosition) {
                 var position = column.findEndOfLine(linePosition, checkPoints, false);
+                endOfLinePositions.push(position);
                 if (this.isHyphenated(position)) {
                     succesiveHyphenationCount++;
                 } else {
@@ -524,6 +532,8 @@ goog.scope(function() {
                 return false;
             }.bind(this));
         } while (result);
+
+        this.deleteUnnecessarySoftHyphen(checkPoints, column, endOfLinePositions);
     };
 
     /**
@@ -648,12 +658,25 @@ goog.scope(function() {
      * @private
      * @param {Array.<adapt.vtree.NodeContext>} checkPoints
      * @param {adapt.layout.Column} column
+     * @param {Array.<{nodeContext: adapt.vtree.NodeContext, index: number, checkPointIndex: number}>=} endOfLinePositions
      */
-    Hyphenator.prototype.deleteUnnecessarySoftHyphen = function(checkPoints, column) {
-        var linePositions = column.findLinePositions(checkPoints);
-        var hyphenatedPositions = linePositions.map(function(linePosition) {
-            return column.findEndOfLine(linePosition, checkPoints, false);
-        }).filter(function(position) {
+    Hyphenator.prototype.deleteUnnecessarySoftHyphen = function(checkPoints, column, endOfLinePositions) {
+        // Early return when no soft hyphen is contained
+        var containSoftHyphen = checkPoints.some(function(cp) {
+            if (cp.after || cp.viewNode.nodeType === 1)
+                return false;
+            var text = cp.viewNode.data;
+            return text.indexOf("\xAD") >= 0;
+        });
+        if (!containSoftHyphen) return;
+
+        if (!endOfLinePositions) {
+            var linePositions = column.findLinePositions(checkPoints);
+            endOfLinePositions = linePositions.map(function(linePosition) {
+                return column.findEndOfLine(linePosition, checkPoints, false);
+            });
+        }
+        var hyphenatedPositions = endOfLinePositions.filter(function(position) {
             return this.isHyphenated(position);
         }.bind(this));
         for (var i=0; i < checkPoints.length; i++) {
