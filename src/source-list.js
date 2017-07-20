@@ -79,7 +79,8 @@
 
         "../plugins/wiley-add-orcid/src/wiley-add-orcid.js",
         "../plugins/wiley-move-creators-affiliations-notes/src/wiley-move-creators-affiliations-notes.js",
-        "../plugins/wiley-table-row-shading/src/wiley-table-row-shading.js"
+        "../plugins/wiley-table-row-shading/src/wiley-table-row-shading.js",
+        "../plugins/wiley-postprocess/src/wiley-postprocess.js"
     ];
 
     var commonJsModuleList = [

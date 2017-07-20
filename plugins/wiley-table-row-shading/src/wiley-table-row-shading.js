@@ -100,7 +100,7 @@ function stripy_tables(document)
 							
 						map = newmap;
 					}
-					if ((row+1)%2 == 1 && !rows[row].hasAttribute('data-shaded')) rows[row].setAttribute('data-shaded','yes');
+					if ((row+1)%2 == 0 && !rows[row].hasAttribute('data-shaded')) rows[row].setAttribute('data-shaded','yes');
 				}
 			}
 			else
@@ -108,7 +108,7 @@ function stripy_tables(document)
 				var rows = tbodys[tbody].getElementsByTagName('tr');
 	
 				for (var row = 0; row < rows.length; row++)
-					if ((row+1)%2 == 1 && !rows[row].hasAttribute('data-shaded')) rows[row].setAttribute('data-shaded','yes');
+					if ((row+1)%2 == 0 && !rows[row].hasAttribute('data-shaded')) rows[row].setAttribute('data-shaded','yes');
 			}
 		}
 	}

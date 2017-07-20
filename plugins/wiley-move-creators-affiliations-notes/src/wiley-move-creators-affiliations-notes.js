@@ -86,12 +86,38 @@ function move_creators_affiliations_notes(document)
 				}				
 			}
 
-			if (document.querySelector('section.letter>section.bibliography')) {
-				document.querySelector('section.letter').insertBefore(fragment,document.querySelector('section.letter>section.bibliography'));
+			if (document.querySelector('article>section.letter>section.noteGroup') && document.querySelector('article>section.letter>section.bibliography')) 
+			{
+				if (document.querySelector('article>section.letter>section.noteGroup').previousElementSibling.getAttribute('class') === 'bibliography'){
+					document.querySelector('article>section.letter').insertBefore(fragment,document.querySelector('article>section.letter>section.bibliography'));	
+				}
+				else {
+					document.querySelector('article>section.letter').insertBefore(fragment,document.querySelector('article>section.letter>section.noteGroup'));
+				}
+			}
+			else if (document.querySelector('article>section.letter>section.noteGroup')) {
+				document.querySelector('article>section.letter').insertBefore(fragment,document.querySelector('article>section.letter>section.noteGroup'));
+			}
+			else if (document.querySelector('article>section.letter>section.bibliography')) {
+				document.querySelector('article>section.letter').insertBefore(fragment,document.querySelector('article>section.letter>section.bibliography'));
+			}
+			
+			else if (document.querySelector('article.displayed-content>section.noteGroup') && document.querySelector('article.displayed-content>section.noteGroup'))
+			{
+				if (document.querySelector('article.displayed-content>section.noteGroup').previousElementSibling.getAttribute('class') === 'bibliography'){
+					document.querySelector('article.displayed-content').insertBefore(fragment,document.querySelector('article.displayed-content>section.bibliography'));				
+				}
+				else {
+					document.querySelector('article.displayed-content').insertBefore(fragment,document.querySelector('article.displayed-content>section.noteGroup'));
+				}
+			}
+			else if (document.querySelector('article.displayed-content>section.noteGroup')) {
+				document.querySelector('article.displayed-content').insertBefore(fragment,document.querySelector('article.displayed-content>section.noteGroup'));
 			}
 			else if (document.querySelector('article.displayed-content>section.bibliography')) {
 				document.querySelector('article.displayed-content').insertBefore(fragment,document.querySelector('article.displayed-content>section.bibliography'));
 			}
+			
 			else if (document.querySelector('article.displayed-content>span.citation[data-type="self"]')) {
 				document.querySelector('article.displayed-content').insertBefore(fragment,document.querySelector('article.displayed-content>span.citation[data-type="self"]'));
 			}
@@ -105,6 +131,23 @@ function move_creators_affiliations_notes(document)
 				for (i=0; i<jobs.length; i++) 
 					if (jobs[i].innerHTML.toLowerCase().indexOf('editor') >= 0)
 						jobs[i].setAttribute('class','jobTitle editor');
+			}
+		}
+		
+		// change orcid icon size
+		var orcidImg = document.querySelector('img[alt="orcid link"]');
+		orcidImg.setAttribute('width','12');
+		orcidImg.setAttribute('height','12');		
+		
+		// IF the author is marked with data-corresponding="yes" AND if <div class="correspondenceTo"> doesn't exist AND IF <li class="creator">/<div property="schema:author">/<span class="contactDetails">/<a class="email"> exists THEN display email under author name.
+		if (!document.querySelector('div.correspondenceTo')) 
+		{
+			var creators = document.querySelectorAll('li.creator[data-corresponding="yes"]'); 
+			for (c=0; c<creators.length; c++)  {
+				var email = creators[c].querySelector('a.email');
+				if (email) {
+					creators[c].appendChild(email);
+				}
 			}
 		}
 		
