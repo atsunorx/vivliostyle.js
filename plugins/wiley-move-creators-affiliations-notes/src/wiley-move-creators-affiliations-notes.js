@@ -136,8 +136,10 @@ function move_creators_affiliations_notes(document)
 		
 		// change orcid icon size
 		var orcidImg = document.querySelector('img[alt="orcid link"]');
-		orcidImg.setAttribute('width','12');
-		orcidImg.setAttribute('height','12');		
+		if (orcidImg) {
+			orcidImg.setAttribute('width','12');
+			orcidImg.setAttribute('height','12');
+		}
 		
 		// IF the author is marked with data-corresponding="yes" AND if <div class="correspondenceTo"> doesn't exist AND IF <li class="creator">/<div property="schema:author">/<span class="contactDetails">/<a class="email"> exists THEN display email under author name.
 		if (!document.querySelector('div.correspondenceTo')) 
